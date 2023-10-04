@@ -242,7 +242,6 @@ GameObject:
   - component: {fileID: 374771438}
   - component: {fileID: 374771443}
   - component: {fileID: 374771447}
-  - component: {fileID: 374771446}
   m_Layer: 0
   m_Name: MainCamera
   m_TagString: MainCamera
@@ -291,7 +290,7 @@ MonoBehaviour:
   debugShowUI: 1
   debugDrawLOD: 0
   debugDrawBoundsInSceneView: 0
-  debugDrawHiZ: 0
+  debugDrawHiZ: 1
   debugHiZLOD: 0
   debugUIPrefab: {fileID: 1573785215841776141, guid: 0a2641a9a8d324edf94453167d849fa8, type: 3}
   instancesInputData: []
@@ -25028,18 +25027,6 @@ MonoBehaviour:
     - {x: 0.81174386, y: 0.81174386, z: 0.81174386}
     - {x: 0.9655209, y: 0.9655209, z: 0.9655209}
     - {x: 0.75671923, y: 0.75671923, z: 0.75671923}
---- !u!114 &374771446
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 374771437}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 948f4100a11a5c24981795d21301da5c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &374771447
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -25540,7 +25527,7 @@ Camera:
   far clip plane: 2000
   field of view: 95
   orthographic: 1
-  orthographic size: 5000
+  orthographic size: 70
   m_Depth: 8.68
   m_CullingMask:
     serializedVersion: 2
@@ -25565,7 +25552,7 @@ Transform:
   m_GameObject: {fileID: 658572710}
   serializedVersion: 2
   m_LocalRotation: {x: -0.65328145, y: 0.2705982, z: -0.2705982, w: -0.65328145}
-  m_LocalPosition: {x: 0, y: 1000, z: 0}
+  m_LocalPosition: {x: 0, y: 20, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
