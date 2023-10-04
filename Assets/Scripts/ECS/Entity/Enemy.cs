@@ -4,7 +4,20 @@ using Unity.Mathematics;
 
 namespace GamesTan.ECS.Game
 {
-    
+    public struct EntityData
+    {
+        /// <summary> EntityId   /// </summary>
+        public int SlotId;
+        /// <summary> Version   /// </summary>
+        public int Version;
+
+        public EntityData(int entityId,int version)
+        {
+            SlotId = entityId;
+            Version = version;
+        }
+    }
+
     public struct EnemyConfig
     {
         /// <summary> AI 类型   /// </summary>
@@ -15,21 +28,18 @@ namespace GamesTan.ECS.Game
         public float SkillInterval;
     }
 
-    public struct EnemyRef
-    {
-        /// <summary> EntityId   /// </summary>
-        public int EntityId;
-        /// <summary> Slot Index   /// </summary>
-        public int SlotId;
-    }
-
     public struct Enemy
     {
+        public EntityData EntityData;
         /// <summary> EntityId   /// </summary>
-        public int EntityId;
+        public int EntityId => EntityData.SlotId;
+        /// <summary> Version   /// </summary>
+        public int Version=> EntityData.SlotId;
+        
         /// <summary> 状态集合   /// </summary>
         public BitSet32 StatusData;
-        public bool IsFree
+        /// <summary> 是否已经释放   /// </summary>
+        public bool IsMemFree
         {
             get => StatusData.Is(0);
             set => StatusData.Set(0,value);

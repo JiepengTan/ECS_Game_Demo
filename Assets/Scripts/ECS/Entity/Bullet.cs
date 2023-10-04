@@ -7,12 +7,19 @@ using UnityEngine;
 namespace GamesTan.ECS.Game
 {
     public struct Bullet 
-    {
+    {        
+        /// <summary> Entity Data   /// </summary>
+        public EntityData EntityData;
         /// <summary> EntityId   /// </summary>
-        public int EntityId;
-        /// <summary> EntityId   /// </summary>
+        public int EntityId => EntityData.SlotId;
+        /// <summary> Version   /// </summary>
+        public int Version=> EntityData.SlotId;
+        
+        
+        /// <summary> 状态集合   /// </summary>
         public BitSet32 StatusData;
-        public bool IsFree
+        /// <summary> 是否已经释放   /// </summary>
+        public bool IsMemFree
         {
             get => StatusData.Is(0);
             set => StatusData.Set(0,value);
