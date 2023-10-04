@@ -9808,14 +9808,14 @@ MonoBehaviour:
   numberOfInstances: 256
   indirectRenderer: {fileID: 374771440}
   instances:
-  - prefab: {fileID: 1590168933121062, guid: 1fa7141d6b0f746cca57ca62eab0dd7e, type: 3}
+  - prefab: {fileID: 1937056754075877283, guid: b6a6530fe999a824e932a2a37f2dd973, type: 3}
     indirectMaterial: {fileID: 2100000, guid: 85906cf1ade55474e9230ae827eda8db, type: 2}
     normalMaterial: {fileID: 2100000, guid: 7c1ac4768247c4b449e54e3553e2496e, type: 2}
     scaleRange: {x: 0.5, y: 1}
     positionOffset: {x: 0, y: 0.5, z: 0}
-    lod00Mesh: {fileID: 4300004, guid: 782460c5190c847bdbdeac496ccac326, type: 3}
-    lod01Mesh: {fileID: 4300000, guid: 782460c5190c847bdbdeac496ccac326, type: 3}
-    lod02Mesh: {fileID: 4300002, guid: 782460c5190c847bdbdeac496ccac326, type: 3}
+    lod00Mesh: {fileID: 4300000, guid: 2e29e2a065ece1e4ebe3427446243eff, type: 2}
+    lod01Mesh: {fileID: 4300000, guid: 5e12879c1ba86d846908da8f20d03916, type: 2}
+    lod02Mesh: {fileID: 4300000, guid: 782460c5190c847bdbdeac496ccac326, type: 3}
     rotations:
     - {x: 0, y: 0, z: 0}
     - {x: 0, y: 0, z: 0}
