@@ -127,8 +127,8 @@ public class TestBitonicSort : MonoBehaviour
         lst.AddRange(nums);
         lst.Sort();
         GFG.sort2(nums, nums.Length, 1);
-        Print(nums);
-        Print(lst.ToArray());
+        //Print(nums);
+        //Print(lst.ToArray());
     }
 
     private static void Print(int[] nums)
