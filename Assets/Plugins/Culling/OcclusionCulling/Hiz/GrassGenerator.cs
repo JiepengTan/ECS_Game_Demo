@@ -206,7 +206,7 @@ public class GrassGenerator : MonoBehaviour
         //解决草偏暗的问题
         m_drawGrassCommandBuffer.EnableShaderKeyword("LIGHTPROBE_SH");
         m_drawGrassCommandBuffer.EnableShaderKeyword("SHADOWS_SCREEN");
-        //m_materialBlock.SetTexture(shadowMapTextureId, whiteTexture);
+        m_materialBlock.SetTexture(shadowMapTextureId, whiteTexture);
         m_drawGrassCommandBuffer.DrawMeshInstancedIndirect(grassMesh, subMeshIndex, grassMaterial, 0, argsBuffer, 0,
             m_materialBlock);
 

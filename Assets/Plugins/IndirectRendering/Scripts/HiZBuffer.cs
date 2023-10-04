@@ -50,6 +50,7 @@ public class HiZBuffer : MonoBehaviour
 
     #region MonoBehaviour
 
+    const RenderTextureFormat DepthTextureFormat= RenderTextureFormat.RGFloat;
     private void Awake()
     {
         m_generateBufferMaterial = new Material(generateBufferShader);
@@ -106,7 +107,7 @@ public class HiZBuffer : MonoBehaviour
         m_textureSize.x = size;
         m_textureSize.y = size;
         
-        m_HiZDepthTexture = new RenderTexture(size, size, 0, RenderTextureFormat.RGHalf, RenderTextureReadWrite.Linear);
+        m_HiZDepthTexture = new RenderTexture(size, size, 0, DepthTextureFormat, RenderTextureReadWrite.Linear);
         m_HiZDepthTexture.filterMode = FilterMode.Point;
         m_HiZDepthTexture.useMipMap = true;
         m_HiZDepthTexture.autoGenerateMips = false;
@@ -162,7 +163,7 @@ public class HiZBuffer : MonoBehaviour
                 size >>= 1;
                 size = Mathf.Max(size, 1);
                 
-                m_CommandBuffer.GetTemporaryRT(m_Temporaries[i], size, size, 0, FilterMode.Point, RenderTextureFormat.RGHalf, RenderTextureReadWrite.Linear);
+                m_CommandBuffer.GetTemporaryRT(m_Temporaries[i], size, size, 0, FilterMode.Point,DepthTextureFormat, RenderTextureReadWrite.Linear);
                 
                 if (i == 0)
                 {

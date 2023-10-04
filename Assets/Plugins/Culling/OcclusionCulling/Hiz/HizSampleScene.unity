@@ -264,8 +264,7 @@ MonoBehaviour:
   grassMesh: {fileID: 4300000, guid: 02e48aea181058a47acc4c8a06b88f13, type: 3}
   subMeshIndex: 0
   grassMaterial: {fileID: 2100000, guid: 7f52cfde0b450e24a9f1cc86cb1a0433, type: 2}
-  GrassCountPerRaw: 299
-  depthTextureGenerator: {fileID: 0}
+  GrassCountPerRaw: 30
   compute: {fileID: 7200000, guid: f521190d28bb6de4ca5c8a9501378caa, type: 3}
 --- !u!1001 &333296549
 PrefabInstance:
