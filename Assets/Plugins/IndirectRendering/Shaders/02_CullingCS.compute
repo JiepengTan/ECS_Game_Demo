@@ -34,6 +34,8 @@ cbuffer CB
     uint _ShouldLOD;
     uint _ShouldOnlyUseLOD02Shadows;
     
+    float _Lod0Distance;
+    float _Lod1Distance;
     int _ShadowCascades;
     float _ShadowDistance;
     float _DetailCullingScreenPercentage;
@@ -212,8 +214,8 @@ inline void CSMain (
         isVisible *= (_ShouldDetailCull * isVisible > 0) ? IsVisibleAfterDetailCulling(clipMinX, clipMaxX, clipMinY, clipMaxY) : 1;
     }
 
-    float lod00Range = LOD00_RANGE;
-    float lod01Range = LOD01_RANGE;
+    float lod00Range = _Lod0Distance;
+    float lod01Range = _Lod1Distance;
 
     // Calculate the correct index to the arguments buffers
     uint argsIndex = drawCall + 1;    

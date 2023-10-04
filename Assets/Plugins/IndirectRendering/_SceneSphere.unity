@@ -9653,6 +9653,8 @@ MonoBehaviour:
   enableOnlyLOD02Shadows: 0
   detailCullingPercentage: 0.005
   shadowDistance: 100
+  lod0Distance: 20
+  lod1Distance: 40
   debugShowUI: 1
   debugDrawLOD: 0
   debugDrawBoundsInSceneView: 0
@@ -9803,7 +9805,7 @@ MonoBehaviour:
   createInstancesOnAwake: 1
   shouldInstantiatePrefabs: 1
   areaSize: 100
-  numberOfInstances: 8192
+  numberOfInstances: 256
   indirectRenderer: {fileID: 374771440}
   instances:
   - prefab: {fileID: 1590168933121062, guid: 1fa7141d6b0f746cca57ca62eab0dd7e, type: 3}

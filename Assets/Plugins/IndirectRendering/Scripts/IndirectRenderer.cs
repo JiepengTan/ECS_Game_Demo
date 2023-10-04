@@ -67,6 +67,8 @@ public class IndirectRenderer : MonoBehaviour
     public bool enableOnlyLOD02Shadows = true;
     [Range(00.00f, 00.2f)] public float detailCullingPercentage = 0.005f;
     [Range(10, 1000)] public float shadowDistance = 100;
+    [Range(10, 300.0f)] public float lod0Distance = 20f;
+    [Range(10, 300.0f)] public float lod1Distance = 100f;
     
     // Debugging Variables
     [Header("Debug")]
@@ -192,6 +194,9 @@ public class IndirectRenderer : MonoBehaviour
     private static readonly int _Height = Shader.PropertyToID("_Height");
     private static readonly int _ShadowDistance = Shader.PropertyToID("_ShadowDistance");
     private static readonly int _DetailCullingScreenPercentage = Shader.PropertyToID("_DetailCullingScreenPercentage");
+    private static readonly int _Lod0Distance = Shader.PropertyToID("_Lod0Distance");
+    private static readonly int _Lod1Distance = Shader.PropertyToID("_Lod1Distance");
+    
     private static readonly int _HiZMap = Shader.PropertyToID("_HiZMap");
     private static readonly int _NumOfGroups = Shader.PropertyToID("_NumOfGroups");
     private static readonly int _NumOfDrawcalls = Shader.PropertyToID("_NumOfDrawcalls");
@@ -871,6 +876,8 @@ public class IndirectRenderer : MonoBehaviour
         occlusionCS.SetInt(_ShouldOnlyUseLOD02Shadows,  enableOnlyLOD02Shadows  ? 1 : 0);
         occlusionCS.SetFloat(_ShadowDistance, shadowDistance);
         occlusionCS.SetFloat(_DetailCullingScreenPercentage, detailCullingPercentage);
+        occlusionCS.SetFloat(_Lod0Distance, lod0Distance);
+        occlusionCS.SetFloat(_Lod1Distance, lod1Distance);
         occlusionCS.SetVector(_HiZTextureSize, hiZBuffer.TextureSize);
         occlusionCS.SetBuffer(m_occlusionKernelID, _InstanceDataBuffer, m_instanceDataBuffer);
         occlusionCS.SetBuffer(m_occlusionKernelID, _ArgsBuffer, m_instancesArgsBuffer);

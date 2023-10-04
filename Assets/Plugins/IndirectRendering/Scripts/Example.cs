@@ -20,6 +20,7 @@ public class Example : MonoBehaviour
     // Enums
     public enum NumberOfInstances
     {
+        _64 = 64,
         _256 = 256,
         _2048 = 2048,
         _4096 = 4096,
