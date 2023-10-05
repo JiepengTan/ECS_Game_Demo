@@ -62,8 +62,8 @@ Shader "GamesTan/InstanceGUPSkin"
         	
             uniform float4 _LightColor0;
             
-            #include "ShaderInclude_IndirectStructs.cginc"
-            #include "GPUSkin.cginc"
+            #include "../Core/Instances/ShaderInclude_IndirectStructs.cginc"
+            #include "../Core/GPUSkin/GPUSkin.cginc"
             uniform uint _ArgsOffset;
             StructuredBuffer<uint> _ArgsBuffer;
             StructuredBuffer<Indirect2x2Matrix> _InstancesDrawMatrixRows01;

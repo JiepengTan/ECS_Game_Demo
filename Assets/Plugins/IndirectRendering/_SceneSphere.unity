@@ -9805,7 +9805,7 @@ MonoBehaviour:
   createInstancesOnAwake: 1
   shouldInstantiatePrefabs: 1
   areaSize: 100
-  numberOfInstances: 256
+  numberOfInstances: 4096
   indirectRenderer: {fileID: 374771440}
   instances:
   - prefab: {fileID: 1937056754075877283, guid: b6a6530fe999a824e932a2a37f2dd973, type: 3}
@@ -42050,7 +42050,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4007726215032910553, guid: b6a6530fe999a824e932a2a37f2dd973, type: 3}
       propertyPath: Frame
-      value: 124
+      value: 134
       objectReference: {fileID: 0}
     - target: {fileID: 4007726215032910553, guid: b6a6530fe999a824e932a2a37f2dd973, type: 3}
       propertyPath: _matrix.e00
@@ -42059,6 +42059,10 @@ PrefabInstance:
     - target: {fileID: 4007726215032910553, guid: b6a6530fe999a824e932a2a37f2dd973, type: 3}
       propertyPath: _matrix.e02
       value: 124
+      objectReference: {fileID: 0}
+    - target: {fileID: 4007726215032910553, guid: b6a6530fe999a824e932a2a37f2dd973, type: 3}
+      propertyPath: isAutoUpdate
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4007726215032910553, guid: b6a6530fe999a824e932a2a37f2dd973, type: 3}
       propertyPath: EnableAnimation

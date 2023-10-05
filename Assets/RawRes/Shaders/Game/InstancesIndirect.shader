@@ -20,7 +20,7 @@ Shader "IndirectRendering/Instance"
             #if defined(UNITY_PROCEDURAL_INSTANCING_ENABLED)
                 #pragma instancing_options procedural:setup
                 
-                #include "ShaderInclude_IndirectStructs.cginc"
+                #include "../Core/Instances/ShaderInclude_IndirectStructs.cginc"
                 uniform uint _ArgsOffset;
                 StructuredBuffer<uint> _ArgsBuffer;
                 StructuredBuffer<Indirect2x2Matrix> _InstancesDrawMatrixRows01;
