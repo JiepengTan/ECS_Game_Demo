@@ -1,4 +1,4 @@
-Shader "Unlit/Graphics_DrawMeshInstancedIndirect"
+Shader "GamesTan/InstanceGUPSkin"
 {
     Properties
     {
@@ -7,7 +7,9 @@ Shader "Unlit/Graphics_DrawMeshInstancedIndirect"
 		_Color ("_Color", Color) = (1,1,1,1)
     	
         [NoScaleOffset]_AnimatedBoneMatrices("AnimatedBoneMatrices", 2D) = "white" {}
-        _EnableAnimation("EnableAnimation", Float) = 0
+        [Toggle]_EnableAnimation("EnableAnimation", Float) = 0
+        [Toggle]_EnableInstance("_EnableInstance", Float) = 0
+    	
     }
     SubShader
     {
@@ -16,17 +18,25 @@ Shader "Unlit/Graphics_DrawMeshInstancedIndirect"
         Pass
         {
             CGPROGRAM
+			// Upgrade NOTE: excluded shader from OpenGL ES 2.0 because it uses non-square matrices
+			#pragma exclude_renderers gles
             #pragma vertex vert
             #pragma fragment frag
             #pragma target 5.0
 
             #include "UnityCG.cginc"
 
-
             struct appdata
             {
                 float4 vertex : POSITION;
-                float2 uv : TEXCOORD0;
+			    float4 tangent : TANGENT;
+			    float3 normal : NORMAL;
+			    float4 texcoord : TEXCOORD0;
+			    float4 texcoord1 : TEXCOORD1;
+			    float4 texcoord2 : TEXCOORD2;
+			    float4 texcoord3 : TEXCOORD3;
+			    fixed4 color : COLOR;
+	
             	uint inst : SV_InstanceID;
             	uint id : SV_VertexID;
             };
@@ -45,19 +55,23 @@ Shader "Unlit/Graphics_DrawMeshInstancedIndirect"
             sampler2D _Normal;
             sampler2D _AnimatedBoneMatrices;
 	        float4 _AnimatedBoneMatrices_TexelSize;
-	        float4x4 _AnimationState;
+	        float4x4 _AnimationState; //blendFactor,transpercent,frameIndex
 	        float _EnableAnimation;
+	        float _EnableInstance;
 
-            
+        	
             uniform float4 _LightColor0;
             
             #include "ShaderInclude_IndirectStructs.cginc"
+            #include "GPUSkin.cginc"
             uniform uint _ArgsOffset;
             StructuredBuffer<uint> _ArgsBuffer;
             StructuredBuffer<Indirect2x2Matrix> _InstancesDrawMatrixRows01;
             StructuredBuffer<Indirect2x2Matrix> _InstancesDrawMatrixRows23;
             StructuredBuffer<Indirect2x2Matrix> _InstancesDrawMatrixRows45;
-            
+
+
+            float4 animStateRow1;
             v2f vert (appdata v)
             {
 				v2f o;
@@ -66,11 +80,23 @@ Shader "Unlit/Graphics_DrawMeshInstancedIndirect"
                 Indirect2x2Matrix rows01 = _InstancesDrawMatrixRows01[index];
                 Indirect2x2Matrix rows23 = _InstancesDrawMatrixRows23[index];
                 Indirect2x2Matrix rows45 = _InstancesDrawMatrixRows45[index];
-                
-                float4x4 obj2world = float4x4(rows01.row0, rows01.row1, rows23.row0, float4(0, 0, 0, 1));
+
+            	if(_EnableInstance) {
+            		unity_ObjectToWorld = float4x4(rows01.row0, rows01.row1, rows23.row0, float4(0, 0, 0, 1));
+            	}
             	
-				o.uv = v.uv;
-            	o.vertex = mul(UNITY_MATRIX_VP, mul(obj2world, float4(v.vertex.xyz, 1.0)));
+            	float3 animPos = v.vertex.xyz;
+            	float3 animNor = v.normal.xyz;
+            	float3 animTan = v.tangent.xyz;
+            	
+            	if(_EnableAnimation>0.5) {
+            		float3x4 uvs = float3x4(v.texcoord1,  v.texcoord2,  v.texcoord3);
+            		AnimateBlend_float(v.vertex, v.normal, v.tangent,uvs,
+            			_AnimatedBoneMatrices, _AnimatedBoneMatrices_TexelSize.xy,
+            			_AnimationState,  animPos,   animNor,   animTan) ;
+            	}
+            	o.uv = v.texcoord.xy;
+            	o.vertex = mul(UNITY_MATRIX_VP, mul(unity_ObjectToWorld, float4(animPos, 1.0)));
 				//world position for rim
 				o.color = 1;//mul(unity_ObjectToWorld, pos);
 

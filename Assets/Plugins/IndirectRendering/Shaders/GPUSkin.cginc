@@ -1,15 +1,17 @@
 //UNITY_SHADER_NO_UPGRADE
-#ifndef MYHLSLINCLUDE_INCLUDED
-#define MYHLSLINCLUDE_INCLUDED
+#ifndef GPUSKIN_ANIM_INCLUDED
+#define GPUSKIN_ANIM_INCLUDED
 
 float3 doTransform(float4x4 transform, float3 pt)
 {
     return mul(transform, float4(pt.x, pt.y, pt.z, 1)).xyz;
 }
 
-float4 loadBoneMatrixTexture(Texture2D<float4> animatedBoneMatrices, int frameIndex, int boneIndex, int i)
+float4 loadBoneMatrixTexture(sampler2D animatedBoneMatrices,float2 texSize, int frameIndex, int boneIndex, int i)
 {
-    return animatedBoneMatrices.Load(int3((boneIndex * 4) + i, frameIndex, 0));
+    float2 texCoords = float2((boneIndex * 4 + i + 0.5) *texSize.x, (frameIndex + 0.5) *texSize.y);
+    // Sample the pixel from the sampler
+    return tex2Dlod(animatedBoneMatrices, float4(texCoords,0,0));
 }
 
 float4x4 extractRotationMatrix(float4x4 m)
@@ -51,8 +53,8 @@ float4x4 extractRotationMatrix(float4x4 m)
     return m;
 }
 
-void calculateFrameValues(float3 position, float3 normal, float3 tangent,
-    Texture2D<float4> animatedBoneMatrices, 
+void calculateFrameValues(float2 texSize,float3 position, float3 normal, float3 tangent,
+    sampler2D animatedBoneMatrices, 
     float2 boneWeights[6], int frameIndex, 
     out float3 positionOut, out float3 normalOut, out float3 tangentOut)
 {
@@ -63,10 +65,10 @@ void calculateFrameValues(float3 position, float3 normal, float3 tangent,
         if(boneWeight == 0) break;
         float boneIndex = boneWeights[i].x;
 
-        float4 m0 = loadBoneMatrixTexture(animatedBoneMatrices, frameIndex, boneIndex, 0); 
-        float4 m1 = loadBoneMatrixTexture(animatedBoneMatrices, frameIndex, boneIndex, 1); 
-        float4 m2 = loadBoneMatrixTexture(animatedBoneMatrices, frameIndex, boneIndex, 2); 
-        float4 m3 = loadBoneMatrixTexture(animatedBoneMatrices, frameIndex, boneIndex, 3); 
+        float4 m0 = loadBoneMatrixTexture(animatedBoneMatrices,texSize, frameIndex, boneIndex, 0); 
+        float4 m1 = loadBoneMatrixTexture(animatedBoneMatrices,texSize, frameIndex, boneIndex, 1); 
+        float4 m2 = loadBoneMatrixTexture(animatedBoneMatrices,texSize, frameIndex, boneIndex, 2); 
+        float4 m3 = loadBoneMatrixTexture(animatedBoneMatrices,texSize, frameIndex, boneIndex, 3); 
 
         float4x4 animatedBoneMatrix = float4x4(m0, m1, m2, m3);
         float4x4 rotationMatrix = extractRotationMatrix(animatedBoneMatrix);
@@ -74,12 +76,12 @@ void calculateFrameValues(float3 position, float3 normal, float3 tangent,
         positionOut += boneWeight * doTransform(animatedBoneMatrix, position);
         
         normalOut += boneWeight * doTransform(rotationMatrix, normal);
-        tangentOut += boneWeight * doTransform(rotationMatrix, tangent);
+        tangentOut += boneWeight * doTransform(rotationMatrix, tangent); 
     }
 }
 
 void AnimateBlend_float(float3 position, float3 normal, float3 tangent,
-    float3x4 uvs, Texture2D<float4> animatedBoneMatrices, float4x3 animationState,
+    float3x4 uvs, sampler2D animatedBoneMatrices, float2 texSize, float4x4 animationState,
     out float3 positionOut, out float3 normalOut, out float3 tangentOut) 
 {
     positionOut = float3(0, 0, 0);
@@ -93,15 +95,15 @@ void AnimateBlend_float(float3 position, float3 normal, float3 tangent,
     for(int blendIndex = 0; blendIndex < 4; blendIndex++)
     {
         float blendFactor = animationState[blendIndex][0]; 
-        if(blendFactor > 0)
+        if(blendFactor > 0.01)
         {
-            float transitionNextFrame = animationState[blendIndex][1];
+            float transitionNextFrame =0;// animationState[blendIndex][1];
             float prevFrameFrac = 1.0 - transitionNextFrame;
             float frameIndex = animationState[blendIndex][2];
             float3 posOutBefore, posOutAfter, normalOutBefore, normalOutAfter, tangentOutBefore, tangentOutAfter;
-            calculateFrameValues(position, normal, tangent, animatedBoneMatrices, boneWeights, frameIndex, 
+            calculateFrameValues(texSize,position, normal, tangent, animatedBoneMatrices, boneWeights, frameIndex, 
                 posOutBefore, normalOutBefore, tangentOutBefore);
-            calculateFrameValues(position, normal, tangent, animatedBoneMatrices, boneWeights, frameIndex + 1,
+            calculateFrameValues(texSize,position, normal, tangent, animatedBoneMatrices, boneWeights, frameIndex + 1,
                 posOutAfter, normalOutAfter, tangentOutAfter);
             positionOut += blendFactor * (prevFrameFrac * posOutBefore + transitionNextFrame * posOutAfter);
             normalOut += blendFactor * (prevFrameFrac * normalOutBefore + transitionNextFrame * normalOutAfter);
@@ -109,4 +111,4 @@ void AnimateBlend_float(float3 position, float3 normal, float3 tangent,
         }        
     }
 }
-#endif //MYHLSLINCLUDE_INCLUDED
+#endif //GPUSKIN_ANIM_INCLUDED
