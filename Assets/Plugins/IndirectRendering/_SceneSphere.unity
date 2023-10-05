@@ -9805,7 +9805,7 @@ MonoBehaviour:
   createInstancesOnAwake: 1
   shouldInstantiatePrefabs: 1
   areaSize: 100
-  numberOfInstances: 256
+  numberOfInstances: 8192
   indirectRenderer: {fileID: 374771440}
   instances:
   - prefab: {fileID: 1937056754075877283, guid: b6a6530fe999a824e932a2a37f2dd973, type: 3}
@@ -9813,9 +9813,9 @@ MonoBehaviour:
     normalMaterial: {fileID: 2100000, guid: 7c1ac4768247c4b449e54e3553e2496e, type: 2}
     scaleRange: {x: 0.5, y: 1}
     positionOffset: {x: 0, y: 0.5, z: 0}
-    lod00Mesh: {fileID: 4300000, guid: 2e29e2a065ece1e4ebe3427446243eff, type: 2}
-    lod01Mesh: {fileID: 4300000, guid: 5e12879c1ba86d846908da8f20d03916, type: 2}
-    lod02Mesh: {fileID: 4300000, guid: 782460c5190c847bdbdeac496ccac326, type: 3}
+    lod00Mesh: {fileID: 4300000, guid: 4315a4b9d93227148869ad91b67a3e55, type: 2}
+    lod01Mesh: {fileID: 4300000, guid: 2e29e2a065ece1e4ebe3427446243eff, type: 2}
+    lod02Mesh: {fileID: 4300000, guid: 4091eb895c8d44c4c877d838b60a0cf0, type: 2}
     rotations:
     - {x: 0, y: 0, z: 0}
     - {x: 0, y: 0, z: 0}
