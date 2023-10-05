@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Text;
 using Lockstep.InternalUnsafeECS;
 using Lockstep.UnsafeECS;
-using Unity.Mathematics;
 using UnityEngine;
 using TItem = GamesTan.ECS.Game.Enemy;
 

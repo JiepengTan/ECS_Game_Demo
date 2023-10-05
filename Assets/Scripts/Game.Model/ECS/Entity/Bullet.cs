@@ -5,6 +5,7 @@ using Unity.Mathematics;
 using UnityEngine;
 
 namespace GamesTan.ECS.Game {
+
     public struct Bullet {
         /// <summary> Entity Data   /// </summary>
         public EntityData __EntityData;
