@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using Lockstep.InternalUnsafeECS;
+using Lockstep.UnsafeECS;
 using Unity.Mathematics;
 using UnityEngine;
 using TItem = GamesTan.ECS.Game.Enemy;
@@ -36,6 +38,8 @@ namespace GamesTan.ECS.Game {
             for (int i = 0; i < capacity; i++) {
                 // Don't initialize chunk.
                 _freeList[i] = new EntityData(_typeId, i, -1);
+                _ary[i] = new TItem();
+                _ary[i].__EntityData = _freeList[i];
             }
         }
 
@@ -48,26 +52,26 @@ namespace GamesTan.ECS.Game {
             _freeList[_length].Version--; // neg-- == pos++
             var ret = _freeList[_length];
             ret.Version = -ret.Version;
-            _ary[_length].__EntityData = ret;
+            _freeList[_length] = ret;
+            _ary[ret.SlotId].__EntityData =ret;
             _length++;
             return ret;
         }
 
         public void QueueFree(EntityData item) {
             TItem* ptr = GetData(item);
-            Debug.Assert(ptr != null, "Try to free a destroied entity" + GetType().Name);
+            Debug.Assert(ptr != null, $"{GetType().Name}Try to free a destroied entity {item}" );
             if (ptr == null) {
                 return;
             }
-
-            ptr->__EntityData.Version = -ptr->__EntityData.Version;
             _length--;
+            ptr->__EntityData.Version = -ptr->__EntityData.Version;
             _freeList[_length] = ptr->__EntityData;
         }
 
         public TItem* GetData(EntityData entity) {
             if (entity.SlotId < 0 || entity.SlotId > _capacity) {
-                throw new Exception(" Index Out of range " + GetType().Name);
+                throw new Exception($"{GetType().Name} Index Out of range " );
             }
 
             var ptr = &_ary[entity.SlotId];
@@ -76,6 +80,41 @@ namespace GamesTan.ECS.Game {
             }
 
             return ptr;
+        }
+
+        public override string ToString() {
+            return DebugGetFreeListString(8) +"\n=======\n"+ DebugGetItemListString(8);
+        }
+
+        string DebugGetFreeListString(int count) {
+            StringBuilder sb = new StringBuilder();
+            var info = DebugGetFreeListData(0,count);
+            foreach (var item in info) {
+                sb.AppendLine(item.ToString());
+            }
+            return sb.ToString();
+        }
+        string DebugGetItemListString(int count) {
+            StringBuilder sb = new StringBuilder();
+            var info = DebugGetItemListData(0,count);
+            foreach (var item in info) {
+                sb.AppendLine(item.ToString());
+            }
+            return sb.ToString();
+        }
+        TItem[] DebugGetItemListData(int startIdx,int count) {
+            var ret = new TItem[count];
+            fixed (TItem* ptr = ret) {
+                NativeUtil.Copy(ptr,_ary,sizeof(TItem)*count);
+            }
+            return ret;
+        }
+        EntityData[] DebugGetFreeListData(int startIdx,int count) {
+            var ret = new EntityData[count];
+            fixed (EntityData* ptr = ret) {
+                NativeUtil.Copy(ptr,_freeList,sizeof(EntityData)*count);
+            }
+            return ret;
         }
     }
 }

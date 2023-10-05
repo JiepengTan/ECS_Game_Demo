@@ -8,6 +8,8 @@ namespace GamesTan.ECS.Game {
     public struct Bullet {
         /// <summary> Entity Data   /// </summary>
         public EntityData __EntityData;
+        /// <summary> GameObject Id   /// </summary>
+        public int GObjectId;
 
         /// <summary> 状态集合   /// </summary>
         public BitSet32 StatusData;

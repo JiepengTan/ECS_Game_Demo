@@ -23,7 +23,7 @@ namespace GamesTan.ECS.Game {
         }
 
         public override string ToString() {
-            return $"typeId{TypeId} SlotId:{SlotId} Version:{Version}";
+            return $" typeId{TypeId} SlotId:{SlotId} Version:{Version}";
         }
     }
 
@@ -41,6 +41,9 @@ namespace GamesTan.ECS.Game {
     public struct Enemy {
         public EntityData __EntityData;
 
+        /// <summary> GameObject Id   /// </summary>
+        public int GObjectId;
+        
         /// <summary> 状态集合   /// </summary>
         public BitSet32 StatusData;
 
@@ -49,6 +52,7 @@ namespace GamesTan.ECS.Game {
             get => StatusData.Is(0);
             set => StatusData.Set(0, value);
         }
+
 
         /// <summary> 位置   /// </summary>
         public float2 Pos;
@@ -72,5 +76,9 @@ namespace GamesTan.ECS.Game {
 
         /// <summary> AI 计时器   /// </summary>
         public float AITimer;
+
+        public override string ToString() {
+            return __EntityData.ToString();
+        }
     }
 }
