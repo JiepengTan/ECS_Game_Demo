@@ -41,7 +41,7 @@ namespace GamesTan.Game.View.Test {
                     _testUnits.RemoveAt(_testUnits.Count - 1);
                     Debug.Log("DestroyOne " + enemys.Count + unit+ "  \n" + enemys.ToString());
                 }
-                else if(!enemys.IsFull) {
+                else  {
                     var entity = enemys.Alloc();
                     _testUnits.Add(entity);
                     Debug.Log("CreateOne " + enemys.Count + entity + "  \n" + enemys.ToString());

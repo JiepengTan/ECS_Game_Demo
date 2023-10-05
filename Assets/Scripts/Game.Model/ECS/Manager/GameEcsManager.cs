@@ -18,7 +18,7 @@ namespace GamesTan.ECS.Game {
         }
 
         public void DoStart() {
-            Enemys.Init((int)EEntityType.Enemy, 20000);
+            Enemys.Init((int)EEntityType.Enemy, 200);
         }
 
         public NativePoolEnemy Enemys = new NativePoolEnemy();

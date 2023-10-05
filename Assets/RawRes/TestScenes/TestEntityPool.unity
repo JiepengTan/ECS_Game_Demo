@@ -610,8 +610,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   InitActorCount: 5000
-  FreshCountPerFrame: 50
+  FreshCountPerFrame: 4
   DeletePropability: 0.4
+  goId: 0
 --- !u!4 &600140742
 Transform:
   m_ObjectHideFlags: 0

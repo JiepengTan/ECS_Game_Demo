@@ -1,25 +1,32 @@
 ﻿using System;
 using Lockstep.NativeUtil;
 using Unity.Mathematics;
+using UnityEngine;
 using UnityEngine.Serialization;
 
 namespace GamesTan.ECS.Game {
     public struct EntityData {
+
+        public const int SlotBitCount = 20;
+        public const int TypeIdBitCount = 32-SlotBitCount;
+        public const int MaxSlotId = 1<<SlotBitCount;
         /// <summary> TypeId   /// </summary>
-        public short TypeId;
+        public uint TypeId=> DataInfo >> SlotBitCount ;
 
-        /// <summary> EntityId   /// </summary>
-        public short SlotId;
+        /// <summary> SlotId   /// </summary>
+        public uint SlotId=> DataInfo &0x0FFFFF;
 
+        /// <summary> internalInfo   /// </summary>
+        public UInt32 DataInfo;
         /// <summary> Version   /// </summary>
         public int Version;
 
         public bool IsAlive => Version < 0;
-
-        public EntityData(int typeId, int entityId, int version) {
-            SlotId = (short)entityId;
+        public EntityData(int typeId, int slotId, int version) {
+            Debug.Assert(typeId <1<<TypeIdBitCount,"TypeId out of range " +typeId );
+            Debug.Assert(slotId <1<<SlotBitCount,"EntityId out of range "+ slotId );
+            DataInfo = (uint)typeId <<SlotBitCount | (uint)slotId;
             Version = version;
-            TypeId = (short)typeId;
         }
 
         public override string ToString() {

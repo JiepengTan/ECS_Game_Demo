@@ -20,8 +20,17 @@ namespace Lockstep.InternalUnsafeECS {
             TotalAllocSize += size;
             return UnsafeECS.NativeUtil.Alloc((int) size).ToPointer();
         }
-
-        public static unsafe void Free(void* memory, Allocator allocator){
+        public static unsafe void* Realloc(void* rawPtr,int rawSize, long size, int alignment =1, Allocator allocator = Allocator.Persistent){
+            if (size <= rawSize) {
+                throw new Exception("ReAlloc size invalid !");
+            }
+            var newPtr = Malloc((int) size,alignment,allocator);
+            TotalAllocSize -= rawSize;
+            MemCpy(newPtr,rawPtr,rawSize);
+            Free(rawPtr,allocator);
+            return newPtr;
+        }
+        public static unsafe void Free(void* memory, Allocator allocator = Allocator.Persistent){
             if (memory == null) {
                 throw new Exception("Try to free a null pointer");
             }

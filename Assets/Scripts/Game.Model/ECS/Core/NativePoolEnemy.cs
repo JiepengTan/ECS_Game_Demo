@@ -28,12 +28,13 @@ namespace GamesTan.ECS.Game {
             return _ary;
         }
 
-        public void Init(int typeId, int capacity) {
+        public void Init(int typeId, int capacity = 128) {
             _typeId = typeId;
-            _ary = (TItem*)UnsafeUtility.Malloc(UnsafeUtility.SizeOf<TItem>() * capacity);
-            _freeList = (EntityData*)UnsafeUtility.Malloc(UnsafeUtility.SizeOf<EntityData>() * capacity);
             _capacity = capacity;
             _length = 0;
+            Debug.Assert(_capacity < EntityData.MaxSlotId,"Pool size too big !" + _capacity);
+            _ary = (TItem*)UnsafeUtility.Malloc(UnsafeUtility.SizeOf<TItem>() * capacity);
+            _freeList = (EntityData*)UnsafeUtility.Malloc(UnsafeUtility.SizeOf<EntityData>() * capacity);
 
             for (int i = 0; i < capacity; i++) {
                 // Don't initialize chunk.
@@ -43,9 +44,36 @@ namespace GamesTan.ECS.Game {
             }
         }
 
+        public void Destroy() {
+            if (_ary != null) {
+                UnsafeUtility.Free(_ary);
+                _ary = null;
+            }
+            if (_freeList != null) {
+                UnsafeUtility.Free(_freeList);
+                _freeList = null;
+            }
+            _length = 0;
+            _capacity = 0;
+        }
+
         public EntityData Alloc() {
+            if (_capacity == 0) {
+                Init(_typeId);
+            }
             if (_length == _capacity) {
-                throw new Exception(" Memory out of range " + GetType().Name);
+                var oldCap = _capacity;
+                _capacity = (int)(_capacity * 1.4f);
+                Debug.LogWarning($"{GetType().Name} Realloc {_capacity}" );
+                Debug.Assert(_capacity < EntityData.MaxSlotId,"Pool size too big !" + _capacity);
+                _ary = (TItem*)UnsafeUtility.Realloc(_ary, UnsafeUtility.SizeOf<TItem>() * oldCap,UnsafeUtility.SizeOf<TItem>() * _capacity);
+                _freeList = (EntityData*)UnsafeUtility.Realloc(_freeList,UnsafeUtility.SizeOf<EntityData>() * oldCap,UnsafeUtility.SizeOf<EntityData>() * _capacity);
+                for (int i = oldCap; i < _capacity; i++) {
+                    // Don't initialize chunk.
+                    _freeList[i] = new EntityData(_typeId, i, -1);
+                    _ary[i] = new TItem();
+                    _ary[i].__EntityData = _freeList[i];
+                }
             }
 
             Debug.Assert(_freeList[_length].Version < 0, "freeList version should <0");
@@ -59,6 +87,11 @@ namespace GamesTan.ECS.Game {
         }
 
         public void QueueFree(EntityData item) {
+            if (_ary == null) {
+                Debug.LogError(  GetType().Name+" Not init or has destroyed");
+                return;
+            }
+
             TItem* ptr = GetData(item);
             Debug.Assert(ptr != null, $"{GetType().Name}Try to free a destroied entity {item}" );
             if (ptr == null) {
@@ -70,6 +103,10 @@ namespace GamesTan.ECS.Game {
         }
 
         public TItem* GetData(EntityData entity) {
+            if (_ary == null) {
+                Debug.LogError(  GetType().Name+" Not init or has destroyed");
+                return null;
+            }
             if (entity.SlotId < 0 || entity.SlotId > _capacity) {
                 throw new Exception($"{GetType().Name} Index Out of range " );
             }
@@ -83,6 +120,7 @@ namespace GamesTan.ECS.Game {
         }
 
         public override string ToString() {
+            if (_ary == null) return "null";
             return DebugGetFreeListString(8) +"\n=======\n"+ DebugGetItemListString(8);
         }
 
