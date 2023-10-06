@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using GamesTan.ECS.Game;
 using NUnit.Framework;
 using UnityEngine;
+using UnityEngine.Profiling;
 
 namespace GamesTan.Game.View {
     public unsafe class GameMain : MonoBehaviour {
@@ -33,7 +34,9 @@ namespace GamesTan.Game.View {
             _updateTimer += dt;
             while (_updateTimer > UpdateInterval) {
                 _updateTimer -= UpdateInterval;
+                Profiler.BeginSample("Update Frame=" +_curService.Frame );
                 _curWorld.Update(UpdateInterval);
+                Profiler.EndSample();
             }
         }
 

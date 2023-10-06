@@ -1,6 +1,7 @@
 
 using System.Collections.Generic;
 using GamesTan.Rendering;
+using UnityEngine.Profiling;
 
 namespace GamesTan.ECS.Game {
     
@@ -25,11 +26,17 @@ namespace GamesTan.ECS.Game {
             _services.Frame++;
             _services.DeltaTime = dt;
             _services.TimeSinceLevelLoad += dt;
+            Profiler.BeginSample("OnFrameStart");
             RenderWorld.Instance.RendererData.OnFrameStart();
+            Profiler.EndSample();
+            Profiler.BeginSample("SystemUpdate");
             foreach (var sys in _systems) {
                 sys.Update(dt);
             }
+            Profiler.EndSample();
+            Profiler.BeginSample("OnFrameEnd");
             RenderWorld.Instance.RendererData.OnFrameEnd();
+            Profiler.EndSample();
         }
 
 
