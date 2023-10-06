@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 
 namespace GamesTan.ECS.Game {
+    
     [System.Serializable]
     public unsafe partial class GameEcsWorld {
         public GameServices _services = new GameServices();
@@ -33,10 +34,7 @@ namespace GamesTan.ECS.Game {
         }
 
         private void RegisterSystems() {
-            _systems.Add(new SysTestCreateEnemy());
-            _systems.Add(new SysEnemyAwake());
-            _systems.Add(new SysUpdateEnemyPos());
-            _systems.Add(new SysTestDestroyEnemy());
+            _systems.Add(new SysGroupTest1());
         }
 
         
