@@ -16,7 +16,7 @@ namespace GamesTan.ECS.Game {
         public BitSet32 StatusData;
 
         /// <summary> 是否已经释放   /// </summary>
-        public bool IsMemFree {
+        public bool IsDoneStart {
             get => StatusData.Is(0);
             set => StatusData.Set(0, value);
         }

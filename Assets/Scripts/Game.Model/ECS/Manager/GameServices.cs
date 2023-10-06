@@ -7,7 +7,7 @@ namespace GamesTan.ECS.Game {
     public unsafe class GameServices :BaseServices{
         [Range(0,1.0f)]
         public float DeleteProbability = 0.5f;
-        [Range(1,3000)]
+        [Range(0,3000)]
         public int FreshCountPerFrame = 20;
         public bool IsCreateGo = true;
         public bool IsShowLog = false;

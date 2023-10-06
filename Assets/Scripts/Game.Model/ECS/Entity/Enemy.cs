@@ -24,7 +24,7 @@ namespace GamesTan.ECS.Game {
         public BitSet32 StatusData;
 
         /// <summary> 是否已经释放   /// </summary>
-        public bool IsMemFree {
+        public bool IsDoneStart {
             get => StatusData.Is(0);
             set => StatusData.Set(0, value);
         }
@@ -41,6 +41,21 @@ namespace GamesTan.ECS.Game {
 
         /// <summary> 旋转   /// </summary>
         public float Deg;
+        public float2 Forward {
+            get {
+                float deg = math.radians(-Deg+90);
+                return new float2( math.cos(deg),math.sin(deg));
+            }
+        }
+        /// <summary> 旋转   /// </summary>
+        public float3 Deg3 => new float3(0, Deg, 0);
+        public float3 Pos3 => new float3(Pos.x, 0, Pos.y);
+        public float3 Forward3 {
+            get {
+                float deg = math.radians(-Deg+90);
+                return new float3( math.cos(deg),0,math.sin(deg));
+            }
+        }
 
         /// <summary> 旋转   /// </summary>
         public int Health;

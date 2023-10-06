@@ -34,6 +34,7 @@ namespace GamesTan.ECS.Game {
 
         private void RegisterSystems() {
             _systems.Add(new SysTestCreateEnemy());
+            _systems.Add(new SysEnemyAwake());
             _systems.Add(new SysUpdateEnemyPos());
             _systems.Add(new SysTestDestroyEnemy());
         }

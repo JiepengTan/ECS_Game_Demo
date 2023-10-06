@@ -630,11 +630,12 @@ MonoBehaviour:
     TimeSinceLevelLoad: 0
     Frame: 0
     DeleteProbability: 0.5
+    FreshCountPerFrame: 1
     IsCreateGo: 1
     IsShowLog: 0
     CurGoId: 0
-    FreshCountPerFrame: 20
     transform: {fileID: 0}
+    CurEnemyCount: 0
 --- !u!1 &645079594
 GameObject:
   m_ObjectHideFlags: 0
