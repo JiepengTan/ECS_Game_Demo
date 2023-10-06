@@ -90,6 +90,7 @@ public unsafe class InstanceRenderData {
             }
         }
         OnLayoutChangedEvent?.Invoke();
+        isDirty = true;
     }
 
     
@@ -129,7 +130,6 @@ public unsafe class InstanceRenderData {
     private void ResetCapacity(int capacity) {
         Debug.LogWarning("OnRenderResetCapacity" + capacity);
         Capacity = capacity;
-        isDirty = true;
         positions = new Vector3[capacity];
         scales = new Vector3[capacity];
         rotations = new Vector3[capacity];
