@@ -13,7 +13,7 @@ namespace GamesTan.Game.View {
         private GameEcsWorld _curWorld;
         [SerializeField] private GameServices _curService;
 
-        public void Start() {
+        public void Awake() {
             _updateTimer = 0;
             _curWorld = new GameEcsWorld();
             // just for debug

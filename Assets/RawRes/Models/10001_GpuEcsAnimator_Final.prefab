@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4007726215032910553}
   - component: {fileID: 5961115532213651772}
   m_Layer: 0
-  m_Name: Ch09_GpuEcsAnimator_Final
+  m_Name: 10001_GpuEcsAnimator_Final
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

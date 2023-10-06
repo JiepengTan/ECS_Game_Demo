@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using GamesTan.Rendering;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace GamesTan.ECS.Game {
@@ -14,15 +16,19 @@ namespace GamesTan.ECS.Game {
                 if (!isDelete) {
                     var entity = World.CreateEnemy();
                     _testUnits.Add(entity);
+                    var entityPtr = World.GetEnemy(entity);
+                    entityPtr->Scale = new float3(1, 1, 1);
+                    entityPtr->PrefabId = Services.RandomValue()>0.3? 10001:10001;
+                    entityPtr->InstancePrefabIdx = RenderWorld.Instance.GetInstancePrefabIdx(entityPtr->PrefabId);
                     if (Services.IsShowLog) Debug.Log("CreateOne " + EnemyPool.Count + entity + "  \n" + EnemyPool.ToString());
                     if (Services.IsCreateGo) {
                         var obj = GameObject.CreatePrimitive(PrimitiveType.Cube);
                         var view = obj.AddComponent<DebugTestEntityView>();
                         view.Entity = entity;
                         view.World = World;
-                        obj.name = $"{Services.CurGoId++}_UnitID_{entity.SlotId}";
+                        obj.name = $"{Services.CurGoId++}_UnitID_{entity.SlotId}_PrefabID{World.GetEnemy(entity)->PrefabId}";
                         obj.transform.SetParent(Services.transform);
-                        World.GetEnemy(entity)->GObjectId = obj.GetInstanceID();
+                        entityPtr->GObjectId = obj.GetInstanceID();
                         Services._id2Go.Add(obj.GetInstanceID(), obj);
                     }
                 }

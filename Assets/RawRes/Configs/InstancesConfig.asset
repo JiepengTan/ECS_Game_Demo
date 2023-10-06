@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d1c2778f3bb8b34e88f7dbd267e0c54, type: 3}
+  m_Name: InstancesConfig
+  m_EditorClassIdentifier: 
+  Infos:
+  - prefabId: 10001
+    prefab: {fileID: 1937056754075877283, guid: b6a6530fe999a824e932a2a37f2dd973, type: 3}
+    indirectMaterial: {fileID: 2100000, guid: e788d4c7a55a88e428ed4f8456dc5900, type: 2}
+    positionOffset: {x: 0, y: 0.5, z: 0}
+    lod00Mesh: {fileID: 4300000, guid: 4315a4b9d93227148869ad91b67a3e55, type: 2}
+    lod01Mesh: {fileID: 4300000, guid: 2e29e2a065ece1e4ebe3427446243eff, type: 2}
+    lod02Mesh: {fileID: 4300000, guid: 4091eb895c8d44c4c877d838b60a0cf0, type: 2}
+  - prefabId: 10002
+    prefab: {fileID: 5369157977643787679, guid: 17688d1906f8ae742879213963ca302c, type: 3}
+    indirectMaterial: {fileID: 2100000, guid: 4aacae513127019428a7df8944145faa, type: 2}
+    positionOffset: {x: 0, y: 0.5, z: 0}
+    lod00Mesh: {fileID: 4300000, guid: 47818a725f8f86a4f9bd36d260c860de, type: 2}
+    lod01Mesh: {fileID: 4300000, guid: 7e4487b714c10404f906cb7bbf722f6f, type: 2}
+    lod02Mesh: {fileID: 4300000, guid: 2217f0b5fe7d8fe478cc2281b0c2ff88, type: 2}

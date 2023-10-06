@@ -1,5 +1,6 @@
 
 using System.Collections.Generic;
+using GamesTan.Rendering;
 
 namespace GamesTan.ECS.Game {
     
@@ -24,9 +25,11 @@ namespace GamesTan.ECS.Game {
             _services.Frame++;
             _services.DeltaTime = dt;
             _services.TimeSinceLevelLoad += dt;
+            RenderWorld.Instance.RendererData.OnFrameStart();
             foreach (var sys in _systems) {
                 sys.Update(dt);
             }
+            RenderWorld.Instance.RendererData.OnFrameEnd();
         }
 
 

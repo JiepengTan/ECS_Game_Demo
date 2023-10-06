@@ -3,18 +3,20 @@ using UnityEngine.Profiling;
 using UnityEngine.Rendering;
 using System.Text;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 using UnityEngine.UI;
 using Unity.Collections;
+using Unity.Mathematics;
 
 // Preferrably want to have all buffer structs in power of 2...
 // 6 * 4 bytes = 24 bytes
 [System.Serializable]
 [StructLayout(LayoutKind.Sequential)]
-public struct IndirectInstanceCSInput
+public struct InstanceBound
 {
-    public Vector3 boundsCenter;       // 3
-    public Vector3 boundsExtents;      // 6
+    public float3 boundsCenter;       // 3
+    public float3 boundsExtents;      // 6
 }
 
 // 8 * 4 bytes = 32 bytes
@@ -50,7 +52,9 @@ public class IndirectRenderingMesh
     public uint numOfIndicesLod00;
     public uint numOfIndicesLod01;
     public uint numOfIndicesLod02;
+    public Bounds originalBounds;
 }
+
 
 public class IndirectRenderer : MonoBehaviour
 {
@@ -81,8 +85,8 @@ public class IndirectRenderer : MonoBehaviour
     
     
     [Header("Data")]
-    [ReadOnly] public List<IndirectInstanceCSInput> instancesInputData = new List<IndirectInstanceCSInput>();
     [ReadOnly] public IndirectRenderingMesh[] indirectMeshes;
+    private InstanceRenderData _rendererData = new InstanceRenderData();
     
     [Header("Logging")]
     public bool logInstanceDrawMatrices = false;
@@ -106,7 +110,9 @@ public class IndirectRenderer : MonoBehaviour
     public HiZBuffer hiZBuffer;
     public Camera mainCamera;
     public Camera debugCamera;
-    
+    // prefab buffers
+    private ComputeBuffer m_instancesArgsBuffer;
+    private ComputeBuffer m_shadowArgsBuffer;
     // Compute Buffers
     private ComputeBuffer m_instancesIsVisibleBuffer;
     private ComputeBuffer m_instancesGroupSumArrayBuffer;
@@ -121,8 +127,6 @@ public class IndirectRenderer : MonoBehaviour
     private ComputeBuffer m_instancesCulledMatrixRows01;
     private ComputeBuffer m_instancesCulledMatrixRows23;
     private ComputeBuffer m_instancesCulledMatrixRows45;
-    private ComputeBuffer m_instancesArgsBuffer;
-    private ComputeBuffer m_shadowArgsBuffer;
     private ComputeBuffer m_shadowsIsVisibleBuffer;
     private ComputeBuffer m_shadowGroupSumArrayBuffer;
     private ComputeBuffer m_shadowsScannedGroupSumBuffer;
@@ -130,6 +134,12 @@ public class IndirectRenderer : MonoBehaviour
     private ComputeBuffer m_shadowCulledMatrixRows01;
     private ComputeBuffer m_shadowCulledMatrixRows23;
     private ComputeBuffer m_shadowCulledMatrixRows45;
+
+    // update buffers
+    private ComputeBuffer m_positionsBuffer;
+    private ComputeBuffer m_scaleBuffer;
+    private ComputeBuffer m_rotationBuffer;
+    
     
     // Command Buffers
     private CommandBuffer m_sortingCommandBuffer;
@@ -169,7 +179,7 @@ public class IndirectRenderer : MonoBehaviour
     // Constants
     private const int NUMBER_OF_DRAW_CALLS = 3; // (LOD00 + LOD01 + LOD02)
     private const int NUMBER_OF_ARGS_PER_DRAW = 5; // (indexCount, instanceCount, startIndex, baseVertex, startInstance)
-    private const int NUMBER_OF_ARGS_PER_INSTANCE_TYPE = NUMBER_OF_DRAW_CALLS * NUMBER_OF_ARGS_PER_DRAW; // 3draws * 5args = 15args
+    public const int NUMBER_OF_ARGS_PER_INSTANCE_TYPE = NUMBER_OF_DRAW_CALLS * NUMBER_OF_ARGS_PER_DRAW; // 3draws * 5args = 15args
     private const int ARGS_BYTE_SIZE_PER_DRAW_CALL = NUMBER_OF_ARGS_PER_DRAW * sizeof(uint); // 5args * 4bytes = 20 bytes
     private const int ARGS_BYTE_SIZE_PER_INSTANCE_TYPE = NUMBER_OF_ARGS_PER_INSTANCE_TYPE * sizeof(uint); // 15args * 4bytes = 60bytes
     private const int SCAN_THREAD_GROUP_SIZE = 64;
@@ -226,8 +236,30 @@ public class IndirectRenderer : MonoBehaviour
     #endregion
 
     #region MonoBehaviour
-    
-    private void Update()
+
+    public void SetRenderData(InstanceRenderData data) {
+        if (this._rendererData != null) {
+            this._rendererData.OnLayoutChangedEvent -= OnRenderDataLayoutChanged;
+        }
+        this._rendererData = data;  
+        this._rendererData.OnLayoutChangedEvent += OnRenderDataLayoutChanged;
+    }
+
+    private void OnDestroy()
+    {
+        ReleaseBuffers();
+        if (this._rendererData != null) {
+            this._rendererData.OnLayoutChangedEvent -= OnRenderDataLayoutChanged;
+        }
+        if (debugDrawLOD)
+        {
+            for (int i = 0; i < indirectMeshes.Length; i++)
+            {
+                indirectMeshes[i].material.DisableKeyword(DEBUG_SHADER_LOD_KEYWORD);
+            }
+        }
+    }
+    public void DoUpdate()
     {
         if (m_isEnabled)
         {
@@ -278,18 +310,6 @@ public class IndirectRenderer : MonoBehaviour
         }
     }
 
-    private void OnDestroy()
-    {
-        ReleaseBuffers();
-        
-        if (debugDrawLOD)
-        {
-            for (int i = 0; i < indirectMeshes.Length; i++)
-            {
-                indirectMeshes[i].material.DisableKeyword(DEBUG_SHADER_LOD_KEYWORD);
-            }
-        }
-    }
     
     private void OnDrawGizmos()
     {
@@ -298,28 +318,45 @@ public class IndirectRenderer : MonoBehaviour
             return;
         }
         
-        if (debugDrawBoundsInSceneView)
-        {
+        if (debugDrawBoundsInSceneView) {
+            var bound = this._rendererData.bounds;
             Gizmos.color = new Color(1f, 0f, 0f, 0.333f);
-            for (int i = 0; i < instancesInputData.Count; i++)
+            for (int i = 0; i < bound.Length; i++)
             {
-                Gizmos.DrawWireCube(instancesInputData[i].boundsCenter, instancesInputData[i].boundsExtents * 2f);
+                Gizmos.DrawWireCube(bound[i].boundsCenter, bound[i].boundsExtents * 2f);
             }
         }
     }
     
     #endregion
+
+    public int MaxRenderCount = 0;
     
     #region Public Functions
     
-    public void Initialize(ref IndirectInstanceData[] _instances)
-    {
+    public void Initialize(List<IndirectInstanceData> Infos,int maxCount) {
         if (!m_isInitialized)
         {
-            m_isInitialized = InitializeRenderer(ref _instances);
+            if (!TryGetKernels())
+            {
+                Debug.LogError("Load compute shader core failed!");
+            }
+            m_numberOfInstances = maxCount;
+            InitPrefabBuffers(Infos);
+            InitInstanceBuffers();
+            m_isInitialized = true;
         }
     }
-    
+
+
+    public void OnRenderDataLayoutChanged() {
+        if (m_numberOfInstances < _rendererData.Capacity) {
+            m_numberOfInstances = _rendererData.Capacity;
+            InitInstanceBuffers();
+        }
+        m_instancesSortingData.SetData(_rendererData.sortingData);
+    }
+
     public void StartDrawing()
     {
         if (!m_isInitialized)
@@ -384,12 +421,13 @@ public class IndirectRenderer : MonoBehaviour
             
         }
     }
-    
+
     private void CalculateVisibleInstances()
     {
         // Global data
         m_camPosition =  mainCamera.transform.position;
         m_bounds.center = m_camPosition;
+        m_bounds.extents = Vector3.one * 10000;
         
         //Matrix4x4 m = mainCamera.transform.localToWorldMatrix;
         Matrix4x4 v = mainCamera.worldToCameraMatrix;
@@ -418,7 +456,22 @@ public class IndirectRenderer : MonoBehaviour
         }
         Profiler.EndSample();
         
+        Profiler.BeginSample("01 Calc Transform Matrix");
+        // upload entity's matrix
+        if (_rendererData.isDirty) {
+            _rendererData.isDirty = false;
+            m_positionsBuffer.SetData(_rendererData.positions);
+            m_scaleBuffer.SetData(_rendererData.scales);
+            m_rotationBuffer.SetData(_rendererData.rotations);
         
+            m_instanceDataBuffer.SetData(_rendererData.bounds ); // bounds
+        }
+
+        
+        int groupX = Mathf.Max(1, m_numberOfInstances / (2 * SCAN_THREAD_GROUP_SIZE));
+        createDrawDataBufferCS.Dispatch(m_createDrawDataBufferKernelID, groupX, 1, 1);
+        
+        Profiler.EndSample();
         
         //////////////////////////////////////////////////////
         // Set up compute shader to perform the occlusion culling
@@ -572,8 +625,11 @@ public class IndirectRenderer : MonoBehaviour
         uint NUM_ELEMENTS = (uint)m_numberOfInstances;
         uint MATRIX_WIDTH = BITONIC_BLOCK_SIZE;
         uint MATRIX_HEIGHT = (uint)NUM_ELEMENTS / BITONIC_BLOCK_SIZE;
+        if (m_sortingCommandBuffer == null) {
+            m_sortingCommandBuffer = new CommandBuffer {name = "AsyncGPUSorting"};
+        }
 
-        m_sortingCommandBuffer = new CommandBuffer {name = "AsyncGPUSorting"};
+        m_sortingCommandBuffer.Clear();
         m_sortingCommandBuffer.SetExecutionFlags( CommandBufferExecutionFlags.AsyncCompute);
         // Sort the data
         // First sort the rows for the levels <= to the block size
@@ -586,6 +642,7 @@ public class IndirectRenderer : MonoBehaviour
             m_sortingCommandBuffer.DispatchCompute(sortingCS, m_sortingCSKernelID, (int)(NUM_ELEMENTS / BITONIC_BLOCK_SIZE), 1, 1);
         }
 
+        return;// TODO fixed the 0 thread bug
         // Then sort the rows and columns for the levels > than the block size
         // Transpose. Sort the Columns. Transpose. Sort the Rows.
         for (uint level = (BITONIC_BLOCK_SIZE << 1); level <= NUM_ELEMENTS; level <<= 1)
@@ -634,121 +691,15 @@ public class IndirectRenderer : MonoBehaviour
             && TryGetKernel("CSMain",           ref copyInstanceDataCS,     ref m_copyInstanceDataKernelID)
         ;
     }
-    
-    private bool InitializeRenderer(ref IndirectInstanceData[] _instances)
+
+
+
+    private void InitInstanceBuffers()
     {
-        if (!TryGetKernels())
-        {
-            return false;
-        }
-        
-        ReleaseBuffers();
-        instancesInputData.Clear();
-        m_numberOfInstanceTypes = _instances.Length;
-        m_numberOfInstances = 0;
-        m_camPosition = mainCamera.transform.position;
-        m_bounds.center = m_camPosition;
-        m_bounds.extents = Vector3.one * 10000;
-        hiZBuffer.enabled = true;
-        hiZBuffer.InitializeTexture();
-        indirectMeshes = new IndirectRenderingMesh[m_numberOfInstanceTypes];
-        m_args = new uint[m_numberOfInstanceTypes * NUMBER_OF_ARGS_PER_INSTANCE_TYPE];
-        List<Vector3> positions = new List<Vector3>();
-        List<Vector3> scales = new List<Vector3>();
-        List<Vector3> rotations = new List<Vector3>();
-        List<SortingData> sortingData = new List<SortingData>();
-        
-        for (int i = 0; i < m_numberOfInstanceTypes; i++)
-        {
-            IndirectRenderingMesh irm = new IndirectRenderingMesh();
-            IndirectInstanceData iid = _instances[i];
-            
-            // Initialize Mesh
-            irm.numOfVerticesLod00 = (uint)iid.lod00Mesh.vertexCount;
-            irm.numOfVerticesLod01 = (uint)iid.lod01Mesh.vertexCount;
-            irm.numOfVerticesLod02 = (uint)iid.lod02Mesh.vertexCount;
-            irm.numOfIndicesLod00 = iid.lod00Mesh.GetIndexCount(0);
-            irm.numOfIndicesLod01 = iid.lod01Mesh.GetIndexCount(0);
-            irm.numOfIndicesLod02 = iid.lod02Mesh.GetIndexCount(0);
-            
-            irm.mesh = new Mesh();
-            irm.mesh.name = iid.prefab.name;
-            irm.mesh.CombineMeshes(
-                new CombineInstance[] {
-                    new CombineInstance() { mesh = iid.lod00Mesh},
-                    new CombineInstance() { mesh = iid.lod01Mesh},
-                    new CombineInstance() { mesh = iid.lod02Mesh}
-                },
-                true,       // Merge Submeshes 
-                false,      // Use Matrices
-                false       // Has lightmap data
-            );
-            
-            // Arguments
-            int argsIndex = i * NUMBER_OF_ARGS_PER_INSTANCE_TYPE;
-            
-            // Buffer with arguments has to have five integer numbers
-            // LOD00
-            m_args[argsIndex + 0] = irm.numOfIndicesLod00;                          // 0 - index count per instance, 
-            m_args[argsIndex + 1] = 0;                                              // 1 - instance count
-            m_args[argsIndex + 2] = 0;                                              // 2 - start index location
-            m_args[argsIndex + 3] = 0;                                              // 3 - base vertex location
-            m_args[argsIndex + 4] = 0;                                              // 4 - start instance location
-            
-            // LOD01
-            m_args[argsIndex + 5] = irm.numOfIndicesLod01;                          // 0 - index count per instance, 
-            m_args[argsIndex + 6] = 0;                                              // 1 - instance count
-            m_args[argsIndex + 7] = m_args[argsIndex + 0] + m_args[argsIndex + 2];  // 2 - start index location
-            m_args[argsIndex + 8] = 0;                                              // 3 - base vertex location
-            m_args[argsIndex + 9] = 0;                                              // 4 - start instance location
-            
-            // LOD02
-            m_args[argsIndex + 10] = irm.numOfIndicesLod02;                         // 0 - index count per instance, 
-            m_args[argsIndex + 11] = 0;                                             // 1 - instance count
-            m_args[argsIndex + 12] = m_args[argsIndex + 5] + m_args[argsIndex + 7]; // 2 - start index location
-            m_args[argsIndex + 13] = 0;                                             // 3 - base vertex location
-            m_args[argsIndex + 14] = 0;                                             // 4 - start instance location
-            
-            // Materials
-            irm.material = iid.indirectMaterial;//new Material(iid.indirectMaterial);
-            Bounds originalBounds = CalculateBounds(iid.prefab);
-            
-            // Add the instance data (positions, rotations, scaling, bounds...)
-            for (int j = 0; j < iid.positions.Length; j++)
-            {
-                positions.Add(iid.positions[j]);
-                rotations.Add(iid.rotations[j]);
-                scales.Add(iid.scales[j]);
-                
-                sortingData.Add(new SortingData() {
-                    drawCallInstanceIndex = ((((uint)i * NUMBER_OF_ARGS_PER_INSTANCE_TYPE) << 16) + ((uint) m_numberOfInstances)),
-                    distanceToCam = Vector3.Distance(iid.positions[j], m_camPosition)
-                });
-                
-                // Calculate the renderer bounds
-                Bounds b = new Bounds();
-                b.center = iid.positions[j];
-                Vector3 s = originalBounds.size;
-                s.Scale(iid.scales[j]);
-                b.size = s;
-                
-                instancesInputData.Add(new IndirectInstanceCSInput() {
-                    boundsCenter = b.center,
-                    boundsExtents = b.extents,
-                });
-                
-                m_numberOfInstances++;
-            }
-            
-            // Add the data to the renderer list
-            indirectMeshes[i] = irm;
-        }
-        
-        int computeShaderInputSize = Marshal.SizeOf(typeof(IndirectInstanceCSInput));
+        int computeShaderInputSize = Marshal.SizeOf(typeof(InstanceBound));
         int computeShaderDrawMatrixSize = Marshal.SizeOf(typeof(Indirect2x2Matrix));
         int computeSortingDataSize = Marshal.SizeOf(typeof(SortingData));
-        
-        m_instancesArgsBuffer             = new ComputeBuffer(m_numberOfInstanceTypes * NUMBER_OF_ARGS_PER_INSTANCE_TYPE, sizeof(uint), ComputeBufferType.IndirectArguments);
+        ReleaseInstanceBuffers();
         m_instanceDataBuffer              = new ComputeBuffer(m_numberOfInstances, computeShaderInputSize, ComputeBufferType.Default);
         m_instancesSortingData            = new ComputeBuffer(m_numberOfInstances, computeSortingDataSize, ComputeBufferType.Default);
         m_instancesSortingDataTemp        = new ComputeBuffer(m_numberOfInstances, computeSortingDataSize, ComputeBufferType.Default);
@@ -763,7 +714,6 @@ public class IndirectRenderer : MonoBehaviour
         m_instancesGroupSumArrayBuffer    = new ComputeBuffer(m_numberOfInstances, sizeof(uint), ComputeBufferType.Default);
         m_instancesScannedGroupSumBuffer  = new ComputeBuffer(m_numberOfInstances, sizeof(uint), ComputeBufferType.Default);
         
-        m_shadowArgsBuffer                = new ComputeBuffer(m_numberOfInstanceTypes * NUMBER_OF_ARGS_PER_INSTANCE_TYPE, sizeof(uint), ComputeBufferType.IndirectArguments);
         m_shadowCulledMatrixRows01        = new ComputeBuffer(m_numberOfInstances, computeShaderDrawMatrixSize, ComputeBufferType.Default);
         m_shadowCulledMatrixRows23        = new ComputeBuffer(m_numberOfInstances, computeShaderDrawMatrixSize, ComputeBufferType.Default);
         m_shadowCulledMatrixRows45        = new ComputeBuffer(m_numberOfInstances, computeShaderDrawMatrixSize, ComputeBufferType.Default);
@@ -772,15 +722,7 @@ public class IndirectRenderer : MonoBehaviour
         m_shadowGroupSumArrayBuffer       = new ComputeBuffer(m_numberOfInstances, sizeof(uint), ComputeBufferType.Default);
         m_shadowsScannedGroupSumBuffer    = new ComputeBuffer(m_numberOfInstances, sizeof(uint), ComputeBufferType.Default);
         
-        m_instancesArgsBuffer.SetData(m_args);
-        m_shadowArgsBuffer.SetData(m_args);
-        m_instancesSortingData.SetData(sortingData);
-        m_instancesSortingDataTemp.SetData(sortingData);
-        m_instanceDataBuffer.SetData(instancesInputData);
-        
         // Setup the Material Property blocks for our meshes...
-        int _Whatever = Shader.PropertyToID("_Whatever");
-        int _DebugLODEnabled = Shader.PropertyToID("_DebugLODEnabled");
         for (int i = 0; i < indirectMeshes.Length; i++)
         {
             IndirectRenderingMesh irm = indirectMeshes[i];
@@ -838,27 +780,20 @@ public class IndirectRenderer : MonoBehaviour
         // InitializeDrawData
         //-----------------------------------
         
+        
         // Create the buffer containing draw data for all instances
-        ComputeBuffer positionsBuffer = new ComputeBuffer(m_numberOfInstances, Marshal.SizeOf(typeof(Vector3)), ComputeBufferType.Default);
-        ComputeBuffer scaleBuffer = new ComputeBuffer(m_numberOfInstances, Marshal.SizeOf(typeof(Vector3)), ComputeBufferType.Default);
-        ComputeBuffer rotationBuffer = new ComputeBuffer(m_numberOfInstances, Marshal.SizeOf(typeof(Vector3)), ComputeBufferType.Default);
+        m_positionsBuffer = new ComputeBuffer(m_numberOfInstances, Marshal.SizeOf(typeof(Vector3)), ComputeBufferType.Default);
+        m_scaleBuffer = new ComputeBuffer(m_numberOfInstances, Marshal.SizeOf(typeof(Vector3)), ComputeBufferType.Default);
+        m_rotationBuffer = new ComputeBuffer(m_numberOfInstances, Marshal.SizeOf(typeof(Vector3)), ComputeBufferType.Default);
         
-        positionsBuffer.SetData(positions);
-        scaleBuffer.SetData(scales);
-        rotationBuffer.SetData(rotations);
         
-        createDrawDataBufferCS.SetBuffer(m_createDrawDataBufferKernelID, _Positions, positionsBuffer);
-        createDrawDataBufferCS.SetBuffer(m_createDrawDataBufferKernelID, _Scales, scaleBuffer);
-        createDrawDataBufferCS.SetBuffer(m_createDrawDataBufferKernelID, _Rotations, rotationBuffer);
+        createDrawDataBufferCS.SetBuffer(m_createDrawDataBufferKernelID, _Positions, m_positionsBuffer);
+        createDrawDataBufferCS.SetBuffer(m_createDrawDataBufferKernelID, _Scales, m_scaleBuffer);
+        createDrawDataBufferCS.SetBuffer(m_createDrawDataBufferKernelID, _Rotations, m_rotationBuffer);
         createDrawDataBufferCS.SetBuffer(m_createDrawDataBufferKernelID, _InstancesDrawMatrixRows01, m_instancesMatrixRows01);
         createDrawDataBufferCS.SetBuffer(m_createDrawDataBufferKernelID, _InstancesDrawMatrixRows23, m_instancesMatrixRows23);
         createDrawDataBufferCS.SetBuffer(m_createDrawDataBufferKernelID, _InstancesDrawMatrixRows45, m_instancesMatrixRows45);
-        int groupX = Mathf.Max(1, m_numberOfInstances / (2 * SCAN_THREAD_GROUP_SIZE));
-        createDrawDataBufferCS.Dispatch(m_createDrawDataBufferKernelID, groupX, 1, 1);
 
-        ReleaseComputeBuffer(ref positionsBuffer);
-        ReleaseComputeBuffer(ref scaleBuffer);
-        ReleaseComputeBuffer(ref rotationBuffer);
         
         //-----------------------------------
         // InitConstantComputeVariables
@@ -898,9 +833,87 @@ public class IndirectRenderer : MonoBehaviour
         
         CreateCommandBuffers();
         
-        return true;
     }
-    
+
+    private void InitPrefabBuffers(List<IndirectInstanceData> _instances) {
+        m_numberOfInstanceTypes = _instances.Count;
+        hiZBuffer.enabled = true;
+        hiZBuffer.InitializeTexture();
+        indirectMeshes = new IndirectRenderingMesh[m_numberOfInstanceTypes];
+        m_args = new uint[m_numberOfInstanceTypes * NUMBER_OF_ARGS_PER_INSTANCE_TYPE];
+        for (int i = 0; i < m_numberOfInstanceTypes; i++) {
+            IndirectRenderingMesh irm = new IndirectRenderingMesh();
+            IndirectInstanceData iid = _instances[i];
+
+            // Initialize Mesh
+            irm.numOfVerticesLod00 = (uint)iid.lod00Mesh.vertexCount;
+            irm.numOfVerticesLod01 = (uint)iid.lod01Mesh.vertexCount;
+            irm.numOfVerticesLod02 = (uint)iid.lod02Mesh.vertexCount;
+            irm.numOfIndicesLod00 = iid.lod00Mesh.GetIndexCount(0);
+            irm.numOfIndicesLod01 = iid.lod01Mesh.GetIndexCount(0);
+            irm.numOfIndicesLod02 = iid.lod02Mesh.GetIndexCount(0);
+
+            irm.mesh = new Mesh();
+            irm.mesh.name = iid.prefab.name;
+            irm.mesh.CombineMeshes(
+                new CombineInstance[] {
+                    new CombineInstance() { mesh = iid.lod00Mesh },
+                    new CombineInstance() { mesh = iid.lod01Mesh },
+                    new CombineInstance() { mesh = iid.lod02Mesh }
+                },
+                true, // Merge Submeshes 
+                false, // Use Matrices
+                false // Has lightmap data
+            );
+
+            // Arguments
+            int argsIndex = i * NUMBER_OF_ARGS_PER_INSTANCE_TYPE;
+
+            // Buffer with arguments has to have five integer numbers
+            // LOD00
+            m_args[argsIndex + 0] = irm.numOfIndicesLod00; // 0 - index count per instance, 
+            m_args[argsIndex + 1] = 0; // 1 - instance count
+            m_args[argsIndex + 2] = 0; // 2 - start index location
+            m_args[argsIndex + 3] = 0; // 3 - base vertex location
+            m_args[argsIndex + 4] = 0; // 4 - start instance location
+
+            // LOD01
+            m_args[argsIndex + 5] = irm.numOfIndicesLod01; // 0 - index count per instance, 
+            m_args[argsIndex + 6] = 0; // 1 - instance count
+            m_args[argsIndex + 7] = m_args[argsIndex + 0] + m_args[argsIndex + 2]; // 2 - start index location
+            m_args[argsIndex + 8] = 0; // 3 - base vertex location
+            m_args[argsIndex + 9] = 0; // 4 - start instance location
+
+            // LOD02
+            m_args[argsIndex + 10] = irm.numOfIndicesLod02; // 0 - index count per instance, 
+            m_args[argsIndex + 11] = 0; // 1 - instance count
+            m_args[argsIndex + 12] = m_args[argsIndex + 5] + m_args[argsIndex + 7]; // 2 - start index location
+            m_args[argsIndex + 13] = 0; // 3 - base vertex location
+            m_args[argsIndex + 14] = 0; // 4 - start instance location
+
+            // Materials
+            irm.material = iid.indirectMaterial; //new Material(iid.indirectMaterial);
+            irm.originalBounds = CalculateBounds(iid.prefab);
+            // Add the data to the renderer list
+            indirectMeshes[i] = irm;
+            _rendererData.prefabSize[i] = irm.originalBounds.size;
+        }
+
+        ReleasePrefabBuffer();
+        m_instancesArgsBuffer = new ComputeBuffer(m_numberOfInstanceTypes * NUMBER_OF_ARGS_PER_INSTANCE_TYPE, sizeof(uint),
+            ComputeBufferType.IndirectArguments);
+        m_shadowArgsBuffer = new ComputeBuffer(m_numberOfInstanceTypes * NUMBER_OF_ARGS_PER_INSTANCE_TYPE, sizeof(uint),
+            ComputeBufferType.IndirectArguments);
+
+        m_instancesArgsBuffer.SetData(m_args);
+        m_shadowArgsBuffer.SetData(m_args);
+    }
+
+    private void ReleasePrefabBuffer() {
+        ReleaseComputeBuffer(ref m_instancesArgsBuffer);
+        ReleaseComputeBuffer(ref m_shadowArgsBuffer);
+    }
+
     private Bounds CalculateBounds(GameObject _prefab)
     {
         GameObject obj = Instantiate(_prefab);
@@ -922,8 +935,13 @@ public class IndirectRenderer : MonoBehaviour
         
         return b;
     }
-    
-    private void ReleaseBuffers()
+
+    private void ReleaseBuffers() {
+        ReleasePrefabBuffer();
+        ReleaseInstanceBuffers();
+    }
+
+    private void ReleaseInstanceBuffers()
     {
         ReleaseCommandBuffer(ref m_sortingCommandBuffer);
         //ReleaseCommandBuffer(ref visibleInstancesCB);
@@ -941,9 +959,7 @@ public class IndirectRenderer : MonoBehaviour
         ReleaseComputeBuffer(ref m_instancesCulledMatrixRows01);
         ReleaseComputeBuffer(ref m_instancesCulledMatrixRows23);
         ReleaseComputeBuffer(ref m_instancesCulledMatrixRows45);
-        ReleaseComputeBuffer(ref m_instancesArgsBuffer);
         
-        ReleaseComputeBuffer(ref m_shadowArgsBuffer);
         ReleaseComputeBuffer(ref m_shadowsIsVisibleBuffer);
         ReleaseComputeBuffer(ref m_shadowGroupSumArrayBuffer);
         ReleaseComputeBuffer(ref m_shadowsScannedGroupSumBuffer);

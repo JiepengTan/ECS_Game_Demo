@@ -202,6 +202,11 @@ inline void CSMain (
     // We only cull instances where the camera doesn't intersect the instance 
     // bounds. If the camera is inside the bounds we want to render the object
     uint isVisible = 1;
+    
+    // ignore invalid bound => useless instance
+    if(instance.boundsExtents.x <0.001) {
+        isVisible = 0;
+    }
     if (IsCameraOutsideObjBounds(_CamPosition, minPos, maxPos))
     {
         // Do we pass the frustum culling...?

@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: InstancesAnimation
+  m_Name: 10001_InstancesAnimation
   m_Shader: {fileID: 4800000, guid: 42d939f769e18c74aa92f94f69404314, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0

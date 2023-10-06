@@ -9,31 +9,31 @@ namespace GamesTan.Rendering {
                 Camera = GetComponentInChildren<Camera>();
             }
 
-            WorldRenderer.Instance.SetMainCamera(Camera);
+            RenderWorld.Instance.SetMainCamera(Camera);
         }
 
         private void OnDestroy() {
-            WorldRenderer.Instance.OnMainCameraDestroy(Camera);
+            RenderWorld.Instance?.OnMainCameraDestroy(Camera);
         }
 
         void OnWillRenderObject() {
-            WorldRenderer.Instance.OnCameraWillRenderObject(Camera);
+            RenderWorld.Instance.OnCameraWillRenderObject(Camera);
         }
         void OnPreCull() {
-            WorldRenderer.Instance.OnCameraPreCull(Camera);
+            RenderWorld.Instance.OnCameraPreCull(Camera);
         }
         void OnPreRender() {
-            WorldRenderer.Instance.OnCameraPreRender(Camera);
+            RenderWorld.Instance.OnCameraPreRender(Camera);
         }
         void OnRenderObject() {
-            WorldRenderer.Instance.OnCameraRenderObject(Camera);
+            RenderWorld.Instance.OnCameraRenderObject(Camera);
         }
         void OnPostRender() {
-            WorldRenderer.Instance.OnCameraPostRender(Camera);
+            RenderWorld.Instance.OnCameraPostRender(Camera);
         }
 
         void OnRenderImage(RenderTexture source, RenderTexture destination) {
-            WorldRenderer.Instance.OnCameraRenderImage(Camera,source,destination);
+            RenderWorld.Instance.OnCameraRenderImage(Camera,source,destination);
             
         }
     }

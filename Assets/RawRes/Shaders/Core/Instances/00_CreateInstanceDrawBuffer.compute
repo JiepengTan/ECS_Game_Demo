@@ -26,9 +26,11 @@
 //--------------------------------------------------------------------------------------
 // Buffers
 //--------------------------------------------------------------------------------------
+// why not use transform ?
 StructuredBuffer<float3> _Positions;
 StructuredBuffer<float3> _Scales;
 StructuredBuffer<float3> _Rotations;
+// why not use Indirect3x3Matrix?
 RWStructuredBuffer<Indirect2x2Matrix> _InstancesDrawMatrixRows01;
 RWStructuredBuffer<Indirect2x2Matrix> _InstancesDrawMatrixRows23;
 RWStructuredBuffer<Indirect2x2Matrix> _InstancesDrawMatrixRows45;

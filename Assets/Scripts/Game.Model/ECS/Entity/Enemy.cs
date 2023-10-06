@@ -23,6 +23,12 @@ namespace GamesTan.ECS.Game {
         /// <summary> 状态集合   /// </summary>
         public BitSet32 StatusData;
 
+        /// <summary> Prefab Id   /// </summary>
+        public int PrefabId;
+        /// <summary> Prefab 下标，用于Instance 批量渲染   /// </summary>
+        public int InstancePrefabIdx;
+
+        public bool IsValid => __EntityData.Version > 0;
         /// <summary> 是否已经释放   /// </summary>
         public bool IsDoneStart {
             get => StatusData.Is(0);
@@ -31,7 +37,7 @@ namespace GamesTan.ECS.Game {
 
 
         /// <summary> 位置   /// </summary>
-        public float2 Pos;
+        public float2 Pos2;
 
         /// <summary> 半径   /// </summary>
         public float Radius;
@@ -40,22 +46,31 @@ namespace GamesTan.ECS.Game {
         public float Speed;
 
         /// <summary> 旋转   /// </summary>
-        public float Deg;
-        public float2 Forward {
+        public float DegY {
+            get => Rot.y;
+            set => Rot.y = value;
+        }
+
+        public float2 Forward2 {
             get {
-                float deg = math.radians(-Deg+90);
+                float deg = math.radians(-DegY+90);
                 return new float2( math.cos(deg),math.sin(deg));
             }
         }
+
         /// <summary> 旋转   /// </summary>
-        public float3 Deg3 => new float3(0, Deg, 0);
-        public float3 Pos3 => new float3(Pos.x, 0, Pos.y);
-        public float3 Forward3 {
+        public float3 Rot;
+
+        public float3 Pos;
+        // TODO 
+        public float3 Forward {
             get {
-                float deg = math.radians(-Deg+90);
+                float deg = math.radians(-DegY+90);
                 return new float3( math.cos(deg),0,math.sin(deg));
             }
         }
+
+        public float3 Scale;
 
         /// <summary> 旋转   /// </summary>
         public int Health;

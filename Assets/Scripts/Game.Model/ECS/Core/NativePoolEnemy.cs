@@ -15,7 +15,9 @@ namespace GamesTan.ECS.Game {
         private EntityData* _freeList = null;
         private int _capacity;
         private int _length;
+        private int _maxUsedSlot;
 
+        public int MaxUsedSlot => _maxUsedSlot;
         public int Capacity => _capacity;
         public int Count => _length;
         public int TypeId => _typeId;
@@ -25,7 +27,9 @@ namespace GamesTan.ECS.Game {
         public TItem* GetData() {
             return _ary;
         }
-
+        public ref TItem GetData(int idx) {
+            return ref _ary[idx];
+        }
         public void Init(int typeId, int capacity = 128) {
             _typeId = typeId;
             _capacity = capacity;
@@ -82,6 +86,7 @@ namespace GamesTan.ECS.Game {
             _ary[ret.SlotId] = new TItem();// reset the data
             _ary[ret.SlotId].__EntityData =ret;
             _length++;
+            _maxUsedSlot = Mathf.Max(_length,_maxUsedSlot);
             return ret;
         }
 

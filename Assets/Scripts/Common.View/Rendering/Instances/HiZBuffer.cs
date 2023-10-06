@@ -93,7 +93,10 @@ public class HiZBuffer : MonoBehaviour
             m_HiZDepthTexture = null;
         }
     }
-    
+
+    public void DoUpdate() {
+    }
+
     public void InitializeTexture()
     {
         if (m_HiZDepthTexture != null)
