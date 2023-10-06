@@ -79,6 +79,7 @@ namespace GamesTan.ECS.Game {
             var ret = _freeList[_length];
             ret.Version = -ret.Version;
             _freeList[_length] = ret;
+            _ary[ret.SlotId] = new TItem();// reset the data
             _ary[ret.SlotId].__EntityData =ret;
             _length++;
             return ret;
