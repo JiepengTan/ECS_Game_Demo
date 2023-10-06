@@ -642,7 +642,6 @@ public class IndirectRenderer : MonoBehaviour
             m_sortingCommandBuffer.DispatchCompute(sortingCS, m_sortingCSKernelID, (int)(NUM_ELEMENTS / BITONIC_BLOCK_SIZE), 1, 1);
         }
 
-        return;// TODO fixed the 0 thread bug
         // Then sort the rows and columns for the levels > than the block size
         // Transpose. Sort the Columns. Transpose. Sort the Rows.
         for (uint level = (BITONIC_BLOCK_SIZE << 1); level <= NUM_ELEMENTS; level <<= 1)

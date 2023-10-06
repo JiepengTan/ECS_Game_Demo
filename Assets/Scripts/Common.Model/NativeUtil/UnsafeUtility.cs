@@ -60,7 +60,7 @@ namespace Lockstep.InternalUnsafeECS {
 
 
         public static unsafe void MemClear(void* destination, long size){
-            Profiler.BeginSample($"MemClear {(size/1000.0f)} kb"  );
+            Profiler.BeginSample($"MemClear"  );
 #if USING_UNITY_MEM_FUNC
             Unity.Collections.LowLevel.Unsafe.UnsafeUtility.MemClear(destination, size);
 #else

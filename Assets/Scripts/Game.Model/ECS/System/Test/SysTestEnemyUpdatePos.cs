@@ -17,10 +17,12 @@ namespace GamesTan.ECS.Game {
         public override void Update(float dt) {
             var renderer = RenderWorld.Instance.RendererData;
             var pool = World.EnemyPool;
-            for (int i = 0; i < pool.MaxUsedSlot; i++) {
-                ref var ptr = ref pool.GetData(i);
-                if (ptr.IsValid) {
-                    renderer.AddRenderData(new RendererData(ptr.InstancePrefabIdx,ptr.Pos,ptr.Rot,ptr.Scale));
+            var count = pool.MaxUsedSlot;
+            var ptrAry = pool.GetData();
+            for (int i = 0; i < count; i++) {
+                var item = ptrAry[i];
+                if (item.IsValid) {
+                    renderer.AddRenderData(new RendererData(item.InstancePrefabIdx,item.Pos,item.Rot,item.Scale));
                 }
             }
 

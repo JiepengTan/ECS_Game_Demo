@@ -7,7 +7,7 @@ using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-public class RendererData {
+public struct RendererData {
     public int prefabIdx;
     public float3 pos;
     public float3 rot;
