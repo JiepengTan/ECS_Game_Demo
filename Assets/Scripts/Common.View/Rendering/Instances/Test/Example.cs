@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Profiling;
 using UnityEngine.Rendering;
 
+
 public class Example : MonoBehaviour
 {
     #region Variables

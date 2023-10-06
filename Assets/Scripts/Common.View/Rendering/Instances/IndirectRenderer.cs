@@ -235,7 +235,7 @@ public class IndirectRenderer : MonoBehaviour
         }
     }
     
-    private void OnPreCull()
+    public void OnCameraPreCull()
     {
         if (!m_isEnabled
             || indirectMeshes == null

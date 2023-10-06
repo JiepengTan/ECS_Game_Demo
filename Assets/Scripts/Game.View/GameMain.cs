@@ -6,6 +6,7 @@ using UnityEngine;
 
 namespace GamesTan.Game.View {
     public unsafe class GameMain : MonoBehaviour {
+        public bool IsCopyServiceFromThis;
         public float UpdateInterval = 0.03f;
         private float _updateTimer;
 
@@ -15,9 +16,16 @@ namespace GamesTan.Game.View {
         public void Start() {
             _updateTimer = 0;
             _curWorld = new GameEcsWorld();
+            // just for debug
+            if (IsCopyServiceFromThis) {
+                _curWorld._services = _curService;
+            }
+            else {
+                _curWorld.Services.transform = transform;
+                _curService = _curWorld.Services;
+            }
             _curWorld.DoAwake();
-            _curWorld.Services.transform = transform;
-            _curService = _curWorld.Services;
+
         }
 
         private void Update() {
@@ -32,5 +40,8 @@ namespace GamesTan.Game.View {
         private void OnDestroy() {
             _curWorld.DoDestroy();
         }
+        
+        
+
     }
 }

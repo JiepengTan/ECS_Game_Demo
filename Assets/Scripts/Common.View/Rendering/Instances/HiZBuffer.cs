@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using System.Collections.Generic;
 
-[RequireComponent(typeof(Camera))]
 public class HiZBuffer : MonoBehaviour
 {
     #region Variables
@@ -115,7 +114,7 @@ public class HiZBuffer : MonoBehaviour
         m_HiZDepthTexture.hideFlags = HideFlags.HideAndDontSave;
     }
 
-    private void OnPreRender()
+    public void OnCameraPreRender()
     {
         int size = (int)Mathf.Max((float)mainCamera.pixelWidth, (float)mainCamera.pixelHeight);
         size = (int)Mathf.Min((float)Mathf.NextPowerOfTwo(size), (float)MAXIMUM_BUFFER_SIZE);
@@ -187,7 +186,7 @@ public class HiZBuffer : MonoBehaviour
         }
     }
 
-    private void OnRenderImage(RenderTexture source, RenderTexture destination)
+    public bool OnCameraRenderImage(RenderTexture source, RenderTexture destination)
     {
         if (m_indirectRenderer.debugDrawHiZ)
         {
@@ -209,11 +208,10 @@ public class HiZBuffer : MonoBehaviour
             Graphics.Blit(topDownView, destination);
             
             Camera.main.rect = new Rect(0.0f, 0.0f, 1.0f, 1.0f);
+            return true;
         }
-        else
-        {
-            Graphics.Blit(source, destination);
-        }
+
+        return false;
     }
 
     #endregion
