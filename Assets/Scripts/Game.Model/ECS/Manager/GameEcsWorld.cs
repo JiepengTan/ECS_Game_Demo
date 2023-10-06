@@ -14,7 +14,7 @@ namespace GamesTan.ECS.Game {
             RegisterSystems();
             Services.DoAwake();
             foreach (var sys in _systems) {
-                var gameSys = sys as BaseGameSystem;
+                var gameSys = sys as IGameSystem;
                 gameSys?.DoAwake(this);
             }
         }

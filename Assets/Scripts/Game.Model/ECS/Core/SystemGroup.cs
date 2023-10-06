@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace GamesTan.ECS {
     public class SystemGroup : IEcsSystem {
-        public bool IsEnable { get; set; }
+        public bool IsEnable { get; set; } = true;
         public List<IEcsSystem> _systems = new List<IEcsSystem>();
 
         public void AddSystem(IEcsSystem sys) {
