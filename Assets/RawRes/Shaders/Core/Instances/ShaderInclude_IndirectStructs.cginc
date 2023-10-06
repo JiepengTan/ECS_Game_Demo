@@ -14,6 +14,15 @@ struct Indirect2x2Matrix
     float4 row1;    // 8
 };
 
+struct AnimData
+{
+    // x:AnimFactor,y: FrameLerpFactor,z:FrameIdx ,w:useless
+    float4 AnimInfo0;
+    float4 AnimInfo1;
+    float4 AnimInfo2;
+    float4 AnimInfo3;
+};
+
 struct SortingData
 {
     uint drawCallInstanceIndex; // 1

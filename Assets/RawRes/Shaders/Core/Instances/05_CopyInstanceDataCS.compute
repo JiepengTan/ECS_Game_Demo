@@ -35,6 +35,7 @@ StructuredBuffer<SortingData> _SortingData;
 StructuredBuffer<Indirect2x2Matrix> _InstancesDrawMatrixRows01;
 StructuredBuffer<Indirect2x2Matrix> _InstancesDrawMatrixRows23;
 StructuredBuffer<Indirect2x2Matrix> _InstancesDrawMatrixRows45;
+StructuredBuffer<AnimData> _InstancesDrawAnimData;
 
 StructuredBuffer<uint> _InstancePredicatesIn;
 StructuredBuffer<uint> _GroupSumArray;
@@ -43,6 +44,7 @@ RWStructuredBuffer<uint> _DrawcallDataOut;
 RWStructuredBuffer<Indirect2x2Matrix> _InstancesCulledMatrixRows01;
 RWStructuredBuffer<Indirect2x2Matrix> _InstancesCulledMatrixRows23;
 RWStructuredBuffer<Indirect2x2Matrix> _InstancesCulledMatrixRows45;
+RWStructuredBuffer<AnimData> _InstancesCulledAnimData;
 
 //--------------------------------------------------------------------------------------
 // Kernels & Functions
@@ -70,6 +72,9 @@ inline void CSMain (
         _InstancesCulledMatrixRows01[instanceDataOutIndex] = _InstancesDrawMatrixRows01[drawInstanceIndex];
         _InstancesCulledMatrixRows23[instanceDataOutIndex] = _InstancesDrawMatrixRows23[drawInstanceIndex];
         _InstancesCulledMatrixRows45[instanceDataOutIndex] = _InstancesDrawMatrixRows45[drawInstanceIndex];
+        
+        _InstancesCulledAnimData[instanceDataOutIndex] = _InstancesDrawAnimData[drawInstanceIndex];
+        
     }
     
     

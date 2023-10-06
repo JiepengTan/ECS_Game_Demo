@@ -1,4 +1,5 @@
-﻿using Lockstep.NativeUtil;
+﻿using System.Runtime.InteropServices;
+using Lockstep.NativeUtil;
 using Unity.Mathematics;
 using UnityEngine.Serialization;
 
@@ -14,6 +15,9 @@ namespace GamesTan.ECS.Game {
         public float SkillInterval;
     }
 
+
+    [System.Serializable]
+    [StructLayout(LayoutKind.Sequential)]
     public struct Enemy {
         public EntityData __EntityData;
 
@@ -83,8 +87,22 @@ namespace GamesTan.ECS.Game {
         /// <summary> AI 计时器   /// </summary>
         public float AITimer;
 
+        
+        /// <summary> Animation   /// </summary>
+        public AnimData AnimInfo;
+        public AnimInternalData AnimInternalData;
+        
         public override string ToString() {
             return __EntityData.ToString();
         }
+    }
+    [System.Serializable]
+    [StructLayout(LayoutKind.Sequential)]
+    public struct AnimInternalData {
+        public float4 Timer;
+        public float4 LerpTimer;
+        public int4 AnimId1;
+        public int4 AnimId2;
+        
     }
 }

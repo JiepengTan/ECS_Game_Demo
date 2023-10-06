@@ -69,6 +69,7 @@ Shader "GamesTan/InstanceGUPSkin"
             StructuredBuffer<Indirect2x2Matrix> _InstancesDrawMatrixRows01;
             StructuredBuffer<Indirect2x2Matrix> _InstancesDrawMatrixRows23;
             StructuredBuffer<Indirect2x2Matrix> _InstancesDrawMatrixRows45;
+            StructuredBuffer<AnimData> _InstancesDrawAnimData;
 
 
             float4 animStateRow1;
@@ -80,6 +81,7 @@ Shader "GamesTan/InstanceGUPSkin"
                 Indirect2x2Matrix rows01 = _InstancesDrawMatrixRows01[index];
                 Indirect2x2Matrix rows23 = _InstancesDrawMatrixRows23[index];
                 Indirect2x2Matrix rows45 = _InstancesDrawMatrixRows45[index];
+				AnimData compAnimData = _InstancesDrawAnimData[index];
 
             	if(_EnableInstance) {
             		unity_ObjectToWorld = float4x4(rows01.row0, rows01.row1, rows23.row0, float4(0, 0, 0, 1));
@@ -89,11 +91,14 @@ Shader "GamesTan/InstanceGUPSkin"
             	float3 animNor = v.normal.xyz;
             	float3 animTan = v.tangent.xyz;
             	
+            	float4x4 animState =float4x4(compAnimData.AnimInfo0, compAnimData.AnimInfo1,
+            	                             compAnimData.AnimInfo2, compAnimData.AnimInfo3);
+            	
             	if(_EnableAnimation>0.5) {
             		float3x4 uvs = float3x4(v.texcoord1,  v.texcoord2,  v.texcoord3);
             		AnimateBlend_float(v.vertex, v.normal, v.tangent,uvs,
             			_AnimatedBoneMatrices, _AnimatedBoneMatrices_TexelSize.xy,
-            			_AnimationState,  animPos,   animNor,   animTan) ;
+            			animState,  animPos,   animNor,   animTan) ;
             	}
             	o.uv = v.texcoord.xy;
             	o.vertex = mul(UNITY_MATRIX_VP, mul(unity_ObjectToWorld, float4(animPos, 1.0)));

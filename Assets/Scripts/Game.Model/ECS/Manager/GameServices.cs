@@ -17,5 +17,7 @@ namespace GamesTan.ECS.Game {
         public Transform transform;
 
         public int CurEnemyCount;
+        public bool DebugOnlyOneEntity;
+        public int DebugEntityCount = 1;
     }
 }

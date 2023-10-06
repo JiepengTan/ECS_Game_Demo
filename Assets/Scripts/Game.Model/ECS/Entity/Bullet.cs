@@ -1,11 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using Lockstep.NativeUtil;
 using Unity.Mathematics;
 using UnityEngine;
 
 namespace GamesTan.ECS.Game {
-
+    [System.Serializable]
+    [StructLayout(LayoutKind.Sequential)]
     public struct Bullet {
         /// <summary> Entity Data   /// </summary>
         public EntityData __EntityData;

@@ -7,8 +7,8 @@ namespace GamesTan.ECS.Game {
             var enemys = World.GetEnemys();
             foreach (var item in enemys) {
                 var enemy = World.GetEnemy(item);
-                enemy->DegY += dt * Services.RandomRange(-10, 10);
-                enemy->Pos += enemy->Forward * enemy->Speed * dt;
+                //enemy->DegY += dt * Services.RandomRange(-10, 10);
+                //enemy->Pos += enemy->Forward * enemy->Speed * dt;
             }
         }
     }
@@ -22,7 +22,7 @@ namespace GamesTan.ECS.Game {
             for (int i = 0; i < count; i++) {
                 var item = ptrAry[i];
                 if (item.IsValid) {
-                    renderer.AddRenderData(new RendererData(item.InstancePrefabIdx,item.Pos,item.Rot,item.Scale));
+                    renderer.AddRenderData(new RendererData(item.InstancePrefabIdx,item.Pos,item.Rot,item.Scale,item.AnimInfo));
                 }
             }
 

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
+using GamesTan.ECS.Game;
 using Lockstep.InternalUnsafeECS;
 using Lockstep.UnsafeECS;
 using Unity.Mathematics;
@@ -12,14 +14,36 @@ public struct RendererData {
     public float3 pos;
     public float3 rot;
     public float3 scale;
+    public AnimData anim;
 
-    public RendererData(int prefabIdx, float3 pos, float3 rot, float3 scale) {
+    public RendererData(int prefabIdx, float3 pos, float3 rot, float3 scale,  AnimData anim) {
         this.prefabIdx = prefabIdx;
         this.rot = rot;
         this.pos = pos;
         this.scale = scale;
+        this.anim = anim;
     }
 }
+
+[System.Serializable]
+[StructLayout(LayoutKind.Sequential)]
+public struct AnimData {
+    /// <summary>
+    /// x: AnimFactor
+    /// y: FrameLerpFactor
+    /// z: FrameIdx
+    /// w: useless
+    /// </summary>
+    public float4 AnimInfo0;
+    public float4 AnimInfo1;
+    public float4 AnimInfo2;
+    public float4 AnimInfo3;
+
+    public override string ToString() {
+        return  $"anim1: AnimFactor:{AnimInfo0.x} FrameLerpFactor:{AnimInfo0.y} FrameIdx:{AnimInfo0.z}  \nAnimInfo1:{AnimInfo1}\nAnimInfo2:{AnimInfo2}\nAnimInfo3:{AnimInfo3}";
+    }
+}
+
 
 public unsafe class InstanceRenderData {
     public int Capacity;
@@ -41,6 +65,8 @@ public unsafe class InstanceRenderData {
     public InstanceBound[] bounds;
 
     public SortingData[] sortingData;
+    
+    public AnimData[] animData;
 
 
     public Action OnLayoutChangedEvent;
@@ -76,6 +102,7 @@ public unsafe class InstanceRenderData {
                 bound.boundsExtents = item.scale * prefabSize[item.prefabIdx];// TODO correct bound size
                 bounds[curIdx] = bound;
                 sortingData[curIdx].drawCallInstanceIndex =((((uint)prefabIdx * IndirectRenderer.NUMBER_OF_ARGS_PER_INSTANCE_TYPE) << 16) + ((uint)instanceIdx));
+                animData[curIdx] = item.anim;
             }
             offset+= info.Count;
         }
@@ -136,5 +163,7 @@ public unsafe class InstanceRenderData {
 
         bounds = new InstanceBound[capacity];
         sortingData = new SortingData[capacity];
+        animData = new AnimData[capacity];
+        
     }
 }
