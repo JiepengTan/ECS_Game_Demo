@@ -9500,14 +9500,15 @@ MonoBehaviour:
     TimeSinceLevelLoad: 0
     Frame: 0
     DeleteProbability: 0.5
-    FreshCountPerFrame: 4
-    IsCreateGo: 0
+    FreshCountPerFrame: 58
+    IsCreateGo: 1
     IsShowLog: 0
     CurGoId: 0
     transform: {fileID: 365310895}
     CurEnemyCount: 0
-    DebugOnlyOneEntity: 0
-    DebugEntityCount: 3
+    DebugOnlyOneEntity: 1
+    DebugEntityCount: 16
+    DebugStopAnimation: 0
 --- !u!4 &365310895
 Transform:
   m_ObjectHideFlags: 0
@@ -9517,7 +9518,7 @@ Transform:
   m_GameObject: {fileID: 365310893}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.3782768, y: 9.506051, z: 0.62949085}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -9780,7 +9781,7 @@ Transform:
   m_GameObject: {fileID: 374771437}
   serializedVersion: 2
   m_LocalRotation: {x: -0.32250714, y: 0.028491748, z: -0.0097124055, w: -0.94608825}
-  m_LocalPosition: {x: 53.97385, y: 4.0892262, z: 85.41946}
+  m_LocalPosition: {x: 0, y: 3.65, z: -3.88}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -37602,6 +37603,8 @@ MonoBehaviour:
   logArgsBufferAfterCopy: 0
   logCulledInstancesDrawMatrices: 0
   logCulledInstancesAnimData: 0
+  logDebugAll: 0
+  LogAllArgBuffer: 0
   createDrawDataBufferCS: {fileID: 7200000, guid: ec8dc736dcd73488db5f21571d3708f7, type: 3}
   sortingCS: {fileID: 7200000, guid: 345cad655c4d3473eb2f23a4da170421, type: 3}
   occlusionCS: {fileID: 7200000, guid: 4aeff498554ed42f289ac4c6051b7dba, type: 3}

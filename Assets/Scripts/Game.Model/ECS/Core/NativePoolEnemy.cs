@@ -66,7 +66,7 @@ namespace GamesTan.ECS.Game {
             if (_length == _capacity) {
                 var oldCap = _capacity;
                 _capacity = (int)(_capacity * 1.4f);
-                Debug.LogWarning($"{GetType().Name} Realloc {_capacity}" );
+                if(_capacity>10000) Debug.LogWarning($"{GetType().Name} Realloc {_capacity}" );
                 Debug.Assert(_capacity < EntityData.MaxSlotId,"Pool size too big !" + _capacity);
                 _ary = (TItem*)UnsafeUtility.Realloc(_ary, UnsafeUtility.SizeOf<TItem>() * oldCap,UnsafeUtility.SizeOf<TItem>() * _capacity);
                 _freeList = (EntityData*)UnsafeUtility.Realloc(_freeList,UnsafeUtility.SizeOf<EntityData>() * oldCap,UnsafeUtility.SizeOf<EntityData>() * _capacity);

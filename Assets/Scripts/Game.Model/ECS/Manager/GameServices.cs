@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace GamesTan.ECS.Game {
     [System.Serializable]
@@ -19,5 +20,6 @@ namespace GamesTan.ECS.Game {
         public int CurEnemyCount;
         public bool DebugOnlyOneEntity;
         public int DebugEntityCount = 1;
+        public bool DebugStopAnimation = false;
     }
 }

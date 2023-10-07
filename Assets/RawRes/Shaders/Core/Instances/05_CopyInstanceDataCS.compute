@@ -45,6 +45,7 @@ RWStructuredBuffer<Indirect2x2Matrix> _InstancesCulledMatrixRows01;
 RWStructuredBuffer<Indirect2x2Matrix> _InstancesCulledMatrixRows23;
 RWStructuredBuffer<Indirect2x2Matrix> _InstancesCulledMatrixRows45;
 RWStructuredBuffer<AnimData> _InstancesCulledAnimData;
+RWStructuredBuffer<uint> _InstancesCulledIndexRemap;
 
 //--------------------------------------------------------------------------------------
 // Kernels & Functions
@@ -72,8 +73,8 @@ inline void CSMain (
         _InstancesCulledMatrixRows01[instanceDataOutIndex] = _InstancesDrawMatrixRows01[drawInstanceIndex];
         _InstancesCulledMatrixRows23[instanceDataOutIndex] = _InstancesDrawMatrixRows23[drawInstanceIndex];
         _InstancesCulledMatrixRows45[instanceDataOutIndex] = _InstancesDrawMatrixRows45[drawInstanceIndex];
-        
         _InstancesCulledAnimData[instanceDataOutIndex] = _InstancesDrawAnimData[drawInstanceIndex];
+        _InstancesCulledIndexRemap[instanceDataOutIndex] = drawInstanceIndex;
         
     }
     

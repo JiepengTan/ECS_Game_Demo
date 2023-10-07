@@ -11,7 +11,9 @@ namespace GamesTan.ECS.Game {
                 ref var item = ref ptrAry[i];
                 if (item.IsValid) {
                     ref var internalData = ref item.AnimInternalData;
-                    internalData.Timer += dt;
+                    if (!Services.DebugStopAnimation) {
+                        internalData.Timer += dt;
+                    }
                     internalData.LerpTimer += dt;
                     for (int idx = 0; idx < 4; idx++) {
                         if (idx == 0 && internalData.Timer[idx] > 3) {

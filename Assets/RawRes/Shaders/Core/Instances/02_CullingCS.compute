@@ -218,7 +218,9 @@ inline void CSMain (
         // // // Do we pass the detail (screen size) culling...?
         isVisible *= (_ShouldDetailCull * isVisible > 0) ? IsVisibleAfterDetailCulling(clipMinX, clipMaxX, clipMinY, clipMaxY) : 1;
     }
-
+    if(isVisible <0.5) {
+        minDistanceToCamera = 100000 + index;
+    }
     float lod00Range = _Lod0Distance;
     float lod01Range = _Lod1Distance;
 

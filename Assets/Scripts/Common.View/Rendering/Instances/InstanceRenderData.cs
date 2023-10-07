@@ -46,6 +46,7 @@ public struct AnimData {
 
 
 public unsafe class InstanceRenderData {
+    public const int MIN_CAPACITY = 4096; // 最小大小为4096
     public int Capacity;
     public int Count;
     
@@ -145,7 +146,7 @@ public unsafe class InstanceRenderData {
         var totalCount = offset;
         if (totalCount > Capacity) {
             if (Capacity == 0) {
-                Capacity = 256;
+                Capacity = MIN_CAPACITY;// 
             }
             while (Capacity<totalCount) {
                 Capacity *=2;
