@@ -61,7 +61,7 @@ void BitonicSort(
         SortingData inst1 = _SharedData[GI & ~j];// 提取左边的元素
         SortingData inst2 = _SharedData[GI | j]; // 提取右边的元素
         // drawCallInstanceIndex = ((((uint)prefabIdx * NUMBER_OF_ARGS_PER_INSTANCE_TYPE) << 16)  + ((uint) instanceIdx)),
-        uint dist1 = inst1.distanceToCam;
+        uint dist1 = inst1.distanceToCam; 
         uint dist2 = inst2.distanceToCam;
         if ((dist1 <= dist2) == ((bool)(_LevelMask & tID))) // _LevelMask & tID 表示当前是不是降序 的part   ， _LevelMask == level = j*2
         {

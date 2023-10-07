@@ -22,6 +22,12 @@
 #define LOD00_RANGE 500
 #define LOD01_RANGE 2000
 
+// (LOD00 + LOD01 + LOD02)
+#define NUMBER_OF_DRAW_CALLS 3 
+// (indexCount, instanceCount, startIndex, baseVertex, startInstance)
+#define  NUMBER_OF_ARGS_PER_DRAW  5 
+// 3draws * 5args = 15args
+#define  NUMBER_OF_ARGS_PER_INSTANCE_TYPE  (NUMBER_OF_DRAW_CALLS * NUMBER_OF_ARGS_PER_DRAW) 
 //--------------------------------------------------------------------------------------
 // Constant Buffers
 //--------------------------------------------------------------------------------------
@@ -202,7 +208,6 @@ inline void CSMain (
     // We only cull instances where the camera doesn't intersect the instance 
     // bounds. If the camera is inside the bounds we want to render the object
     uint isVisible = 1;
-    
     // ignore invalid bound => useless instance
     if(instance.boundsExtents.x <0.001 ) {
         isVisible = 0;
@@ -227,8 +232,10 @@ inline void CSMain (
     float lod00Range = _Lod0Distance;
     float lod01Range = _Lod1Distance;
 
+ 
     // Calculate the correct index to the arguments buffers
-    uint argsIndex = drawCall + 1;    
+    // (indexCount, instanceCount, startIndex, baseVertex, startInstance)
+    uint argsIndex = drawCall* NUMBER_OF_ARGS_PER_INSTANCE_TYPE + 1;    
     argsIndex += 5 * (minDistanceToCamera > lod00Range);
     argsIndex += 5 * (minDistanceToCamera > lod01Range);
     argsIndex = _ShouldLOD * argsIndex + ((_ShouldLOD == 0) * (drawCall + 11));
@@ -245,7 +252,7 @@ inline void CSMain (
     _ShadowIsVisibleBuffer[tID] = isCastingShadow;
     InterlockedAdd(_ShadowArgsBuffer[shadowArgsIndex], isCastingShadow);
     // 4096*100 < 4096*128 <  (1<<12 * 1<<7)
-    const uint head = drawCall << 22  + (1-isVisible)<<31;
+    uint head = ((1-isVisible)<<31 ) + (drawCall <<22 );
     sortingData.distanceToCam = head + floor(minDistanceToCamera*100) ;
     _SortingData[tID] = sortingData;
 }

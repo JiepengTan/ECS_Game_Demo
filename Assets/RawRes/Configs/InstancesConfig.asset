@@ -27,3 +27,10 @@ MonoBehaviour:
     lod00Mesh: {fileID: 4300000, guid: 47818a725f8f86a4f9bd36d260c860de, type: 2}
     lod01Mesh: {fileID: 4300000, guid: 7e4487b714c10404f906cb7bbf722f6f, type: 2}
     lod02Mesh: {fileID: 4300000, guid: 2217f0b5fe7d8fe478cc2281b0c2ff88, type: 2}
+  - prefabId: 10003
+    prefab: {fileID: 2483688463644217095, guid: 94814e7d6d48f774d8a7db069f9bf6ad, type: 3}
+    indirectMaterial: {fileID: 2100000, guid: ef50fa25332f40949a30cf24d57aba23, type: 2}
+    positionOffset: {x: 0, y: 0.5, z: 0}
+    lod00Mesh: {fileID: 4300000, guid: 618244311ee1dff4f8208647cdca4adb, type: 2}
+    lod01Mesh: {fileID: 4300000, guid: 90411cb5a04a99c44ad697d847d407e6, type: 2}
+    lod02Mesh: {fileID: 4300000, guid: 97bf3a8a65c65d3459acaf236c733b67, type: 2}

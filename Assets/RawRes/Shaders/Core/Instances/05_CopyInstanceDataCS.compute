@@ -69,13 +69,11 @@ inline void CSMain (
     if (_InstancePredicatesIn[sortedTID] == 1)
     {
         uint instanceDataOutIndex = tID;
-        uint drawInstanceIndex = _SortingData[tID].drawCallInstanceIndex & 0xFFFF;
-        
-        _InstancesCulledMatrixRows01[instanceDataOutIndex] = _InstancesDrawMatrixRows01[drawInstanceIndex];
-        _InstancesCulledMatrixRows23[instanceDataOutIndex] = _InstancesDrawMatrixRows23[drawInstanceIndex];
-        _InstancesCulledMatrixRows45[instanceDataOutIndex] = _InstancesDrawMatrixRows45[drawInstanceIndex];
-        _InstancesCulledAnimData[instanceDataOutIndex] = _InstancesDrawAnimData[drawInstanceIndex];
-        _InstancesCulledIndexRemap[instanceDataOutIndex] = drawInstanceIndex;
+        _InstancesCulledMatrixRows01[instanceDataOutIndex] = _InstancesDrawMatrixRows01[sortedTID];
+        _InstancesCulledMatrixRows23[instanceDataOutIndex] = _InstancesDrawMatrixRows23[sortedTID];
+        _InstancesCulledMatrixRows45[instanceDataOutIndex] = _InstancesDrawMatrixRows45[sortedTID];
+        _InstancesCulledAnimData[instanceDataOutIndex] = _InstancesDrawAnimData[sortedTID];
+        _InstancesCulledIndexRemap[instanceDataOutIndex] = sortedTID;
     }
     
     

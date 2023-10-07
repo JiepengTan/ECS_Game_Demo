@@ -21,7 +21,7 @@ namespace GamesTan.ECS.Game {
                     _testUnits.Add(entity);
                     var entityPtr = World.GetEnemy(entity);
                     entityPtr->Scale = new float3(1, 1, 1);
-                    entityPtr->PrefabId = Services.RandomValue() > 0.3 ? 10001 : 10001;
+                    entityPtr->PrefabId = Services.RandomValue() > 0.3 ? 10001 : 10003;
                     entityPtr->InstancePrefabIdx = RenderWorld.Instance.GetInstancePrefabIdx(entityPtr->PrefabId);
                     if (Services.IsShowLog)
                         Debug.Log("CreateOne " + EnemyPool.Count + entity + "  \n" + EnemyPool.ToString());

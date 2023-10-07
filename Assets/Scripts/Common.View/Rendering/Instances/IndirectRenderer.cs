@@ -37,7 +37,7 @@ public struct SortingData
     public uint threadDispatchID;       //3
 
     public override string ToString() {
-        return $"instanceId{drawCallInstanceIndex} dist:{distanceToCam *1.0f/100} tid:{threadDispatchID}";
+        return $"dist:{distanceToCam } instanceId:{drawCallInstanceIndex}  tid:{threadDispatchID}";
     }
 };
 
@@ -1458,6 +1458,7 @@ public class IndirectRenderer : MonoBehaviour
         count = Mathf.Min(m_numberOfInstances, count);
         StringBuilder sb = new StringBuilder();
         {
+            //sb.AppendLine("IndexCountPerInstance InstanceCount StartIndexLocation BaseVertexLocation StartInstanceLocation");
             uint[] instancesArgs = new uint[m_numberOfInstanceTypes * NUMBER_OF_ARGS_PER_INSTANCE_TYPE];
             m_instancesArgsBuffer.GetData(instancesArgs);
             for (int i = 0; i < instancesArgs.Length; i++)
@@ -1554,17 +1555,8 @@ public class IndirectRenderer : MonoBehaviour
             uint lastDrawCallIndex = 0;
             for (int i = 0; i < count; i++)
             {
-                uint drawCallIndex = (sortingData[i].drawCallInstanceIndex >> 16);
-                uint instanceIndex = (sortingData[i].drawCallInstanceIndex) & 0xFFFF;
-                if (i == 0) { lastDrawCallIndex = drawCallIndex; }
-                sb.AppendLine("(" + drawCallIndex + ") --> " + sortingData[i].distanceToCam + " instanceIndex:" + instanceIndex+ " tId:" + sortingData[i].threadDispatchID);
+                sb.AppendLine(sortingData[i].ToString());
             
-                if (lastDrawCallIndex != drawCallIndex)
-                {
-                    Debug.Log(sb.ToString());
-                    sb = new StringBuilder();
-                    lastDrawCallIndex = drawCallIndex;
-                }
             }
         }
         sb.AppendLine("======== CulledMatrix ===========");

@@ -22,7 +22,9 @@ namespace GamesTan.ECS.Game {
             for (int i = 0; i < count; i++) {
                 var item = ptrAry[i];
                 if (item.IsValid) {
-                    renderer.AddRenderData(new RendererData(item.InstancePrefabIdx,item.Pos,item.Rot,item.Scale,item.AnimInfo));
+                    if (item.InstancePrefabIdx != -1) {
+                        renderer.AddRenderData(new RendererData(item.InstancePrefabIdx,item.Pos,item.Rot,item.Scale,item.AnimInfo));
+                    }
                 }
             }
 

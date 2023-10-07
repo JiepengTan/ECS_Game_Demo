@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: 10002_InstancesAnimation
+  m_Name: 10003_InstancesAnimation
   m_Shader: {fileID: 4800000, guid: 42d939f769e18c74aa92f94f69404314, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -26,7 +26,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _AnimatedBoneMatrices:
-        m_Texture: {fileID: 2800000, guid: 6214e037b51416049bab99cbfa6e7ed2, type: 2}
+        m_Texture: {fileID: 2800000, guid: 3c0ccfdb128667a499890cc986b854a7, type: 2}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Base:
@@ -54,7 +54,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 6eae92eebce427e409f457cd89f6ab09, type: 3}
+        m_Texture: {fileID: 2800000, guid: a54012b169f21e847bfd2ab146afdad8, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTexArray:
@@ -70,7 +70,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Normal:
-        m_Texture: {fileID: 2800000, guid: cb6ded80207c2a74a9283bdc8c6f0852, type: 3}
+        m_Texture: {fileID: 2800000, guid: 5369d35d8f7c50147bc2fafb7ec5a6a6, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _NormalMap:
