@@ -33,11 +33,11 @@ public struct Indirect2x2Matrix
 public struct SortingData
 {
     public uint drawCallInstanceIndex; // 1
-    public float distanceToCam;         // 2
+    public uint distanceToCam;         // 2
     public uint threadDispatchID;       //3
 
     public override string ToString() {
-        return $"instanceId{drawCallInstanceIndex} dist:{distanceToCam} tid:{threadDispatchID}";
+        return $"instanceId{drawCallInstanceIndex} dist:{distanceToCam *1.0f/100} tid:{threadDispatchID}";
     }
 };
 

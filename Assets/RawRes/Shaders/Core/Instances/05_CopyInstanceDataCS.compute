@@ -64,10 +64,11 @@ inline void CSMain (
     uint groupID = _groupID.x;
     uint groupSum = _groupID.x > 0 ? _GroupSumArray[_groupID.x] : 0;
 
+    uint sortedTID = _SortingData[tID].threadDispatchID;
     //scatter results
-    if (_InstancePredicatesIn[tID] == 1)
+    if (_InstancePredicatesIn[sortedTID] == 1)
     {
-        uint instanceDataOutIndex = _ScannedInstancePredicates[tID] + groupSum;
+        uint instanceDataOutIndex = tID;
         uint drawInstanceIndex = _SortingData[tID].drawCallInstanceIndex & 0xFFFF;
         
         _InstancesCulledMatrixRows01[instanceDataOutIndex] = _InstancesDrawMatrixRows01[drawInstanceIndex];
@@ -75,7 +76,6 @@ inline void CSMain (
         _InstancesCulledMatrixRows45[instanceDataOutIndex] = _InstancesDrawMatrixRows45[drawInstanceIndex];
         _InstancesCulledAnimData[instanceDataOutIndex] = _InstancesDrawAnimData[drawInstanceIndex];
         _InstancesCulledIndexRemap[instanceDataOutIndex] = drawInstanceIndex;
-        
     }
     
     

@@ -204,11 +204,13 @@ inline void CSMain (
     uint isVisible = 1;
     
     // ignore invalid bound => useless instance
-    if(instance.boundsExtents.x <0.001) {
+    if(instance.boundsExtents.x <0.001 ) {
         isVisible = 0;
     }
     if (IsCameraOutsideObjBounds(_CamPosition, minPos, maxPos))
     {
+        // Too far to sort
+        isVisible *= minDistanceToCamera < (MAX_SORT_INSTANCE_DISTANCE-1);
         // Do we pass the frustum culling...?
         isVisible *= _ShouldFrustumCull ? isInFrustum : 1;
 
@@ -218,8 +220,9 @@ inline void CSMain (
         // // // Do we pass the detail (screen size) culling...?
         isVisible *= (_ShouldDetailCull * isVisible > 0) ? IsVisibleAfterDetailCulling(clipMinX, clipMaxX, clipMinY, clipMaxY) : 1;
     }
-    if(isVisible <0.5) {
-        minDistanceToCamera = 100000*(drawCall+1) + index ;
+    
+    if(isVisible  == 0) {
+        minDistanceToCamera = MAX_SORT_INSTANCE_DISTANCE-1 ;// < 4096
     }
     float lod00Range = _Lod0Distance;
     float lod01Range = _Lod1Distance;
@@ -241,7 +244,8 @@ inline void CSMain (
 
     _ShadowIsVisibleBuffer[tID] = isCastingShadow;
     InterlockedAdd(_ShadowArgsBuffer[shadowArgsIndex], isCastingShadow);
-
-    sortingData.distanceToCam = minDistanceToCamera;
+    // 4096*100 < 4096*128 <  (1<<12 * 1<<7)
+    const uint head = drawCall << 22  + (1-isVisible)<<31;
+    sortingData.distanceToCam = head + floor(minDistanceToCamera*100) ;
     _SortingData[tID] = sortingData;
 }

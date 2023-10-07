@@ -20,6 +20,7 @@ namespace GamesTan.ECS.Game {
         public int CurEnemyCount;
         public bool DebugOnlyOneEntity;
         public int DebugEntityCount = 1;
+        public int DebugEntityBornRange = 30;
         public bool DebugStopAnimation = false;
     }
 }

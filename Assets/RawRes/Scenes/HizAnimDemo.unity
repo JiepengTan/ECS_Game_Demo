@@ -9501,13 +9501,14 @@ MonoBehaviour:
     Frame: 0
     DeleteProbability: 0.5
     FreshCountPerFrame: 58
-    IsCreateGo: 1
+    IsCreateGo: 0
     IsShowLog: 0
     CurGoId: 0
     transform: {fileID: 365310895}
     CurEnemyCount: 0
     DebugOnlyOneEntity: 1
-    DebugEntityCount: 16
+    DebugEntityCount: 1000
+    DebugEntityBornRange: 100
     DebugStopAnimation: 0
 --- !u!4 &365310895
 Transform:
@@ -9752,7 +9753,7 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 1
+  near clip plane: 0.1
   far clip plane: 200
   field of view: 60
   orthographic: 0
@@ -37605,6 +37606,7 @@ MonoBehaviour:
   logCulledInstancesAnimData: 0
   logDebugAll: 0
   LogAllArgBuffer: 0
+  LogAllArgBufferCount: 5
   createDrawDataBufferCS: {fileID: 7200000, guid: ec8dc736dcd73488db5f21571d3708f7, type: 3}
   sortingCS: {fileID: 7200000, guid: 345cad655c4d3473eb2f23a4da170421, type: 3}
   occlusionCS: {fileID: 7200000, guid: 4aeff498554ed42f289ac4c6051b7dba, type: 3}

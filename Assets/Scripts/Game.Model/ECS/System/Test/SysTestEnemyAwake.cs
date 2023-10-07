@@ -6,7 +6,7 @@ namespace GamesTan.ECS.Game {
         public override void Update(float dt) {
             float dist = 100;
             if (Services.DebugOnlyOneEntity) {
-                dist = Services.DebugEntityCount;
+                dist = Services.DebugEntityBornRange;
             }
             var enemys = World.GetEnemys();
             foreach (var item in enemys) {

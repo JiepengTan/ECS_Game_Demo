@@ -23,10 +23,11 @@ struct AnimData
     float4 AnimInfo3;
 };
 
+#define MAX_SORT_INSTANCE_DISTANCE 4096
 struct SortingData
 {
     uint drawCallInstanceIndex; // 1
-    float distanceToCam;        // 2
+    uint distanceToCam;        // 2
     uint threadDispatchID;      //3
 };
 
