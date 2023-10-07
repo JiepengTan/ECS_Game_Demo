@@ -15,6 +15,9 @@ namespace GamesTan.Game.View {
         [SerializeField] private GameServices _curService;
 
         public void Awake() {
+            #if UNITY_STANDALONE
+            Application.targetFrameRate = 300;
+            #endif
             _updateTimer = 0;
             _curWorld = new GameEcsWorld();
             // just for debug

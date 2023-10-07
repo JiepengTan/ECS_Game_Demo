@@ -9556,16 +9556,16 @@ MonoBehaviour:
     DeltaTime: 0
     TimeSinceLevelLoad: 0
     Frame: 0
-    DeleteProbability: 0.5
-    FreshCountPerFrame: 58
+    DeleteProbability: 0
+    FreshCountPerFrame: 1477
     IsCreateGo: 0
     IsShowLog: 0
     CurGoId: 0
     transform: {fileID: 365310895}
     CurEnemyCount: 0
     DebugOnlyOneEntity: 1
-    DebugEntityCount: 4000
-    DebugEntityBornRange: 100
+    DebugEntityCount: 15000
+    DebugEntityBornRange: 500
     DebugStopAnimation: 0
 --- !u!4 &365310895
 Transform:
