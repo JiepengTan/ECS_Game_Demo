@@ -34,6 +34,11 @@ public struct SortingData
 {
     public uint drawCallInstanceIndex; // 1
     public float distanceToCam;         // 2
+    public uint threadDispatchID;       //3
+
+    public override string ToString() {
+        return $"instanceId{drawCallInstanceIndex} dist:{distanceToCam} tid:{threadDispatchID}";
+    }
 };
 
 [System.Serializable]
@@ -475,7 +480,6 @@ public class IndirectRenderer : MonoBehaviour
         {
             m_instancesArgsBuffer.SetData(m_args);
             m_shadowArgsBuffer.SetData(m_args);
-            
             if (logArgumentsAfterReset || logDebugAll)
             {
                 logArgumentsAfterReset = false;
@@ -486,7 +490,8 @@ public class IndirectRenderer : MonoBehaviour
         
         Profiler.BeginSample("00 Calc Transform Matrix");
         // upload entity's matrix
-        if (_rendererData.isDirty) {
+        //if (_rendererData.isDirty) 
+        {
             _rendererData.isDirty = false;
             m_positionsBuffer.SetData(_rendererData.positions);
             m_scaleBuffer.SetData(_rendererData.scales);
@@ -1452,43 +1457,114 @@ public class IndirectRenderer : MonoBehaviour
     private void LogAllBuffers(int count = 5) {
         count = Mathf.Min(m_numberOfInstances, count);
         StringBuilder sb = new StringBuilder();
-        uint[] instancesArgs = new uint[m_numberOfInstanceTypes * NUMBER_OF_ARGS_PER_INSTANCE_TYPE];
-        m_instancesArgsBuffer.GetData(instancesArgs);
-        for (int i = 0; i < instancesArgs.Length; i++)
         {
-            sb.Append(instancesArgs[i] + " ");
-            if ((i + 1) % 5 == 0)
+            uint[] instancesArgs = new uint[m_numberOfInstanceTypes * NUMBER_OF_ARGS_PER_INSTANCE_TYPE];
+            m_instancesArgsBuffer.GetData(instancesArgs);
+            for (int i = 0; i < instancesArgs.Length; i++)
             {
-                sb.AppendLine("");
+                sb.Append(instancesArgs[i] + " ");
+                if ((i + 1) % 5 == 0)
+                {
+                    sb.AppendLine("");
+                }
             }
+        }
+        sb.AppendLine("======== positions ===========");
+        {
+            var datas = _rendererData.positions;
+            for (int i = 0; i < count; i++)
+            {
+                sb.Append(i+": "+datas[i] +  " instId: " + _rendererData.sortingData[i].drawCallInstanceIndex+ "\n");
+            }
+            sb.AppendLine();
+        }
+        
+        sb.AppendLine("======== VisibleBuffer ===========");
+        {
+            uint[] indexRemap = new uint[m_numberOfInstances ];
+            m_instancesIsVisibleBuffer.GetData(indexRemap);
+            for (int i = 0; i < count; i++)
+            {
+                sb.Append(indexRemap[i] + " ");
+            }
+            sb.AppendLine();
+        }
+        
+        sb.AppendLine("======== SumGroup ===========");
+        {
+            sb.Append("visibleSum: ");
+            uint[] visibleAry = new uint[m_numberOfInstances];
+            m_instancesScannedPredicates.GetData(visibleAry);
+            for (int i = 0; i < count; i++)
+            {
+                sb.Append(visibleAry[i] + " ");
+            }
+            sb.AppendLine();
+            sb.Append("chunkSum: ");
+            uint[] chunkSum = new uint[m_numberOfInstances];
+            m_instancesGroupSumArrayBuffer.GetData(chunkSum);
+            for (int i = 0; i < count; i++)
+            {
+                sb.Append(chunkSum[i] + " ");
+            }
+            sb.AppendLine();
+            sb.Append("groupSum: ");
+            uint[] groupSum = new uint[m_numberOfInstances];
+            m_instancesScannedGroupSumBuffer.GetData(groupSum);
+            for (int i = 0; i < count; i++)
+            {
+                sb.Append(groupSum[i] + " ");
+            }
+            sb.AppendLine();
+            sb.AppendLine("----shadow below----");
+            uint[] shadowsScannedData = new uint[m_numberOfInstances];
+            m_shadowScannedInstancePredicates.GetData(shadowsScannedData);
+            for (int i = 0; i < count; i++)
+            {
+                sb.Append(shadowsScannedData[i] + " ");
+            }
+            sb.AppendLine();
+        }
+        sb.AppendLine("======== SortedInstanceId ===========");
+        {
+            SortingData[] sortingData = new SortingData[m_numberOfInstances];
+            m_instancesSortingData.GetData(sortingData);
+            for (int i = 0; i < count; i++) {
+                uint instanceIndex = (sortingData[i].drawCallInstanceIndex) & 0xFFFF;
+                sb.Append(instanceIndex + " ");
+            }
+            sb.AppendLine();
         }
         
         sb.AppendLine("======== IndexRemap ===========");
-        uint[] indexRemap = new uint[m_numberOfInstanceTypes * NUMBER_OF_ARGS_PER_INSTANCE_TYPE];
-        m_instancesCulledIndexRemap.GetData(indexRemap);
-        for (int i = 0; i < indexRemap.Length; i++)
         {
-            sb.Append(indexRemap[i] + " ");
-        }
-        sb.AppendLine();
-        
-        sb.AppendLine("======== SortData ===========");
-        SortingData[] sortingData = new SortingData[m_numberOfInstances];
-        m_instancesSortingData.GetData(sortingData);
-        
-        uint lastDrawCallIndex = 0;
-        for (int i = 0; i < count; i++)
-        {
-            uint drawCallIndex = (sortingData[i].drawCallInstanceIndex >> 16);
-            uint instanceIndex = (sortingData[i].drawCallInstanceIndex) & 0xFFFF;
-            if (i == 0) { lastDrawCallIndex = drawCallIndex; }
-            sb.AppendLine("(" + drawCallIndex + ") --> " + sortingData[i].distanceToCam + " instanceIndex:" + instanceIndex);
-            
-            if (lastDrawCallIndex != drawCallIndex)
+            uint[] indexRemap = new uint[m_numberOfInstances];
+            m_instancesCulledIndexRemap.GetData(indexRemap);
+            for (int i = 0; i < count; i++)
             {
-                Debug.Log(sb.ToString());
-                sb = new StringBuilder();
-                lastDrawCallIndex = drawCallIndex;
+                sb.Append(indexRemap[i] + " ");
+            }
+            sb.AppendLine();
+        }
+        sb.AppendLine("======== SortData ===========");
+        {
+            SortingData[] sortingData = new SortingData[m_numberOfInstances];
+            m_instancesSortingData.GetData(sortingData);
+        
+            uint lastDrawCallIndex = 0;
+            for (int i = 0; i < count; i++)
+            {
+                uint drawCallIndex = (sortingData[i].drawCallInstanceIndex >> 16);
+                uint instanceIndex = (sortingData[i].drawCallInstanceIndex) & 0xFFFF;
+                if (i == 0) { lastDrawCallIndex = drawCallIndex; }
+                sb.AppendLine("(" + drawCallIndex + ") --> " + sortingData[i].distanceToCam + " instanceIndex:" + instanceIndex+ " tId:" + sortingData[i].threadDispatchID);
+            
+                if (lastDrawCallIndex != drawCallIndex)
+                {
+                    Debug.Log(sb.ToString());
+                    sb = new StringBuilder();
+                    lastDrawCallIndex = drawCallIndex;
+                }
             }
         }
         sb.AppendLine("======== CulledMatrix ===========");

@@ -107,6 +107,7 @@ public unsafe class InstanceRenderData {
             }
             offset+= info.Count;
         }
+        // TODO make sure the sortingdata is correct
         for (int curIdx = totalCount; curIdx < rotations.Length; curIdx++) {
             sortingData[curIdx].drawCallInstanceIndex =((((uint)0 * IndirectRenderer.NUMBER_OF_ARGS_PER_INSTANCE_TYPE) << 16) + ((uint)curIdx));
         }

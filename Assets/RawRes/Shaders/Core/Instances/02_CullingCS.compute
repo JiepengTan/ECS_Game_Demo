@@ -146,7 +146,7 @@ inline void CSMain (
     SortingData sortingData = _SortingData[tID];
     uint drawCall = (sortingData.drawCallInstanceIndex >> 16);
     uint index = (sortingData.drawCallInstanceIndex) & 0xFFFF;
-
+    sortingData.threadDispatchID = tID;
     // Reset the is visible state
     _IsVisibleBuffer[tID] = 0;
     _ShadowIsVisibleBuffer[tID] = 0;
@@ -219,7 +219,7 @@ inline void CSMain (
         isVisible *= (_ShouldDetailCull * isVisible > 0) ? IsVisibleAfterDetailCulling(clipMinX, clipMaxX, clipMinY, clipMaxY) : 1;
     }
     if(isVisible <0.5) {
-        minDistanceToCamera = 100000 + index;
+        minDistanceToCamera = 100000*(drawCall+1) + index ;
     }
     float lod00Range = _Lod0Distance;
     float lod01Range = _Lod1Distance;

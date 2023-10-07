@@ -26,7 +26,8 @@ struct AnimData
 struct SortingData
 {
     uint drawCallInstanceIndex; // 1
-    float distanceToCam;         // 2
+    float distanceToCam;        // 2
+    uint threadDispatchID;      //3
 };
 
 struct Indirect3x3Matrix
