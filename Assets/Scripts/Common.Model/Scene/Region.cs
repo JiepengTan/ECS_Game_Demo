@@ -16,7 +16,7 @@ namespace Gamestan.Spatial {
     [System.Serializable]
     [StructLayout(LayoutKind.Explicit)]
     public unsafe struct Grid {
-        public const int ArySize = 7;
+        public const int ArySize = 15;
         public const int Width = 2;
         public const int MemSize = (ArySize + 1) * 8; // 64
 
@@ -101,32 +101,32 @@ namespace Gamestan.Spatial {
         }
     }
 
+    public unsafe class ChunkInfo {
+        public int EntityCount;
 
-    public unsafe class Region {
-        public class ChunkInfo {
-            public int EntityCount;
+        public Chunk* Ptr;
 
-            public Chunk* Ptr;
+        // left bottom corner
+        public int2 WorldPos => Coord * Chunk.Width;
+        public int2 Coord;
 
-            // left bottom corner
-            public int2 WorldPos => Coord * Chunk.Width;
-            public int2 Coord;
-
-            public override string ToString() {
-                return $"WorldCoord:{WorldPos} EntityCount{EntityCount}";
-            }
-
-            public Grid* GetGrid(int2 worldPos) {
-                Debug.Assert(Ptr != null, "Chunk Ptr == null,has free memory ? " + Coord);
-                var localPos = worldPos - WorldPos;
-                var localGridCoord = localPos / Grid.Width;
-                return Ptr->GetGrid(localGridCoord);
-            }
+        public override string ToString() {
+            return $"WorldCoord:{WorldPos} EntityCount{EntityCount}";
         }
 
+        public Grid* GetGrid(int2 worldPos) {
+            Debug.Assert(Ptr != null, "Chunk Ptr == null,has free memory ? " + Coord);
+            var localPos = worldPos - WorldPos;
+            var localGridCoord = localPos / Grid.Width;
+            return Ptr->GetGrid(localGridCoord);
+        }
+    }
+    public unsafe class Region {
         private Dictionary<int2, ChunkInfo> _coord2Data = new Dictionary<int2, ChunkInfo>();
         private Stack<ChunkInfo> _freeList = new Stack<ChunkInfo>();
 
+        public int TotalChunkCount => _coord2Data.Count;
+        public int TotalEntityCount;
         public void DoAwake(int initSizeKB = 512) {
             Debug.Assert(Grid.MemSize == sizeof(Grid),
                 "Grid size is diff with GridMemSize , but some code is dependent on it");
@@ -202,41 +202,39 @@ namespace Gamestan.Spatial {
             return chunkInfo;
         }
 
-        public void Update(EntityData data, ref int2 lastCoord, float3 pos) {
+        public void Update(EntityData data, ref int2 coord, float3 pos) {
             var pos2 = new float2(pos.x, pos.z);
             var worldPos = (int2)math.floor(pos2);
-            var gridCoord = worldPos / Grid.Width;
-            bool isNeedUpdate = false;
-            if (!gridCoord.Equals(lastCoord)) {
-                var gridCenter = (lastCoord + new int2(1, 1));
+            var newCoord = worldPos / Grid.Width;
+            if (!newCoord.Equals(coord)) {
+                var gridCenter = (coord + new int2(1, 1));
                 var diff = math.abs(pos2 - gridCenter);
-                isNeedUpdate = math.any(diff > Grid.Width);
-            }
-
-            if (isNeedUpdate) {
-                var lastChunkCoord = lastCoord / Chunk.GridScaler;
-                var curChunkCoord = gridCoord / Chunk.GridScaler ;
+                if(!math.any(diff > Grid.Width)) 
+                    return;
+                var lastChunkCoord = coord / Chunk.GridScaler;
+                var curChunkCoord = newCoord / Chunk.GridScaler ;
+                coord = newCoord;
                 var isNeedUpdateChunk = lastChunkCoord.Equals(curChunkCoord);
                 if (isNeedUpdateChunk) {
                     // move chunk
-                    var lastPos = lastCoord*Grid.Width;
+                    var lastPos = coord*Grid.Width;
                     var lastChunk = GetOrAddChunk(lastPos);
                     var lastGrid = lastChunk.GetGrid(lastPos);
                     lastGrid->Remove(data);
                     
-                    var curPos = gridCoord*Grid.Width;
+                    var curPos = newCoord*Grid.Width;
                     var curChunk = GetOrAddChunk(curPos);
                     var curGrid = curChunk.GetGrid(curPos);
                     curGrid->Add(data);
                 }
                 else {
                     // move grid
-                    var lastPos = lastCoord*Grid.Width;
+                    var lastPos = coord*Grid.Width;
                     var lastChunk = GetOrAddChunk(lastPos);
                     var lastGrid = lastChunk.GetGrid(lastPos);
                     lastGrid->Remove(data);
                     
-                    var curPos = gridCoord*Grid.Width;
+                    var curPos = newCoord*Grid.Width;
                     var curGrid = lastChunk.GetGrid(curPos);
                     curGrid->Add(data);
                 }
@@ -249,16 +247,18 @@ namespace Gamestan.Spatial {
             var grid = chunkInfo.GetGrid(worldPos);
             grid->Add(data);
             chunkInfo.EntityCount++;
+            TotalEntityCount++;
             return worldPos / Grid.Width;
         }
 
-        public void RemoveEntity(EntityData data, float3 pos) {
-            var worldPos = (int2)math.floor(new float2(pos.x, pos.z));
+        public void RemoveEntity(EntityData data, int2 coord) {
+            var worldPos = coord * Grid.Width;
             var chunkInfo = GetOrAddChunk(worldPos);
             var grid = chunkInfo.GetGrid(worldPos);
             grid->Remove(data);
             chunkInfo.EntityCount--;
             TryRemoveChunk(chunkInfo);
+            TotalEntityCount--;
         }
     }
 }

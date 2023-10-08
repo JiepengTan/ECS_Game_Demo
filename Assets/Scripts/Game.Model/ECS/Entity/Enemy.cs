@@ -56,6 +56,8 @@ namespace GamesTan.ECS.Game {
             set => Rot.y = value;
         }
 
+        public float RotateSpeed ;
+
         public float2 Forward2 {
             get {
                 float deg = math.radians(-DegY+90);
@@ -88,6 +90,8 @@ namespace GamesTan.ECS.Game {
         /// <summary> AI 计时器   /// </summary>
         public float AITimer;
 
+        [FormerlySerializedAs("AIData1")] public AITestData AIData;
+
         
         /// <summary> Animation   /// </summary>
         public AnimData AnimInfo;
@@ -96,6 +100,14 @@ namespace GamesTan.ECS.Game {
         public override string ToString() {
             return __Data.ToString();
         }
+    }
+
+    [System.Serializable]
+    [StructLayout(LayoutKind.Sequential)]
+    public struct AITestData {
+        public float TargetDeg;
+        public float LerpInterval;
+        public float LerpTimer;
     }
     [System.Serializable]
     [StructLayout(LayoutKind.Sequential)]

@@ -1,4 +1,5 @@
 using System;
+using Gamestan.Spatial;
 
 namespace GamesTan.ECS.Game {
 
@@ -18,18 +19,19 @@ namespace GamesTan.ECS.Game {
 
     public partial class BaseGameSystem : BaseSystem ,IGameSystem{
         public GameEcsWorld World;
+        public GameEntityManager EntityManager;
         public GameServices Services;
         public NativePoolEnemy EnemyPool;
         public EntityList EnemyList;
-        
+        public Region WorldRegion;
         public void DoAwake(GameEcsWorld world) {
             Name = GetType().Name;
             World = world;
             Services = World.Services;
-            EnemyPool = World.EnemyPool;
-            EnemyList = World.EnemyList;
+            WorldRegion = World.WorldRegion;
+            EntityManager = World.EntityManager;
+            EnemyPool = EntityManager.EnemyPool;
+            EnemyList = EntityManager.EnemyList;
         }
-        
-        
     }
 }

@@ -1,18 +1,20 @@
 
 using System.Collections.Generic;
 using GamesTan.Rendering;
+using Gamestan.Spatial;
 using UnityEngine.Profiling;
 
 namespace GamesTan.ECS.Game {
-    
     [System.Serializable]
     public unsafe partial class GameEcsWorld {
         public GameServices _services = new GameServices();
         public GameServices Services => _services;
-        
+        public GameEntityManager EntityManager = new GameEntityManager();
         public List<IEcsSystem> _systems = new List<IEcsSystem>();
+        public Region WorldRegion = new Region();
         public void DoAwake() {
-            CreatePools();
+            EntityManager.DoAwake(this);
+            WorldRegion.DoAwake();
             RegisterSystems();
             Services.DoAwake();
             foreach (var sys in _systems) {
@@ -48,35 +50,5 @@ namespace GamesTan.ECS.Game {
         }
 
         
-        public enum EEntityType {
-            Enemy,
-            Bullet,
-        }
-        private void CreatePools() {
-            _enemyPool.Init((int)EEntityType.Enemy, 200);
-        }
-
-        private NativePoolEnemy _enemyPool = new NativePoolEnemy();
-        public NativePoolEnemy EnemyPool => _enemyPool;
-        public EntityList EnemyList => _enemyList;
-        public int EnemyCount => _enemyPool.Count;
-        private EntityList _enemyList = new EntityList();
-        public List<EntityData> GetEnemys() {
-            return _enemyList.GetInternalData();
-        }
-        public Enemy* GetEnemy(EntityData data) {
-            return _enemyPool.GetData(data);
-        }
-
-        public EntityData AllocEnemy() {
-            var data = _enemyPool.Alloc();
-            _enemyList.Add(data);
-            return data;
-        }
-        public void FreeEnemy(EntityData item) {
-            if (_enemyList.Remove(item)) {
-                _enemyPool.QueueFree(item);
-            }
-        }
     }
 }

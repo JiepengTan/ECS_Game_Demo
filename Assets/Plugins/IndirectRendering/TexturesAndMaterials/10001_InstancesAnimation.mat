@@ -14,6 +14,7 @@ Material:
   m_ValidKeywords: []
   m_InvalidKeywords:
   - _ENABLEANIMATION_ON
+  - _ENABLEINSTANCE_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
@@ -108,7 +109,7 @@ Material:
     - _DstBlend: 0
     - _EdgeWidth: 1
     - _EnableAnimation: 1
-    - _EnableInstance: 0
+    - _EnableInstance: 1
     - _GlossMapScale: 1
     - _Glossiness: 0
     - _GlossyReflections: 1

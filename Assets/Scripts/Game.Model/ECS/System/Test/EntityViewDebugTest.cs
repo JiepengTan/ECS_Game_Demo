@@ -6,7 +6,7 @@ namespace GamesTan.ECS.Game {
         public EntityData Entity;
 
         public void Update() {
-            var entity = World.GetEnemy(Entity);
+            var entity = World.EntityManager.GetEnemy(Entity);
             if (entity != null) {
                 transform.position = entity->Pos;
                 transform.eulerAngles = entity->Rot;
