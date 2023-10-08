@@ -43,6 +43,7 @@ namespace GamesTan.ECS.Game {
 
 
         public void DoDestroy() {
+            WorldRegion.DoDestroy();
         }
 
         private void RegisterSystems() {

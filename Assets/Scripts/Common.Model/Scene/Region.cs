@@ -47,7 +47,7 @@ namespace Gamestan.Spatial {
             Count++;
         }
 
-        public void Remove(EntityData entityData) {
+        public bool Remove(EntityData entityData) {
             var data = (EntityStorageData)entityData;
             int count = Count <= ArySize ? Count : ArySize;
             for (int i = 0; i < count; i++) {
@@ -55,13 +55,11 @@ namespace Gamestan.Spatial {
                     Count--;
                     Entities[i] = Entities[Count];
                     Entities[Count] = EntityData.DefaultObjectIntData;
-                    return;
+                    return true;
                 }
             }
 
-            if (Count > ArySize) {
-                // TODO
-            }
+            return false;
         }
 
         public override string ToString() {
@@ -114,6 +112,8 @@ namespace Gamestan.Spatial {
         public int2 WorldPos => Coord * Chunk.Width;
         public int2 Coord;
 
+        public bool IsNeedFree;
+
         public override string ToString() {
             return $"WorldCoord:{WorldPos} EntityCount{EntityCount}";
         }
@@ -147,21 +147,24 @@ namespace Gamestan.Spatial {
                 var chunkPtr = &chunks[i];
                 var chunk = new ChunkInfo();
                 chunk.Ptr = chunkPtr;
+                chunk.IsNeedFree = i==0;// only the first chunk need to free
                 _freeList.Push(chunk);
             }
         }
 
-        public void Destroy() {
-            foreach (var ptr in _freeList) {
-                UnsafeUtility.Free((void*)ptr.Ptr);
-                ptr.Ptr = null;
+        public void DoDestroy() {
+            foreach (var chunk in _freeList) {
+                if (chunk.IsNeedFree && chunk.Ptr != null) {
+                    UnsafeUtility.Free((void*)chunk.Ptr);
+                    chunk.Ptr = null;
+                }
+                chunk.Ptr = null;
             }
 
             _freeList.Clear();
             foreach (var chunk in _coord2Data.Values) {
-                var ptr = chunk.Ptr;
-                if (ptr != null) {
-                    UnsafeUtility.Free(ptr);
+                if (chunk.IsNeedFree && chunk.Ptr != null) {
+                    UnsafeUtility.Free((void*)chunk.Ptr);
                     chunk.Ptr = null;
                 }
             }
@@ -186,13 +189,9 @@ namespace Gamestan.Spatial {
             return info;
         }
 
-        private void FreeChunk(ChunkInfo chunk) {
-            _freeList.Push(chunk);
-        }
-
         private void TryRemoveChunk(ChunkInfo chunk) {
             if (chunk.EntityCount == 0) {
-                FreeChunk(chunk);
+                _freeList.Push(chunk);
                 _coord2Data.Remove(chunk.Coord);
             }
         }
@@ -203,6 +202,7 @@ namespace Gamestan.Spatial {
             if (!_coord2Data.TryGetValue(chunkCoord, out chunkInfo)) {
                 chunkInfo = AllocChunk();
                 chunkInfo.Coord = chunkCoord;
+                _coord2Data[chunkCoord] = chunkInfo;
             }
 
             return chunkInfo;
@@ -263,10 +263,11 @@ namespace Gamestan.Spatial {
             var worldPos = GridCoord2WorldPos(gridCoord);
             var chunkInfo = GetOrAddChunk(worldPos);
             var grid = chunkInfo.GetGrid(worldPos);
-            grid->Remove(data);
-            chunkInfo.EntityCount--;
-            TryRemoveChunk(chunkInfo);
-            TotalEntityCount--;
+            if (grid->Remove(data)) {
+                chunkInfo.EntityCount--;
+                TryRemoveChunk(chunkInfo);
+                TotalEntityCount--;
+            }
         }
 
 

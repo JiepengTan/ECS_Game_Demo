@@ -22,8 +22,9 @@ namespace Lockstep.UnsafeECS {
                 Marshal.FreeHGlobal((IntPtr)pair.Key);
             }
             if (remainSum != 0) {
-                Debug.LogError($"Some Memory leak ! LeakCount= {remainSum}KB   ");
+                Debug.LogError($"Some Memory leak ! LeakCount= {remainSum/1024.0f /1024}MB   ");
             }
+            s_ptr2Size.Clear();
         }
 
         private static Dictionary<long, int> s_ptr2Size = new Dictionary<long, int>();
