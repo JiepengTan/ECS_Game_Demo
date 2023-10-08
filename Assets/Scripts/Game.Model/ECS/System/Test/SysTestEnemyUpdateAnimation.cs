@@ -21,10 +21,10 @@ namespace GamesTan.ECS.Game {
                 }
             }
 
-            ref var animInfo = ref entity.AnimInfo;
+            ref var animInfo = ref entity.AnimRenderData;
             //TODO 处理其他的动画
             animInfo.AnimInfo0 = new float4(1, 0,
-                AnimationUtil.GetAnimation(entity.PrefabId, internalData.AnimId1[0], internalData.Timer[0]), 0);
+                AnimationUtil.GetAnimation(entity.AssetData.PrefabId, internalData.AnimId1[0], internalData.Timer[0]), 0);
             animInfo.AnimInfo1 = float4.zero;
             animInfo.AnimInfo2 = float4.zero;
             animInfo.AnimInfo3 = float4.zero;

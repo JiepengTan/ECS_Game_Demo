@@ -1,4 +1,5 @@
 namespace GamesTan.ECS.Game {
+    
     public unsafe partial  class BaseEntityUpdateSystem :BaseGameSystem  {
         public override void Update(float dt) {
             var pool = EntityManager.EnemyPool;

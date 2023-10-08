@@ -17,7 +17,8 @@ namespace Gamestan.Spatial {
     [StructLayout(LayoutKind.Explicit)]
     public unsafe struct Grid {
         public const int ArySize = 15;
-        public const int Width = 2;
+        public const int WidthBit = 1;
+        public const int Width = 1 << WidthBit;
         public const int MemSize = (ArySize + 1) * 8; // 64
 
         [FieldOffset(0)] public int Count;
@@ -49,7 +50,7 @@ namespace Gamestan.Spatial {
         public void Remove(EntityData entityData) {
             var data = (EntityStorageData)entityData;
             int count = Count <= ArySize ? Count : ArySize;
-            for (int i = 0; i < Count; i++) {
+            for (int i = 0; i < count; i++) {
                 if (Entities[i] == data) {
                     Count--;
                     Entities[i] = Entities[Count];
@@ -80,12 +81,14 @@ namespace Gamestan.Spatial {
     [System.Serializable]
     [StructLayout(LayoutKind.Explicit)]
     public unsafe struct Chunk {
-        public const int GridScaler = 8; // sqrt( 4KB/Grid.GridMemSize)  = sqrt(64) = 8
+        public const int GridScalerBit = 3;
+        public const int GridScaler = 1 << GridScalerBit; // sqrt( 4KB/Grid.GridMemSize)  = sqrt(64) = 8
 
         public const int SizeX = GridScaler;
         public const int SizeY = GridScaler;
 
-        public const int Width = GridScaler * Grid.Width; // 16
+        public const int WidthBit = 3 + Grid.WidthBit;
+        public const int Width = 1 << WidthBit; // 16
         public const int MemSize = GridScaler * GridScaler * Grid.MemSize;
 
         public const int RowMemSize = GridScaler * Grid.MemSize;
@@ -94,7 +97,8 @@ namespace Gamestan.Spatial {
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Grid* GetGrid(int2 localCoord) {
-            Debug.Assert(localCoord.x>=0 && localCoord.y>=0 && localCoord.x < SizeX && localCoord.y < SizeY, " coord out of range " + localCoord.ToString());
+            DebugUtil.Assert(localCoord.x >= 0 && localCoord.y >= 0 && localCoord.x < SizeX && localCoord.y < SizeY,
+                " coord out of range " + localCoord.ToString());
             var offset = (localCoord.y * SizeX + localCoord.x) * Grid.MemSize;
             fixed (void* ptr = &this.Data[offset])
                 return (Grid*)ptr;
@@ -115,22 +119,24 @@ namespace Gamestan.Spatial {
         }
 
         public Grid* GetGrid(int2 worldPos) {
-            Debug.Assert(Ptr != null, "Chunk Ptr == null,has free memory ? " + Coord);
+            DebugUtil.Assert(Ptr != null, "Chunk Ptr == null,has free memory ? " + Coord);
             var localPos = worldPos - WorldPos;
-            var localGridCoord = localPos / Grid.Width;
+            var localGridCoord = Region.WorldPos2GridCoord(localPos);
             return Ptr->GetGrid(localGridCoord);
         }
     }
+
     public unsafe class Region {
         private Dictionary<int2, ChunkInfo> _coord2Data = new Dictionary<int2, ChunkInfo>();
         private Stack<ChunkInfo> _freeList = new Stack<ChunkInfo>();
 
         public int TotalChunkCount => _coord2Data.Count;
         public int TotalEntityCount;
+
         public void DoAwake(int initSizeKB = 512) {
-            Debug.Assert(Grid.MemSize == sizeof(Grid),
+            DebugUtil.Assert(Grid.MemSize == sizeof(Grid),
                 "Grid size is diff with GridMemSize , but some code is dependent on it");
-            Debug.Assert(Chunk.MemSize == sizeof(Chunk),
+            DebugUtil.Assert(Chunk.MemSize == sizeof(Chunk),
                 "Grid size is diff with GridMemSize , but some code is dependent on it");
             int capacity = initSizeKB * 1024 / Chunk.MemSize;
             int totalSize = UnsafeUtility.SizeOf<Chunk>() * capacity;
@@ -192,7 +198,7 @@ namespace Gamestan.Spatial {
         }
 
         private ChunkInfo GetOrAddChunk(int2 worldPos) {
-            var chunkCoord = worldPos / Chunk.Width;
+            var chunkCoord = WorldPos2ChunkCoord(worldPos);
             ChunkInfo chunkInfo = null;
             if (!_coord2Data.TryGetValue(chunkCoord, out chunkInfo)) {
                 chunkInfo = AllocChunk();
@@ -202,44 +208,46 @@ namespace Gamestan.Spatial {
             return chunkInfo;
         }
 
+
         public void Update(EntityData data, ref int2 coord, float3 pos) {
             var pos2 = new float2(pos.x, pos.z);
             var worldPos = (int2)math.floor(pos2);
-            var newCoord = worldPos / Grid.Width;
+            var newCoord = WorldPos2GridCoord(worldPos);
             if (!newCoord.Equals(coord)) {
                 var gridCenter = (coord + new int2(1, 1));
                 var diff = math.abs(pos2 - gridCenter);
-                if(!math.any(diff > Grid.Width)) 
+                if (!math.any(diff > Grid.Width))
                     return;
-                var lastChunkCoord = coord / Chunk.GridScaler;
-                var curChunkCoord = newCoord / Chunk.GridScaler ;
+                var lastChunkCoord = GridCoord2ChunkCoord(coord);
+                var curChunkCoord = GridCoord2ChunkCoord(newCoord);
                 coord = newCoord;
                 var isNeedUpdateChunk = lastChunkCoord.Equals(curChunkCoord);
                 if (isNeedUpdateChunk) {
                     // move chunk
-                    var lastPos = coord*Grid.Width;
+                    var lastPos = GridCoord2WorldPos(coord);
                     var lastChunk = GetOrAddChunk(lastPos);
                     var lastGrid = lastChunk.GetGrid(lastPos);
                     lastGrid->Remove(data);
-                    
-                    var curPos = newCoord*Grid.Width;
+
+                    var curPos = GridCoord2WorldPos(newCoord);
                     var curChunk = GetOrAddChunk(curPos);
                     var curGrid = curChunk.GetGrid(curPos);
                     curGrid->Add(data);
                 }
                 else {
                     // move grid
-                    var lastPos = coord*Grid.Width;
+                    var lastPos = GridCoord2WorldPos(coord);
                     var lastChunk = GetOrAddChunk(lastPos);
                     var lastGrid = lastChunk.GetGrid(lastPos);
                     lastGrid->Remove(data);
-                    
-                    var curPos = newCoord*Grid.Width;
+
+                    var curPos = GridCoord2WorldPos(newCoord);
                     var curGrid = lastChunk.GetGrid(curPos);
                     curGrid->Add(data);
                 }
             }
         }
+
 
         public int2 AddEntity(EntityData data, float3 pos) {
             var worldPos = (int2)math.floor(new float2(pos.x, pos.z));
@@ -248,17 +256,48 @@ namespace Gamestan.Spatial {
             grid->Add(data);
             chunkInfo.EntityCount++;
             TotalEntityCount++;
-            return worldPos / Grid.Width;
+            return WorldPos2GridCoord(worldPos);
         }
 
-        public void RemoveEntity(EntityData data, int2 coord) {
-            var worldPos = coord * Grid.Width;
+        public void RemoveEntity(EntityData data, int2 gridCoord) {
+            var worldPos = GridCoord2WorldPos(gridCoord);
             var chunkInfo = GetOrAddChunk(worldPos);
             var grid = chunkInfo.GetGrid(worldPos);
             grid->Remove(data);
             chunkInfo.EntityCount--;
             TryRemoveChunk(chunkInfo);
             TotalEntityCount--;
+        }
+
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int2 GridCoord2ChunkCoord(int2 gridCoord) {
+            return gridCoord >> Chunk.GridScalerBit;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int2 ChunkCoord2GridCoord(int2 chunkCoord) {
+            return chunkCoord << Chunk.GridScalerBit;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int2 WorldPos2ChunkCoord(int2 worldPos) {
+            return worldPos >> Chunk.WidthBit;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int2 ChunkCoord2WorldPos(int2 chunkCoord) {
+            return chunkCoord << Chunk.WidthBit;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int2 WorldPos2GridCoord(int2 worldPos) {
+            return worldPos >> Grid.WidthBit;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int2 GridCoord2WorldPos(int2 gridCoord) {
+            return gridCoord << Grid.WidthBit;
         }
     }
 }

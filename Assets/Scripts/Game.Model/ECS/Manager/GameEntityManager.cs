@@ -1,14 +1,13 @@
 using System.Collections.Generic;
 
 namespace GamesTan.ECS.Game {
+    
     [System.Serializable]
     public unsafe partial class GameEntityManager {
-        
         public enum EEntityType {
             Enemy,
             Bullet,
         }
-
         public GameEcsWorld World;
         public void DoAwake(GameEcsWorld world) {
             this.World = world;
@@ -24,7 +23,7 @@ namespace GamesTan.ECS.Game {
         public EntityList EnemyList => _enemyList;
         public int EnemyCount => _enemyPool.Count;
         private EntityList _enemyList = new EntityList();
-        public List<EntityData> GetEnemys() {
+        public List<EntityData> GetAllEnemy() {
             return _enemyList.GetInternalData();
         }
         public Enemy* GetEnemy(EntityData data) {
@@ -39,6 +38,30 @@ namespace GamesTan.ECS.Game {
         public void FreeEnemy(EntityData item) {
             if (_enemyList.Remove(item)) {
                 _enemyPool.QueueFree(item);
+            }
+        }
+        
+         
+        private NativePoolBullet _bulletPool = new NativePoolBullet();
+        public NativePoolBullet BulletPool => _bulletPool;
+        public EntityList BulletList => _bulletList;
+        public int BulletCount => _bulletPool.Count;
+        private EntityList _bulletList = new EntityList();
+        public List<EntityData> GetAllBullet() {
+            return _bulletList.GetInternalData();
+        }
+        public Bullet* GetBullet(EntityData data) {
+            return _bulletPool.GetData(data);
+        }
+
+        public EntityData AllocBullet() {
+            var data = _bulletPool.Alloc();
+            _bulletList.Add(data);
+            return data;
+        }
+        public void FreeBullet(EntityData item) {
+            if (_bulletList.Remove(item)) {
+                _bulletPool.QueueFree(item);
             }
         }
     }

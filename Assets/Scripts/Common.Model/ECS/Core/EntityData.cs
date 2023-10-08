@@ -32,8 +32,8 @@ namespace GamesTan.ECS {
 
 
         public EntityData(int typeId, int slotId, int version) {
-            Debug.Assert(typeId < 1 << TypeIdBitCount, "TypeId out of range " + typeId);
-            Debug.Assert(slotId < 1 << SlotBitCount, "EntityId out of range " + slotId);
+            DebugUtil.Assert(typeId < 1 << TypeIdBitCount, "TypeId out of range " + typeId);
+            DebugUtil.Assert(slotId < 1 << SlotBitCount, "EntityId out of range " + slotId);
             _InternalData = (uint)typeId << SlotBitCount | (uint)slotId;
             _InternalData2 = (UInt32)version;
         }

@@ -1,7 +1,18 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine.Profiling;
+using Debug = UnityEngine.Debug;
 
 namespace GamesTan.ECS {
+    public class DebugUtil {
+        [Conditional("UNITY_ASSERTIONS")]
+        public static void Assert(bool condition, object message) {
+            if (!condition) {
+                Debug.LogError(message);
+            }
+        }
+    }
+
     public class SystemGroup : IEcsSystem {
         public string Name { get; set; }
         public bool IsEnable { get; set; } = true;

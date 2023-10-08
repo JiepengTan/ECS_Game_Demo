@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using GamesTan.ECS;
 using GamesTan.ECS.Game;
 using Lockstep.InternalUnsafeECS;
 using Lockstep.UnsafeECS;
@@ -16,9 +17,9 @@ public struct RendererData {
     public float3 pos;
     public float3 rot;
     public float3 scale;
-    public AnimData anim;
+    public AnimRenderData anim;
 
-    public RendererData(int prefabIdx, float3 pos, float3 rot, float3 scale,  AnimData anim) {
+    public RendererData(int prefabIdx, float3 pos, float3 rot, float3 scale,  AnimRenderData anim) {
         this.prefabIdx = prefabIdx;
         this.rot = rot;
         this.pos = pos;
@@ -27,24 +28,7 @@ public struct RendererData {
     }
 }
 
-[System.Serializable]
-[StructLayout(LayoutKind.Sequential)]
-public struct AnimData {
-    /// <summary>
-    /// x: AnimFactor
-    /// y: FrameLerpFactor
-    /// z: FrameIdx
-    /// w: useless
-    /// </summary>
-    public float4 AnimInfo0;
-    public float4 AnimInfo1;
-    public float4 AnimInfo2;
-    public float4 AnimInfo3;
 
-    public override string ToString() {
-        return  $"anim1: AnimFactor:{AnimInfo0.x} FrameLerpFactor:{AnimInfo0.y} FrameIdx:{AnimInfo0.z}  \nAnimInfo1:{AnimInfo1}\nAnimInfo2:{AnimInfo2}\nAnimInfo3:{AnimInfo3}";
-    }
-}
 
 
 public unsafe class InstanceRenderData {
@@ -69,7 +53,7 @@ public unsafe class InstanceRenderData {
 
     public SortingData[] sortingData;
     
-    public AnimData[] animData;
+    public AnimRenderData[] animData;
 
 
     public Action OnLayoutChangedEvent;
@@ -170,7 +154,7 @@ public unsafe class InstanceRenderData {
 
         bounds = new InstanceBound[capacity];
         sortingData = new SortingData[capacity];
-        animData = new AnimData[capacity];
+        animData = new AnimRenderData[capacity];
         
     }
 }

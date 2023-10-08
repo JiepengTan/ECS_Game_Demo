@@ -8,8 +8,8 @@ namespace GamesTan.ECS.Game {
             base.Update(dt);
         }
         protected override void Update(ref Enemy entity, float dt) {
-            if (entity.InstancePrefabIdx != -1) {
-                _renderer.AddRenderData(new RendererData(entity.InstancePrefabIdx,entity.Pos,entity.Rot,entity.Scale,entity.AnimInfo));
+            if (entity.AssetData.InstancePrefabIdx != -1) {
+                _renderer.AddRenderData(new RendererData(entity.AssetData.InstancePrefabIdx,entity.TransformData.Pos,entity.TransformData. Rot,entity.TransformData.Scale,entity.AnimRenderData));
             }
         }
     }

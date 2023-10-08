@@ -1,5 +1,5 @@
 // Copyright 2019 谭杰鹏. All Rights Reserved //https://github.com/JiepengTan 
-
+#define  DEBUG
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +21,7 @@ namespace Lockstep.UnsafeECS {
             var ptr= Marshal.AllocHGlobal(size);
 #if DEBUG
             s_ptr2Size[(long)ptr] = size;
-            //Debug.LogError($"TotalCount { s_ptr2Size.Values.Sum() / 1024 /1024} MB");
+            Debug.LogError($"TotalCount { s_ptr2Size.Values.Sum() / 1024 /1024} MB");
 #endif
             return ptr;
         }

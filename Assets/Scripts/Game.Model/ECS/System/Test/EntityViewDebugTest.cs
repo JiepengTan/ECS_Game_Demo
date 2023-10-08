@@ -8,8 +8,8 @@ namespace GamesTan.ECS.Game {
         public void Update() {
             var entity = World.EntityManager.GetEnemy(Entity);
             if (entity != null) {
-                transform.position = entity->Pos;
-                transform.eulerAngles = entity->Rot;
+                transform.position = entity->TransformData.Pos;
+                transform.eulerAngles = entity->TransformData.Rot;
             }
         }
     }

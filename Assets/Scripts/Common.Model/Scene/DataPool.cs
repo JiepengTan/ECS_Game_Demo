@@ -42,7 +42,7 @@ namespace Gamestan.Spatial {
         internal UInt32 _InternalData2;
 
         public DataPtr(int slotId,int version) {
-            Debug.Assert(slotId < 1 << SlotBitCount, "EntityId out of range " + slotId);
+            DebugUtil.Assert(slotId < 1 << SlotBitCount, "EntityId out of range " + slotId);
             _InternalData = (uint)version << SlotBitCount | ((uint)slotId & SlotMask);
             _InternalData2 = 0;
         }
@@ -85,7 +85,7 @@ namespace Gamestan.Spatial {
             _typeId = typeId;
             _capacity = capacity;
             _length = 0;
-            Debug.Assert(_capacity < DataPtr.MaxSlotId, "Pool size too big !" + _capacity);
+            DebugUtil.Assert(_capacity < DataPtr.MaxSlotId, "Pool size too big !" + _capacity);
             _ary = (TItem*)UnsafeUtility.Malloc(UnsafeUtility.SizeOf<TItem>() * capacity);
             _freeList = (DataPtr*)UnsafeUtility.Malloc(UnsafeUtility.SizeOf<DataPtr>() * capacity);
 
@@ -121,7 +121,7 @@ namespace Gamestan.Spatial {
                 var oldCap = _capacity;
                 _capacity = (int)(_capacity * 1.4f);
                 if (_capacity > 10000) Debug.LogWarning($"{GetType().Name} Realloc {_capacity}");
-                Debug.Assert(_capacity < DataPtr.MaxSlotId, "Pool size too big !" + _capacity);
+                DebugUtil.Assert(_capacity < DataPtr.MaxSlotId, "Pool size too big !" + _capacity);
                 _ary = (TItem*)UnsafeUtility.Realloc(_ary, UnsafeUtility.SizeOf<TItem>() * oldCap,
                     UnsafeUtility.SizeOf<TItem>() * _capacity);
                 _freeList = (DataPtr*)UnsafeUtility.Realloc(_freeList, UnsafeUtility.SizeOf<DataPtr>() * oldCap,
@@ -134,7 +134,7 @@ namespace Gamestan.Spatial {
                 }
             }
 
-            Debug.Assert(_freeList[_length].Version < 0, "freeList version should <0");
+            DebugUtil.Assert(_freeList[_length].Version < 0, "freeList version should <0");
             var ret = _freeList[_length];
             ret.Version = DataPtr.MaxSlotId - (ret.Version+1);
             _freeList[_length] = ret;
@@ -152,7 +152,7 @@ namespace Gamestan.Spatial {
             }
 
             TItem* ptr = GetData(item);
-            Debug.Assert(ptr != null, $"{GetType().Name}Try to free a destroied entity {item}");
+            DebugUtil.Assert(ptr != null, $"{GetType().Name}Try to free a destroied entity {item}");
             if (ptr == null) {
                 return;
             }

@@ -5,6 +5,7 @@ using System.Text;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using GamesTan.ECS;
 using UnityEngine.UI;
 using Unity.Collections;
 using Unity.Mathematics;
@@ -744,7 +745,7 @@ public class IndirectRenderer : MonoBehaviour
         int computeShaderInputSize = Marshal.SizeOf(typeof(InstanceBound));
         int computeShaderDrawMatrixSize = Marshal.SizeOf(typeof(Indirect2x2Matrix));
         int computeSortingDataSize = Marshal.SizeOf(typeof(SortingData));
-        int computeAnimDataSize = Marshal.SizeOf(typeof(AnimData));
+        int computeAnimDataSize = Marshal.SizeOf(typeof(AnimRenderData));
         int computeIndexRemapDataSize = Marshal.SizeOf(typeof(uint));
         ReleaseInstanceBuffers();
         
@@ -1433,7 +1434,7 @@ public class IndirectRenderer : MonoBehaviour
     }
 
     private void LogInstanceAnimation(string prefix = "") {
-        AnimData[] infos = new AnimData[m_numberOfInstances];
+        AnimRenderData[] infos = new AnimRenderData[m_numberOfInstances];
         m_instancesDrawAnimData.GetData(infos);
         StringBuilder sb = new StringBuilder();
         if (!string.IsNullOrEmpty(prefix)) { sb.AppendLine(prefix); }

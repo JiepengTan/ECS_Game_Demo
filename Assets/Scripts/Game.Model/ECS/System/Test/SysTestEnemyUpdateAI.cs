@@ -7,13 +7,13 @@ namespace GamesTan.ECS.Game {
         
         [BurstCompile]
         protected override void Update(ref Enemy entity, float dt) {
-            entity.AITimer += dt;
-            if (entity.AITimer > 3) { // update ai
-                entity.AITimer = Services.RandomValue();
+            entity.AIData.AITimer += dt;
+            if (entity.AIData.AITimer > 3) { // update ai
+                entity.AIData.AITimer = Services.RandomValue();
                 entity.AIData.LerpInterval = 0.2f;
                 entity.AIData.LerpTimer = 0;
                 entity.AIData.TargetDeg = Services.RandomRange(0, 360);
-                entity.RotateSpeed = Services.RandomRange(-30, 30);
+                entity.PhysicData.RotateSpeed = Services.RandomRange(-30, 30);
             }
             ref var aiData = ref entity.AIData;
             aiData.LerpTimer += dt;
@@ -24,9 +24,9 @@ namespace GamesTan.ECS.Game {
             }
             else {
                 // auto move
-                entity.Pos += entity.Forward * entity.Speed * dt;
+                entity.TransformData.Pos += entity.Forward * entity.PhysicData.Speed * dt;
             }
-            //WorldRegion.Update(entity.__Data, ref entity.GridCoord, entity.Pos);
+            //WorldRegion.Update(entity.__Data, ref entity.PhysicData.GridCoord, entity.TransformData.Pos);
         }
     }
 }

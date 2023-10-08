@@ -9502,7 +9502,7 @@ MonoBehaviour:
     DeleteProbability: 0
     DeleteOrNewCountPerFrame: 162
     DebugOnlyOneEntity: 1
-    DebugEntityCount: 10000
+    DebugEntityCount: 8000
     DebugEntityBornPosRange: 150
     DebugStopAnimation: 0
     CurEnemyCount: 0
