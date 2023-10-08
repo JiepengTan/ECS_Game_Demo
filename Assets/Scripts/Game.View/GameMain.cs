@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using GamesTan.ECS.Game;
+using Lockstep.UnsafeECS;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.Profiling;
@@ -46,8 +47,9 @@ namespace GamesTan.Game.View {
         private void OnDestroy() {
             _curWorld.DoDestroy();
         }
-        
-        
 
+        private void OnApplicationQuit() {
+            NativeUtil.FreeAll();
+        }
     }
 }

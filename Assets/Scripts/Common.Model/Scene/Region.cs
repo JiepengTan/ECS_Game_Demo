@@ -133,7 +133,7 @@ namespace Gamestan.Spatial {
         public int TotalChunkCount => _coord2Data.Count;
         public int TotalEntityCount;
 
-        public void DoAwake(int initSizeKB = 512) {
+        public void DoAwake(int initSizeKB = 1024) {
             DebugUtil.Assert(Grid.MemSize == sizeof(Grid),
                 "Grid size is diff with GridMemSize , but some code is dependent on it");
             DebugUtil.Assert(Chunk.MemSize == sizeof(Chunk),

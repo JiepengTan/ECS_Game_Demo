@@ -1,27 +1,50 @@
 // Copyright 2019 谭杰鹏. All Rights Reserved //https://github.com/JiepengTan 
-#define  DEBUG
+//#define  LOG_MEM_OPT
+
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
-using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 namespace Lockstep.UnsafeECS {
     public class NativeUtil
     {
+        [Conditional("ENABLE_NATIVE_MEM_LOG")]
+        static void LogError(string msg) {
+            Debug.LogError(msg);
+        }
+
+        public static void FreeAll() {
+            var remainSum = s_ptr2Size.Values.Sum();
+            foreach (var pair in s_ptr2Size) {
+                Marshal.FreeHGlobal((IntPtr)pair.Key);
+            }
+            if (remainSum != 0) {
+                Debug.LogError($"Some Memory leak ! LeakCount= {remainSum}KB   ");
+            }
+        }
+
         private static Dictionary<long, int> s_ptr2Size = new Dictionary<long, int>();
-        public static void Free(IntPtr ptr){
+        private static HashSet<IntPtr> _ptrs = new HashSet<IntPtr>();
+        public static void Free(IntPtr ptr) {
+            _ptrs.Remove(ptr);
 #if DEBUG
+            int size = 0;
+            s_ptr2Size.TryGetValue((long)ptr,out size);
             s_ptr2Size.Remove((long)ptr);
+            LogError($"Free{size/1024}KB  TotalCount { s_ptr2Size.Values.Sum() / 1024 /1024} MB");
 #endif
             Marshal.FreeHGlobal(ptr);
         }
 
         public static IntPtr Alloc(int size){
             var ptr= Marshal.AllocHGlobal(size);
+            _ptrs.Add(ptr);
 #if DEBUG
             s_ptr2Size[(long)ptr] = size;
-            Debug.LogError($"TotalCount { s_ptr2Size.Values.Sum() / 1024 /1024} MB");
+            LogError($"Alloc size{size/1024}KB TotalCount { s_ptr2Size.Values.Sum() / 1024 /1024} MB");
 #endif
             return ptr;
         }
