@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 
 namespace GamesTan.ECS {
+
+    
     public unsafe class EntityList{
         private List<EntityData> _datas = new List<EntityData>();
         private Dictionary<uint, int> _data2SlotId = new Dictionary<uint, int>();

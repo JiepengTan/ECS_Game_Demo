@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 namespace GamesTan.ECS.Game {
-    public unsafe class DebugTestEntityView : MonoBehaviour {
+    public unsafe class EntityViewDebugTest : MonoBehaviour {
         public GameEcsWorld World;
         public EntityData Entity;
 

@@ -7,7 +7,7 @@ namespace GamesTan.ECS.Game {
             AddSystem(new SysTestEnemyUpdatePos());
             AddSystem(new SysTestEnemyUpdateAnimation());
             AddSystem(new SysTestDestroyEnemy());
-            AddSystem(new SysRenderUpload());
+            AddSystem(new SysTestRenderUpload());
             
         }
     }

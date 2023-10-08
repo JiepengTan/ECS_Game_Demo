@@ -68,12 +68,12 @@ namespace GamesTan.ECS.Game {
             return _enemyPool.GetData(data);
         }
 
-        public EntityData CreateEnemy() {
+        public EntityData AllocEnemy() {
             var data = _enemyPool.Alloc();
             _enemyList.Add(data);
             return data;
         }
-        public void DestroyEnemy(EntityData item) {
+        public void FreeEnemy(EntityData item) {
             if (_enemyList.Remove(item)) {
                 _enemyPool.QueueFree(item);
             }

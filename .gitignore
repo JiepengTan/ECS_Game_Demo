@@ -49,3 +49,6 @@ sysinfo.txt
 /Assets/Temp
 /Assets/SceneDependencyCache
 
+/ProjectSettings/BurstAotSettings_StandaloneWindows.json
+/ProjectSettings/CommonBurstAotSettings.json
+/ProjectSettings/TimelineSettings.asset

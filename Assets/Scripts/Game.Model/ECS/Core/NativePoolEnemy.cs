@@ -42,7 +42,7 @@ namespace GamesTan.ECS.Game {
                 // Don't initialize chunk.
                 _freeList[i] = new EntityData(_typeId, i, -1);
                 _ary[i] = new TItem();
-                _ary[i].__EntityData = _freeList[i];
+                _ary[i].__Data = _freeList[i];
             }
         }
 
@@ -74,7 +74,7 @@ namespace GamesTan.ECS.Game {
                     // Don't initialize chunk.
                     _freeList[i] = new EntityData(_typeId, i, -1);
                     _ary[i] = new TItem();
-                    _ary[i].__EntityData = _freeList[i];
+                    _ary[i].__Data = _freeList[i];
                 }
             }
 
@@ -84,7 +84,7 @@ namespace GamesTan.ECS.Game {
             ret.Version = -ret.Version;
             _freeList[_length] = ret;
             _ary[ret.SlotId] = new TItem();// reset the data
-            _ary[ret.SlotId].__EntityData =ret;
+            _ary[ret.SlotId].__Data =ret;
             _length++;
             _maxUsedSlot = Mathf.Max(_length,_maxUsedSlot);
             return ret;
@@ -102,8 +102,8 @@ namespace GamesTan.ECS.Game {
                 return;
             }
             _length--;
-            ptr->__EntityData.Version = -ptr->__EntityData.Version;
-            _freeList[_length] = ptr->__EntityData;
+            ptr->__Data.Version = -ptr->__Data.Version;
+            _freeList[_length] = ptr->__Data;
         }
 
         public TItem* GetData(EntityData entity) {
@@ -116,7 +116,7 @@ namespace GamesTan.ECS.Game {
             }
 
             var ptr = &_ary[entity.SlotId];
-            if (ptr->__EntityData.Version <= 0) {
+            if (ptr->__Data.Version <= 0) {
                 return null;
             }
 

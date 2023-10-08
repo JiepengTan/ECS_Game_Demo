@@ -10,9 +10,10 @@ namespace GamesTan.ECS.Game {
     [StructLayout(LayoutKind.Sequential)]
     public struct Bullet {
         /// <summary> Entity Data   /// </summary>
-        public EntityData __EntityData;
+        public EntityData __Data;
         /// <summary> GameObject Id   /// </summary>
         public int GObjectId;
+        public int2 GridCoord;
 
         /// <summary> 状态集合   /// </summary>
         public BitSet32 StatusData;

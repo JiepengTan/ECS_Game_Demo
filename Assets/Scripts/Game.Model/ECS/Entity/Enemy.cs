@@ -19,10 +19,11 @@ namespace GamesTan.ECS.Game {
     [System.Serializable]
     [StructLayout(LayoutKind.Sequential)]
     public struct Enemy {
-        public EntityData __EntityData;
-
+        public EntityData __Data;
         /// <summary> GameObject Id   /// </summary>
         public int GObjectId;
+        
+        public int2 GridCoord;
         
         /// <summary> 状态集合   /// </summary>
         public BitSet32 StatusData;
@@ -32,7 +33,7 @@ namespace GamesTan.ECS.Game {
         /// <summary> Prefab 下标，用于Instance 批量渲染   /// </summary>
         public int InstancePrefabIdx;
 
-        public bool IsValid => __EntityData.Version > 0;
+        public bool IsValid => __Data.Version > 0;
         /// <summary> 是否已经释放   /// </summary>
         public bool IsDoneStart {
             get => StatusData.Is(0);
@@ -93,7 +94,7 @@ namespace GamesTan.ECS.Game {
         public AnimInternalData AnimInternalData;
         
         public override string ToString() {
-            return __EntityData.ToString();
+            return __Data.ToString();
         }
     }
     [System.Serializable]

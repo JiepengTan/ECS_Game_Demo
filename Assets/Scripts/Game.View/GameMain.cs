@@ -25,7 +25,7 @@ namespace GamesTan.Game.View {
                 _curWorld._services = _curService;
             }
             else {
-                _curWorld.Services.transform = transform;
+                _curWorld.Services.ViewRoot = transform;
                 _curService = _curWorld.Services;
             }
             _curWorld.DoAwake();
