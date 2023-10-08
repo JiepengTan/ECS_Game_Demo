@@ -28,5 +28,8 @@ namespace GamesTan.ECS.Game {
         public Transform ViewRoot;
         public Dictionary<int, GameObject> Id2View = new Dictionary<int, GameObject>();
         public int GlobalViewId;
+        
+        public override void DoDestroy() {
+        }
     }
 }

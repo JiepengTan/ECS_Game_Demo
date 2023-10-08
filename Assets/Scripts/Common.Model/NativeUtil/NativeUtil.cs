@@ -1,6 +1,6 @@
 // Copyright 2019 谭杰鹏. All Rights Reserved //https://github.com/JiepengTan 
-//#define  LOG_MEM_OPT
-
+#define ENABLE_NATIVE_MEM_LOG
+#define DEBUG
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -12,17 +12,22 @@ namespace Lockstep.UnsafeECS {
     public class NativeUtil
     {
         [Conditional("ENABLE_NATIVE_MEM_LOG")]
+        static void Log(string msg) {
+            Debug.Log(msg);
+        }
+        [Conditional("ENABLE_NATIVE_MEM_LOG")]
         static void LogError(string msg) {
             Debug.LogError(msg);
         }
 
         public static void FreeAll() {
             var remainSum = s_ptr2Size.Values.Sum();
-            foreach (var pair in s_ptr2Size) {
-                Marshal.FreeHGlobal((IntPtr)pair.Key);
-            }
             if (remainSum != 0) {
                 Debug.LogError($"Some Memory leak ! LeakCount= {remainSum/1024.0f /1024}MB   ");
+            }
+            foreach (var pair in s_ptr2Size) {
+                Debug.LogError($"Memory leak ptr = {pair.Key} size = { pair.Value}" );
+                Marshal.FreeHGlobal((IntPtr)pair.Key);
             }
             s_ptr2Size.Clear();
         }
@@ -35,7 +40,7 @@ namespace Lockstep.UnsafeECS {
             int size = 0;
             s_ptr2Size.TryGetValue((long)ptr,out size);
             s_ptr2Size.Remove((long)ptr);
-            LogError($"Free{size/1024}KB  TotalCount { s_ptr2Size.Values.Sum() / 1024 /1024} MB");
+            Log($"Free ptr={(long)ptr} size={size/1024}KB  TotalCount { s_ptr2Size.Values.Sum() / 1024 /1024} MB");
 #endif
             Marshal.FreeHGlobal(ptr);
         }
@@ -45,7 +50,7 @@ namespace Lockstep.UnsafeECS {
             _ptrs.Add(ptr);
 #if DEBUG
             s_ptr2Size[(long)ptr] = size;
-            LogError($"Alloc size{size/1024}KB TotalCount { s_ptr2Size.Values.Sum() / 1024 /1024} MB");
+            Log($"Alloc ptr={(long)ptr} size={size/1024}KB TotalCount { s_ptr2Size.Values.Sum() / 1024 /1024} MB ");
 #endif
             return ptr;
         }

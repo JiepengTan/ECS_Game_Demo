@@ -43,6 +43,8 @@ namespace GamesTan.ECS.Game {
 
 
         public void DoDestroy() {
+            Services.DoDestroy();
+            EntityManager.DoDestroy();
             WorldRegion.DoDestroy();
         }
 

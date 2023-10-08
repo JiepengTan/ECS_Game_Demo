@@ -16,6 +16,12 @@ namespace GamesTan.ECS.Game {
 
         private void CreatePools() {
             _enemyPool.Init((int)EEntityType.Enemy, 200);
+            _bulletPool.Init((int)EEntityType.Bullet, 200);
+        }
+
+        public void DoDestroy() {
+            _enemyPool.Destroy();
+            _bulletPool.Destroy();
         }
 
         private NativePoolEnemy _enemyPool = new NativePoolEnemy();
