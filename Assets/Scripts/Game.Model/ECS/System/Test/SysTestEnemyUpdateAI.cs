@@ -1,8 +1,11 @@
 ﻿using System.Collections.Generic;
+using Unity.Burst;
 using Unity.Mathematics;
 
 namespace GamesTan.ECS.Game {
     public unsafe partial class SysTestEnemyUpdateAI : BaseEntityUpdateSystem {
+        
+        [BurstCompile]
         protected override void Update(ref Enemy entity, float dt) {
             entity.AITimer += dt;
             if (entity.AITimer > 3) { // update ai

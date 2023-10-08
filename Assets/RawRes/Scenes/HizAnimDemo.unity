@@ -9500,13 +9500,13 @@ MonoBehaviour:
     TimeSinceLevelLoad: 0
     Frame: 0
     DeleteProbability: 0
-    DeleteOrNewCountPerFrame: 20
+    DeleteOrNewCountPerFrame: 162
     DebugOnlyOneEntity: 1
-    DebugEntityCount: 5
-    DebugEntityBornPosRange: 5
+    DebugEntityCount: 10000
+    DebugEntityBornPosRange: 150
     DebugStopAnimation: 0
     CurEnemyCount: 0
-    IsCreateView: 1
+    IsCreateView: 0
     ViewRoot: {fileID: 365310895}
     GlobalViewId: 0
 --- !u!4 &365310895
@@ -16290,7 +16290,7 @@ MonoBehaviour:
   eventSystem: {fileID: 0}
   lockXRotation: 0
   minSpeed: 10
-  mainSpeed: 10
+  mainSpeed: 20
   shiftMultiplier: 2
   maxShift: 1000
   camSens: 0.35

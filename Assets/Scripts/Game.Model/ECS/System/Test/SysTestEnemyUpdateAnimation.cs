@@ -1,8 +1,10 @@
-﻿using Unity.Mathematics;
+﻿using Unity.Burst;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace GamesTan.ECS.Game {
     public unsafe partial class SysTestEnemyUpdateAnimation : BaseEntityUpdateSystem {
+        [BurstCompile]
         protected override void Update(ref Enemy entity, float dt) {
             ref var internalData = ref entity.AnimInternalData;
             if (!Services.DebugStopAnimation) {

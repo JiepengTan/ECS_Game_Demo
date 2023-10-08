@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using GamesTan.ECS.Game;
 using Lockstep.InternalUnsafeECS;
 using Lockstep.UnsafeECS;
+using Unity.Burst;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -78,6 +80,7 @@ public unsafe class InstanceRenderData {
         }
     }
 
+    [BurstCompile]
     public void OnFrameEnd() {
         var totalCount =0;
         for (int i = 0; i < RenderData.Count; i++) {
@@ -122,12 +125,14 @@ public unsafe class InstanceRenderData {
         isDirty = true;
     }
 
-    
+    [BurstCompile]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void AddRenderData(RendererData data) {
         RenderData[data.prefabIdx].Add(data);
     }
 
 
+    [BurstCompile]
     public void ResetLayout(List<int> configs, List<int> counts,bool isInit = false) {
         this._configs = configs;
         this._counts = counts;
