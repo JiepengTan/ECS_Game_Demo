@@ -11,7 +11,7 @@ namespace Lockstep.InternalUnsafeECS {
     public static class UnsafeUtility
     {
         public static long TotalAllocSize;
-        public static unsafe void* Malloc(long size, int alignment =1, Allocator allocator = Allocator.Persistent){
+        public static unsafe void* Malloc(long size, int alignment =8, Allocator allocator = Allocator.Persistent){
             var remain = size % alignment;
             if (remain != 0) {
                 size = size + (alignment - remain);
@@ -20,7 +20,7 @@ namespace Lockstep.InternalUnsafeECS {
             TotalAllocSize += size;
             return UnsafeECS.NativeUtil.Alloc((int) size).ToPointer();
         }
-        public static unsafe void* Realloc(void* rawPtr,int rawSize, long size, int alignment =1, Allocator allocator = Allocator.Persistent){
+        public static unsafe void* Realloc(void* rawPtr,int rawSize, long size, int alignment =8, Allocator allocator = Allocator.Persistent){
             if (size <= rawSize) {
                 throw new Exception("ReAlloc size invalid !");
             }

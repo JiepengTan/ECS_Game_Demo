@@ -17,6 +17,7 @@ namespace GamesTan.ECS.Game {
                     enemy->PhysicData.RotateSpeed = 10;
                     enemy->TransformData.Scale = new float3(1, 1, 1) * (Services.RandomValue()*0.5f+0.5f);
                     enemy->TransformData.Pos = new float3(Services.RandomValue() * dist, 0, Services.RandomValue() * dist);
+                    
                     enemy->DegY = Services.RandomValue()*360;
                     enemy->AnimInternalData.Timer = Services.RandomValue() * 3;
                     enemy->AnimInternalData.AnimId1[0] = Services.RandomRange(0,3) ;

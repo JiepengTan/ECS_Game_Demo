@@ -22,59 +22,17 @@ namespace Gamestan.Spatial {
         public const int MemSize = (ArySize + 1) * 8; // 64
 
         [FieldOffset(0)] public int Count;
-        [FieldOffset(4)] public UInt32 ExtDataPtr; // 同一个格子内部太多物体的时候，使用外链进行存储
+        [FieldOffset(4)] public UInt32 NextGridPtr; // 同一个格子内部太多物体的时候，使用外链进行存储
         [FieldOffset(8)] public fixed EntityStorageData Entities[ArySize];
-        public bool IsLocalFull => Count == ArySize;
+        public bool IsLocalFull => Count >= ArySize;
+        public bool HasExtData => NextGridPtr == 0;
 
-        // TODO  完成数据的存储
-        public EntityData GetEntity(uint idx) {
-            if (idx > Count) return EntityData.DefaultObject;
-            if (IsLocalFull) {
-                Debug.LogError("TODO implements ");
-                return EntityData.DefaultObject;
-            }
-
-            return (EntityData)(Entities[idx]);
-        }
-
-        public void Add(EntityData entityData) {
-            if (IsLocalFull) {
-                Debug.LogError("TODO implements ");
-                return;
-            }
-
-            Entities[Count] = (EntityStorageData)entityData;
-            Count++;
-        }
-
-        public bool Remove(EntityData entityData) {
-            var data = (EntityStorageData)entityData;
-            int count = Count <= ArySize ? Count : ArySize;
-            for (int i = 0; i < count; i++) {
-                if (Entities[i] == data) {
-                    Count--;
-                    Entities[i] = Entities[Count];
-                    Entities[Count] = EntityData.DefaultObjectIntData;
-                    return true;
-                }
-            }
-
-            return false;
-        }
 
         public override string ToString() {
             return base.ToString();
         }
     }
 
-    [System.Serializable]
-    [StructLayout(LayoutKind.Explicit)]
-    public unsafe struct GridExtLink {
-        [FieldOffset(0)] public DataPtr __Data;
-
-        [FieldOffset(8)] public fixed EntityStorageData Entities[15];
-        // TODO implement
-    }
 
     [System.Serializable]
     [StructLayout(LayoutKind.Explicit)]
@@ -126,29 +84,45 @@ namespace Gamestan.Spatial {
         }
     }
 
+
     public unsafe class Region {
         private Dictionary<int2, ChunkInfo> _coord2Data = new Dictionary<int2, ChunkInfo>();
         private Stack<ChunkInfo> _freeList = new Stack<ChunkInfo>();
 
+        private Grid* _extraGrids = null;
+        private Stack<UInt32> _freeExtraGrids = new Stack<UInt32>();
+        private int _extGridsCapacity;
         public int TotalChunkCount => _coord2Data.Count;
         public int TotalEntityCount;
 
+
         public void DoAwake(int initSizeKB = 1024) {
+            initSizeKB = math.max(initSizeKB, 128);
             DebugUtil.Assert(Grid.MemSize == sizeof(Grid),
                 "Grid size is diff with GridMemSize , but some code is dependent on it");
             DebugUtil.Assert(Chunk.MemSize == sizeof(Chunk),
                 "Grid size is diff with GridMemSize , but some code is dependent on it");
-            int capacity = initSizeKB * 1024 / Chunk.MemSize;
-            int totalSize = UnsafeUtility.SizeOf<Chunk>() * capacity;
-            var chunks = (Chunk*)UnsafeUtility.Malloc(totalSize);
-            _coord2Data.EnsureCapacity(initSizeKB);
-            UnsafeUtility.MemClear(chunks, totalSize);
-            for (int i = 0; i < capacity; i++) {
-                var chunkPtr = &chunks[i];
-                var chunk = new ChunkInfo();
-                chunk.Ptr = chunkPtr;
-                chunk.IsNeedFree = i==0;// only the first chunk need to free
-                _freeList.Push(chunk);
+            {
+                int totalSize = initSizeKB * 1024 ;
+                int capacity = totalSize / UnsafeUtility.SizeOf<Chunk>() ;
+                var chunks = (Chunk*)UnsafeUtility.Malloc(totalSize);
+                _coord2Data.EnsureCapacity(initSizeKB);
+                UnsafeUtility.MemClear(chunks, totalSize);
+                for (int i = 0; i < capacity; i++) {
+                    var chunkPtr = &chunks[i];
+                    var chunk = new ChunkInfo();
+                    chunk.Ptr = chunkPtr;
+                    chunk.IsNeedFree = i == 0; // only the first chunk need to free
+                    _freeList.Push(chunk);
+                }
+            }
+            {
+                int totalSize  = initSizeKB * 128; //   1/8 size of AllChunkSize
+                _extGridsCapacity = totalSize / UnsafeUtility.SizeOf<Grid>();
+                _extraGrids = (Grid*)UnsafeUtility.Malloc(totalSize);
+                for (int i = _extGridsCapacity-1; i >=0; --i) {
+                    _freeExtraGrids.Push((UInt32)(i));
+                }
             }
         }
 
@@ -158,6 +132,7 @@ namespace Gamestan.Spatial {
                     UnsafeUtility.Free((void*)chunk.Ptr);
                     chunk.Ptr = null;
                 }
+
                 chunk.Ptr = null;
             }
 
@@ -170,6 +145,81 @@ namespace Gamestan.Spatial {
             }
 
             _coord2Data.Clear();
+
+            if (_extraGrids != null) {
+                UnsafeUtility.Free(_extraGrids);
+                _extraGrids = null;
+            }
+
+            _extGridsCapacity = 0;
+            _freeExtraGrids.Clear();
+        }
+
+
+
+        public void Update(EntityData data, ref int2 coord, float3 pos) {
+            var pos2 = new float2(pos.x, pos.z);
+            var worldPos = (int2)math.floor(pos2);
+            var newCoord = WorldPos2GridCoord(worldPos);
+            if (!newCoord.Equals(coord)) {
+                var gridCenter = (coord + new int2(1, 1));
+                var diff = math.abs(pos2 - gridCenter);
+                if (!math.any(diff > Grid.Width))
+                    return;
+                var lastChunkCoord = GridCoord2ChunkCoord(coord);
+                var curChunkCoord = GridCoord2ChunkCoord(newCoord);
+                var isNeedUpdateChunk = lastChunkCoord.Equals(curChunkCoord);
+                if (isNeedUpdateChunk) {
+                    // move chunk
+                    var lastPos = GridCoord2WorldPos(coord);
+                    var lastChunk = GetOrAddChunk(lastPos);
+                    var lastGrid = lastChunk.GetGrid(lastPos);
+                    var succ = RemoveGridEntity(lastGrid, data);
+                    DebugUtil.Assert(succ, "Remove EntityFailed!");
+                    var curPos = GridCoord2WorldPos(newCoord);
+                    var curChunk = GetOrAddChunk(curPos);
+                    var curGrid = curChunk.GetGrid(curPos);
+                    AddGridEntity(curGrid, data);
+                }
+                else {
+                    // move grid
+                    var lastPos = GridCoord2WorldPos(coord);
+                    var lastChunk = GetOrAddChunk(lastPos);
+                    var lastGrid = lastChunk.GetGrid(lastPos);
+                    var succ = RemoveGridEntity(lastGrid, data);
+                    DebugUtil.Assert(succ, "Remove EntityFailed!");
+
+                    var curPos = GridCoord2WorldPos(newCoord);
+                    var curGrid = lastChunk.GetGrid(curPos);
+                    AddGridEntity(curGrid, data);
+                }
+
+                coord = newCoord;
+            }
+        }
+
+
+        public int2 AddEntity(EntityData data, float3 pos) {
+            var worldPos = (int2)math.floor(new float2(pos.x, pos.z));
+            var chunkInfo = GetOrAddChunk(worldPos);
+            var grid = chunkInfo.GetGrid(worldPos);
+            AddGridEntity(grid, data);
+            chunkInfo.EntityCount++;
+            TotalEntityCount++;
+            return WorldPos2GridCoord(worldPos);
+        }
+
+        public void RemoveEntity(EntityData data, int2 gridCoord) {
+            var worldPos = GridCoord2WorldPos(gridCoord);
+            var chunkInfo = GetOrAddChunk(worldPos);
+            var grid = chunkInfo.GetGrid(worldPos);
+            if (RemoveGridEntity(grid, data)) {
+                chunkInfo.EntityCount--;
+                if (chunkInfo.EntityCount == 0) {
+                    FreeChunk(chunkInfo);
+                }
+                TotalEntityCount--;
+            }
         }
 
         private ChunkInfo AllocChunk() {
@@ -189,11 +239,9 @@ namespace Gamestan.Spatial {
             return info;
         }
 
-        private void TryRemoveChunk(ChunkInfo chunk) {
-            if (chunk.EntityCount == 0) {
-                _freeList.Push(chunk);
-                _coord2Data.Remove(chunk.Coord);
-            }
+        private void FreeChunk(ChunkInfo chunk) {
+            _freeList.Push(chunk);
+            _coord2Data.Remove(chunk.Coord);
         }
 
         private ChunkInfo GetOrAddChunk(int2 worldPos) {
@@ -207,69 +255,121 @@ namespace Gamestan.Spatial {
 
             return chunkInfo;
         }
-
-
-        public void Update(EntityData data, ref int2 coord, float3 pos) {
-            var pos2 = new float2(pos.x, pos.z);
-            var worldPos = (int2)math.floor(pos2);
-            var newCoord = WorldPos2GridCoord(worldPos);
-            if (!newCoord.Equals(coord)) {
-                var gridCenter = (coord + new int2(1, 1));
-                var diff = math.abs(pos2 - gridCenter);
-                if (!math.any(diff > Grid.Width))
-                    return;
-                var lastChunkCoord = GridCoord2ChunkCoord(coord);
-                var curChunkCoord = GridCoord2ChunkCoord(newCoord);
-                coord = newCoord;
-                var isNeedUpdateChunk = lastChunkCoord.Equals(curChunkCoord);
-                if (isNeedUpdateChunk) {
-                    // move chunk
-                    var lastPos = GridCoord2WorldPos(coord);
-                    var lastChunk = GetOrAddChunk(lastPos);
-                    var lastGrid = lastChunk.GetGrid(lastPos);
-                    lastGrid->Remove(data);
-
-                    var curPos = GridCoord2WorldPos(newCoord);
-                    var curChunk = GetOrAddChunk(curPos);
-                    var curGrid = curChunk.GetGrid(curPos);
-                    curGrid->Add(data);
-                }
-                else {
-                    // move grid
-                    var lastPos = GridCoord2WorldPos(coord);
-                    var lastChunk = GetOrAddChunk(lastPos);
-                    var lastGrid = lastChunk.GetGrid(lastPos);
-                    lastGrid->Remove(data);
-
-                    var curPos = GridCoord2WorldPos(newCoord);
-                    var curGrid = lastChunk.GetGrid(curPos);
-                    curGrid->Add(data);
+        
+        private UInt32 AllocExtGrid() {
+            if (_freeExtraGrids.Count == 0) {
+                var rawCap = _extGridsCapacity;
+                _extGridsCapacity *= 2;
+                int rawSize = UnsafeUtility.SizeOf<Chunk>() * rawCap;
+                int totalSize = UnsafeUtility.SizeOf<Chunk>() * _extGridsCapacity;
+                UnsafeUtility.Realloc(_extraGrids, rawSize, totalSize);
+                for (int i = _extGridsCapacity - 1; i >=rawCap; --i) {
+                    _freeExtraGrids.Push((UInt32)i);
                 }
             }
+            return _freeExtraGrids.Pop();
         }
 
-
-        public int2 AddEntity(EntityData data, float3 pos) {
-            var worldPos = (int2)math.floor(new float2(pos.x, pos.z));
-            var chunkInfo = GetOrAddChunk(worldPos);
-            var grid = chunkInfo.GetGrid(worldPos);
-            grid->Add(data);
-            chunkInfo.EntityCount++;
-            TotalEntityCount++;
-            return WorldPos2GridCoord(worldPos);
+        private void FreeExtraGrid(UInt32 extraGridPtr) {
+            _freeExtraGrids.Push(extraGridPtr);
         }
 
-        public void RemoveEntity(EntityData data, int2 gridCoord) {
-            var worldPos = GridCoord2WorldPos(gridCoord);
-            var chunkInfo = GetOrAddChunk(worldPos);
-            var grid = chunkInfo.GetGrid(worldPos);
-            if (grid->Remove(data)) {
-                chunkInfo.EntityCount--;
-                TryRemoveChunk(chunkInfo);
-                TotalEntityCount--;
+        private Grid* GetExtraGrid(UInt32 extraGridPtr) {
+            DebugUtil.Assert(extraGridPtr < _extGridsCapacity, "Invalid ExtraGrid Index");
+            if (extraGridPtr >= _extGridsCapacity)
+                return null;
+            return &_extraGrids[extraGridPtr];
+        }
+
+        private void AddGridEntity(Grid* grid, EntityData entityData) {
+            int count = grid->Count;
+            if (count >= Grid.ArySize) {
+                var offset = count % Grid.ArySize;
+                Grid* lastGrid = grid;
+                for (int i = Grid.ArySize; i < count; i+=Grid.ArySize) {
+                    lastGrid = GetExtraGrid(lastGrid->NextGridPtr);
+                }
+                if (offset == 0) {
+                    lastGrid->NextGridPtr = AllocExtGrid();
+                }
+                lastGrid->Entities[offset] = (EntityStorageData)entityData;
+                grid->Count++;
+                return;
             }
+
+            grid->Entities[grid->Count] = (EntityStorageData)entityData;
+            grid->Count++;
         }
 
+        private bool RemoveGridEntity(Grid* grid, EntityData entityData) {
+            var entity = (EntityStorageData)entityData;
+            int count = grid->Count;
+            if (count >= Grid.ArySize) {
+                //1. 找到匹配的 Grid*, 和对应的 Entity下标
+                Grid* matchGrid = null;
+                int matchOffset = 0;
+                Grid* curGrid = grid;
+                for (int i = 0; i < count; i++) {
+                    var offset = i % Grid.ArySize;
+                    if (offset ==0 && i != 0) {
+                        curGrid = GetExtraGrid(curGrid->NextGridPtr);
+                    }
+                    if (curGrid->Entities[offset] == entity) {
+                        matchGrid = curGrid;
+                        matchOffset = offset;
+                        break;
+                    }
+                }
+
+                if (matchGrid == null) 
+                    return false; // no match
+                
+                //2. 找到最后一个EntityData 
+                EntityStorageData lastEntity = 0;
+                curGrid = grid;
+                Grid* preGrid = null;
+                for (int i = 0; i < count; i++) {
+                    var offset = i % Grid.ArySize;
+                    if (offset == 0 && i != 0) {
+                        preGrid = curGrid;
+                        curGrid = GetExtraGrid(curGrid->NextGridPtr);
+                    }
+                    if (i == count - 1) {
+                        lastEntity = curGrid->Entities[offset];
+                    }
+                }
+                //3. 覆盖数据，count--;
+                matchGrid->Entities[matchOffset] = lastEntity;
+                
+                //4. 如果最后一个 Grid 空了，记得释放 Grid
+                if (count % Grid.ArySize == 1) {
+                    FreeExtraGrid(preGrid->NextGridPtr);
+                }
+                return true;
+            }
+            
+            for (int i = 0; i < count; i++) {
+                if (grid->Entities[i] == entity) {
+                    grid->Count--;
+                    grid->Entities[i] = grid->Entities[grid->Count];
+                    grid->Entities[grid->Count] = EntityData.DefaultObjectIntData;
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private EntityData GetGridEntity(Grid* grid, uint idx) {
+            if (idx > grid->Count) return EntityData.DefaultObject;
+            if (grid->IsLocalFull) {
+                Debug.LogError("TODO implements ");
+                return EntityData.DefaultObject;
+            }
+
+            return (EntityData)(grid->Entities[idx]);
+        }
+        
+        
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int2 GridCoord2ChunkCoord(int2 gridCoord) {
