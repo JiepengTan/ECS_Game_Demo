@@ -197,6 +197,7 @@ namespace Gamestan.Spatial {
                 info = new ChunkInfo();
                 info.Ptr = (Chunk*)ptr;
                 info.Region = this;
+                info.IsNeedFree = true;
                 _totalChunkCount++;
             }
 
