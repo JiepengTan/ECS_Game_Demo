@@ -128,7 +128,7 @@ namespace Gamestan.Spatial {
         }
 
         public int2 AddEntity(EntityData data,ref int2 coord, float3 pos) {
-            if (IsDebugMode) Debug.Log($"AddEntity {data} pos:{pos}");
+            //if (IsDebugMode) Debug.Log($"AddEntity {data} pos:{pos}");
             var worldPos = (int2)math.floor(new float2(pos.x, pos.z));
             coord = WorldPos2GridCoord(worldPos);
             var chunkInfo = GetOrAddChunk(worldPos);
@@ -138,7 +138,7 @@ namespace Gamestan.Spatial {
         }
 
         public bool RemoveEntity(EntityData data, int2 gridCoord) {
-            if (IsDebugMode) Debug.Log($"RemoveEntity {data} gridCoord:{gridCoord}");
+            //if (IsDebugMode) Debug.Log($"RemoveEntity {data} gridCoord:{gridCoord}");
             var worldPos = GridCoord2WorldPos(gridCoord);
             var chunkInfo = GetOrAddChunk(worldPos);
             var isSucc = chunkInfo.RemoveEntity(data, worldPos);
@@ -200,7 +200,12 @@ namespace Gamestan.Spatial {
                 }
             }
 
-            return _freeExtraGrids.Pop();
+            var id =  _freeExtraGrids.Pop();
+            if (IsDebugMode) {
+                Debug.Log($"AllocExtGrid {id}  remain:{_freeExtraGrids.Count}"  );
+            }
+
+            return id;
         }
 
         public void FreeExtraGrid(UInt32 extraGridPtr) {
@@ -211,6 +216,9 @@ namespace Gamestan.Spatial {
             }
 
             _freeExtraGrids.Push(extraGridPtr);
+            if (IsDebugMode) {
+                Debug.Log($"FreeExtraGrid {extraGridPtr}  remain:{_freeExtraGrids.Count}"  );
+            }
         }
 
         public Grid* GetExtraGrid(UInt32 extraGridPtr) {

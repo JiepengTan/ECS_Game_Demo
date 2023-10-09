@@ -1,4 +1,5 @@
-﻿using System;
+﻿#define DEBUG_REGION 
+using System;
 using System.Diagnostics;
 using GamesTan.ECS;
 using Unity.Mathematics;
@@ -59,7 +60,7 @@ namespace Gamestan.Spatial {
                 return;
             }
 
-            DebugUtil.Assert(succ, $"MoveEntity Failed CrossChunk");
+            DebugUtil.Assert(succ, $"MoveEntity Failed CrossChunk {Coord}=>{newChunk.Coord} worldPos:{lastPos} =>{newPos} entity:{data}  {this} newChunk {newChunk} ");
             RemoveGridEntity(lastGrid, data);
         }
 
@@ -73,7 +74,7 @@ namespace Gamestan.Spatial {
                 DebugDump($"MoveEntity After InChunk {Coord} worldPos:{lastPos} =>{newPos}  entity:{data} ");
                 return;
             }
-            DebugUtil.Assert(succ, $"MoveEntity Failed InChunk");
+            DebugUtil.Assert(succ, $"MoveEntity Failed InChunk {Coord} worldPos:{lastPos} =>{newPos}  entity:{data} {this}");
             RemoveGridEntity(lastGrid, data);
         }
 
@@ -119,8 +120,12 @@ namespace Gamestan.Spatial {
         }
 
         public bool RemoveGridEntity(Grid* grid, EntityData entityData) {
+            if (Region.IsDebugMode) {
+                Debug.Log($"RemoveGridEntity Before  remainCount:{grid->Count} ");
+            }
             var entity = (UInt64)entityData;
             int count = grid->Count;
+            int matchIdx = 0;
             if (count >= Grid.ArySize) {
                 //1. 找到匹配的 Grid*, 和对应的 Entity下标
                 Grid* matchGrid = null;
@@ -135,6 +140,7 @@ namespace Gamestan.Spatial {
                     if (curGrid->Entities[offset] == entity) {
                         matchGrid = curGrid;
                         matchOffset = offset;
+                        matchIdx = i;
                         break;
                     }
                 }
@@ -164,6 +170,11 @@ namespace Gamestan.Spatial {
                 //4. 如果最后一个 Grid 空了，记得释放 Grid
                 if (count % Grid.ArySize == 1) {
                     Region.FreeExtraGrid(preGrid->NextGridPtr);
+                    preGrid->NextGridPtr = 0;
+                }
+
+                if (Region.IsDebugMode) {
+                    Debug.Log($"RemoveGridEntity After {matchIdx} remainCount:{grid->Count} ");
                 }
 
                 return true;
@@ -171,9 +182,13 @@ namespace Gamestan.Spatial {
 
             for (int i = 0; i < count; i++) {
                 if (grid->Entities[i] == entity) {
+                    matchIdx = i;
                     grid->Count--;
                     grid->Entities[i] = grid->Entities[grid->Count];
                     grid->Entities[grid->Count] = EntityData.DefaultObjectIntData;
+                    if (Region.IsDebugMode) {
+                        Debug.Log($"RemoveGridEntity Local After {matchIdx} remainCount:{grid->Count} ");
+                    }
                     return true;
                 }
             }

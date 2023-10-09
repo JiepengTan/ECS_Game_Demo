@@ -57,7 +57,7 @@ namespace Gamestan.Spatial {
             }
 
             for (int i = 0; i < datas.Count; i++) {
-                sb.Append(i + ": " + datas[i].ToString());
+                sb.Append(datas[i]._InternalData + ", ");
                 if (!isOneLine) {
                     sb.AppendLine();
                 }

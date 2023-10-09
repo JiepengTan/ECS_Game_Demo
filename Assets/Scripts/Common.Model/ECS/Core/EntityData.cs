@@ -53,7 +53,7 @@ namespace GamesTan.ECS {
         }
 
         public override string ToString() {
-            return $" typeId{TypeId} SlotId:{SlotId} Version:{Version}";
+            return $" typeId{TypeId} SlotId:{SlotId} Version:{Version} _data:{_InternalData}";
         }
 
         public static bool operator ==(EntityData lhs, EntityData rhs) {
