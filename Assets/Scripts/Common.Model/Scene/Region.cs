@@ -12,14 +12,14 @@ using Debug = UnityEngine.Debug;
 
 namespace Gamestan.Spatial {
     public unsafe class Region {
-        private Dictionary<int2, ChunkInfo> _coord2Data = new Dictionary<int2, ChunkInfo>();
+        private Dictionary<int2, ChunkInfo> _chunkCoord2Info = new Dictionary<int2, ChunkInfo>();
         private Stack<ChunkInfo> _freeList = new Stack<ChunkInfo>();
 
         public static Region Instance;
         private Grid* _extraGrids = null;
         private Stack<UInt32> _freeExtraGrids = new Stack<UInt32>();
         private int _extGridsCapacity;
-        public int TotalChunkCount => _coord2Data.Count;
+        public int TotalChunkCount => _chunkCoord2Info.Count;
         public int TotalEntityCount;
 
         public static bool IsDebugMode = false;
@@ -34,7 +34,7 @@ namespace Gamestan.Spatial {
                 int totalSize = initSizeKB * 1024;
                 int capacity = totalSize / UnsafeUtility.SizeOf<Chunk>();
                 var chunks = (Chunk*)UnsafeUtility.Malloc(totalSize);
-                _coord2Data.EnsureCapacity(initSizeKB);
+                _chunkCoord2Info.EnsureCapacity(initSizeKB);
                 UnsafeUtility.MemClear(chunks, totalSize);
                 for (int i = 0; i < capacity; i++) {
                     var chunkPtr = &chunks[i];
@@ -69,14 +69,14 @@ namespace Gamestan.Spatial {
             }
 
             _freeList.Clear();
-            foreach (var chunk in _coord2Data.Values) {
+            foreach (var chunk in _chunkCoord2Info.Values) {
                 if (chunk.IsNeedFree && chunk.Ptr != null) {
                     UnsafeUtility.Free((void*)chunk.Ptr);
                     chunk.Ptr = null;
                 }
             }
 
-            _coord2Data.Clear();
+            _chunkCoord2Info.Clear();
 
             if (_extraGrids != null) {
                 UnsafeUtility.Free(_extraGrids);
@@ -98,13 +98,13 @@ namespace Gamestan.Spatial {
                 var diff = math.abs(pos2 - gridCenter);
                 if (!math.any(diff > Grid.Width))
                     return;
-                if (IsDebugMode) {
-                    Debug.Log($"Update Entity {data} fromCoord {coord} => {newCoord}");
-                }
                 var lastChunkCoord = GridCoord2ChunkCoord(coord);
                 var curChunkCoord = GridCoord2ChunkCoord(newCoord);
-                var isNeedUpdateChunk = !lastChunkCoord.Equals(curChunkCoord);
-                if (isNeedUpdateChunk) {
+                var isCrossChunk = !lastChunkCoord.Equals(curChunkCoord);
+                if (IsDebugMode) {
+                    Debug.Log($"Update Entity {data} fromCoord {coord} => {newCoord} isCrossChunk = {isCrossChunk}");
+                }
+                if (isCrossChunk) {
                     // move chunk
                     var lastPos = GridCoord2WorldPos(coord);
                     var lastChunk = GetOrAddChunk(lastPos);
@@ -127,9 +127,10 @@ namespace Gamestan.Spatial {
             }
         }
 
-        public int2 AddEntity(EntityData data, float3 pos) {
+        public int2 AddEntity(EntityData data,ref int2 coord, float3 pos) {
             if (IsDebugMode) Debug.Log($"AddEntity {data} pos:{pos}");
             var worldPos = (int2)math.floor(new float2(pos.x, pos.z));
+            coord = WorldPos2GridCoord(worldPos);
             var chunkInfo = GetOrAddChunk(worldPos);
             chunkInfo.AddEntity(data, worldPos);
             TotalEntityCount++;
@@ -169,19 +170,19 @@ namespace Gamestan.Spatial {
             return info;
         }
 
-        public void FreeChunk(ChunkInfo chunk) {
-            UnsafeUtility.MemClear(chunk.Ptr, Chunk.MemSize);
-            _freeList.Push(chunk);
-            _coord2Data.Remove(chunk.Coord);
+        public void FreeChunk(ChunkInfo chunkInfo) {
+            UnsafeUtility.MemClear(chunkInfo.Ptr, Chunk.MemSize);
+            _freeList.Push(chunkInfo);
+            _chunkCoord2Info.Remove(chunkInfo.Coord);
         }
 
         private ChunkInfo GetOrAddChunk(int2 worldPos) {
             var chunkCoord = WorldPos2ChunkCoord(worldPos);
             ChunkInfo chunkInfo = null;
-            if (!_coord2Data.TryGetValue(chunkCoord, out chunkInfo)) {
+            if (!_chunkCoord2Info.TryGetValue(chunkCoord, out chunkInfo)) {
                 chunkInfo = AllocChunk();
                 chunkInfo.Coord = chunkCoord;
-                _coord2Data[chunkCoord] = chunkInfo;
+                _chunkCoord2Info[chunkCoord] = chunkInfo;
             }
 
             return chunkInfo;

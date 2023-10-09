@@ -29,7 +29,7 @@ namespace Gamestan.Spatial {
             return Ptr->GetGrid(localGridCoord);
         }
 
-        [Conditional("UNITY_ASSERTIONS")]
+        [Conditional("DEBUG_REGION")]
         public void DebugDump(string msg = "") {
             if (Region.IsDebugMode) {
                 Debug.Log(msg + "  " + ToString());
@@ -47,8 +47,7 @@ namespace Gamestan.Spatial {
         }
 
         public void MoveEntity(EntityData data, int2 lastPos, ChunkInfo newChunk, int2 newPos) {
-            DebugDump(
-                $"MoveEntity CrossChunk {Coord}=>{newChunk.Coord} entity:{data} worldPos:{lastPos} =>{newPos}   newChunk {newChunk}");
+            DebugDump($"MoveEntity Before CrossChunk {Coord}=>{newChunk.Coord} worldPos:{lastPos} =>{newPos} entity:{data}   newChunk {newChunk}");
             var lastGrid = GetGrid(lastPos);
             var succ = RemoveGridEntity(lastGrid, data);
             if (succ) {
@@ -56,24 +55,25 @@ namespace Gamestan.Spatial {
                 newChunk.AddGridEntity(curGrid, data);
                 EntityCount--;
                 newChunk.EntityCount++;
+                DebugDump($"MoveEntity After CrossChunk {Coord}=>{newChunk.Coord} worldPos:{lastPos} =>{newPos} entity:{data}   newChunk {newChunk}");
                 return;
             }
 
-            DebugUtil.Assert(succ, "MoveEntity EntityFailed!");
+            DebugUtil.Assert(succ, $"MoveEntity Failed CrossChunk");
             RemoveGridEntity(lastGrid, data);
         }
 
         public void MoveEntity(EntityData data, int2 lastPos, int2 newPos) {
-            DebugDump($"MoveEntity InChunk {Coord}  entity:{data} worldPos:{lastPos} =>{newPos} ");
+            DebugDump($"MoveEntity Before InChunk {Coord} worldPos:{lastPos} =>{newPos}  entity:{data} ");
             var lastGrid = GetGrid(lastPos);
             var succ = RemoveGridEntity(lastGrid, data);
             if (succ) {
                 var curGrid = GetGrid(newPos);
                 AddGridEntity(curGrid, data);
+                DebugDump($"MoveEntity After InChunk {Coord} worldPos:{lastPos} =>{newPos}  entity:{data} ");
                 return;
             }
-
-            DebugUtil.Assert(succ, "MoveEntity EntityFailed!");
+            DebugUtil.Assert(succ, $"MoveEntity Failed InChunk");
             RemoveGridEntity(lastGrid, data);
         }
 

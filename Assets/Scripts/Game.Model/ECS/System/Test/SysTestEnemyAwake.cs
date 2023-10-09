@@ -22,7 +22,7 @@ namespace GamesTan.ECS.Game {
                     enemy->AnimInternalData.Timer = Services.RandomValue() * 3;
                     enemy->AnimInternalData.AnimId1[0] = Services.RandomRange(0,3) ;
                     enemy->AnimInternalData.AnimId1[1] = Services.RandomRange(0,3) ;  
-                    WorldRegion.AddEntity(item,enemy->TransformData.Pos);
+                    WorldRegion.AddEntity(item, ref enemy->PhysicData.GridCoord,enemy->TransformData.Pos);
                 }
             }
         }
