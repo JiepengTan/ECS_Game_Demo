@@ -18,7 +18,6 @@ namespace GamesTan.ECS.Game {
                     _testUnits.RemoveAt(_testUnits.Count - 1);
                 }
             }
-
             Services.CurEnemyCount = EntityManager.EnemyPool.Count;
         }
     }

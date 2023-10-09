@@ -100,6 +100,27 @@ namespace Gamestan.Spatial {
             _freeExtraGrids.Clear();
         }
 
+        private static List<EntityData> _collisionResult = new List<EntityData>();
+        public List<EntityData> QueryCollision(float3 pos, float radius) {
+            var centerWorldPos = FloorWorldPos(pos);
+            var centerGridCoord = WorldPos2GridCoord(centerWorldPos);
+            var width = ((int)(math.ceil(radius +1 )))>> Grid.WidthBit;
+            width = math.max(1, width);
+            _collisionResult.Clear();
+            // TODO check faster
+            for (int x = -width; x <= width; x++) {
+                for (int y = -width; y <= width; y++) {
+                    var gridCoord = new int2(x, y) + centerGridCoord;
+                    var worldPos = GridCoord2WorldPos(gridCoord);
+                    var chunkInfo = GetOrAddChunk(worldPos);
+                    if(chunkInfo.EntityCount ==0) continue;
+                    var grid = chunkInfo.GetGrid(worldPos);
+                    grid->GetEntities(_collisionResult);
+                }
+            }
+
+            return _collisionResult;
+        }
 
         public void Update(EntityData data, ref int2 coord, float3 pos) {
             Instance = this;
@@ -142,7 +163,7 @@ namespace Gamestan.Spatial {
 
         public int2 AddEntity(EntityData data,ref int2 coord, float3 pos) {
             //if (IsDebugMode) Debug.Log($"AddEntity {data} pos:{pos}");
-            var worldPos = (int2)math.floor(new float2(pos.x, pos.z));
+            var worldPos = FloorWorldPos(pos);
             coord = WorldPos2GridCoord(worldPos);
             var chunkInfo = GetOrAddChunk(worldPos);
             chunkInfo.AddEntity(data, worldPos);
@@ -282,5 +303,11 @@ namespace Gamestan.Spatial {
         public static int2 GridCoord2WorldPos(int2 gridCoord) {
             return gridCoord << Grid.WidthBit;
         }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int2 FloorWorldPos(float3 pos) {
+            return (int2)math.floor(new float2(pos.x, pos.z));
+        }
+
     }
 }

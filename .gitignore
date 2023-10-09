@@ -53,3 +53,4 @@ sysinfo.txt
 /ProjectSettings/CommonBurstAotSettings.json
 /ProjectSettings/TimelineSettings.asset
 /.utmp
+/ProjectSettings/BurstAotSettings_Android.json

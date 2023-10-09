@@ -37,7 +37,23 @@ namespace GamesTan.ECS.Game {
             get => TransformData.Rot.y;
             set => TransformData.Rot.y = value;
         }
-
+        public float Radius {
+            get => PhysicData.Radius;
+            set => PhysicData.Radius = value;
+        }
+        public float3 Pos3 {
+            get => TransformData.Pos;
+            set => TransformData.Pos = value;
+        }
+        public float3 Rot3 {
+            get => TransformData.Rot;
+            set => TransformData.Rot = value;
+        }
+        public float3 Scale3 {
+            get => TransformData.Scale;
+            set => TransformData.Scale = value;
+        }
+        
         public float3 Forward {
             get {
                 float deg = math.radians(-DegY + 90);
@@ -49,6 +65,13 @@ namespace GamesTan.ECS.Game {
             get {
                 float deg = math.radians(-DegY + 90);
                 return new float2(math.cos(deg), math.sin(deg));
+            }
+        }
+        public float Scale {
+            get => TransformData.Scale.x;
+            set {
+                TransformData.Scale = new float3(2, 2, 2) * value;
+                PhysicData.Radius = value;
             }
         }
     }
@@ -99,6 +122,29 @@ namespace GamesTan.ECS.Game {
             get {
                 float deg = math.radians(-DegY + 90);
                 return new float2(math.cos(deg), math.sin(deg));
+            }
+        }
+        public float Radius {
+            get => PhysicData.Radius;
+            set => PhysicData.Radius = value;
+        }
+        public float3 Pos3 {
+            get => TransformData.Pos;
+            set => TransformData.Pos = value;
+        }
+        public float3 Rot3 {
+            get => TransformData.Rot;
+            set => TransformData.Rot = value;
+        }
+        public float3 Scale3 {
+            get => TransformData.Scale;
+            set => TransformData.Scale = value;
+        }
+        public float Scale {
+            get => TransformData.Scale.x;
+            set {
+                TransformData.Scale = new float3(2, 2, 2) * value;
+                PhysicData.Radius = value;
             }
         }
     }

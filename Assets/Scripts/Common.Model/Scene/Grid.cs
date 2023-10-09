@@ -20,10 +20,8 @@ namespace Gamestan.Spatial {
         public bool HasExtData => NextGridPtr == 0;
 
 
-        static List<EntityData> _debugTempDatas = new List<EntityData>();
-
-        public List<EntityData> ToDebugList() {
-            _debugTempDatas.Clear();
+        public void GetEntities(List<EntityData> lst) {
+            if(Count ==0) return;
             fixed (void* ptr = &this.Count) {
                 Grid* curGrid = (Grid*)ptr;
                 for (int i = 0; i < Count; i++) {
@@ -35,11 +33,18 @@ namespace Gamestan.Spatial {
                     if (curGrid == null) {
                         break;
                     }
-
-                    _debugTempDatas.Add((EntityData)curGrid->Entities[offset]);
+                    lst.Add((EntityData)curGrid->Entities[offset]);
                 }
             }
 
+        }
+
+
+        static List<EntityData> _debugTempDatas = new List<EntityData>();
+
+        public List<EntityData> ToDebugList() {
+            _debugTempDatas.Clear();
+            GetEntities(_debugTempDatas);
             return _debugTempDatas;
         }
 

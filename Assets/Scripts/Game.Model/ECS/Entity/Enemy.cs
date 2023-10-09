@@ -21,6 +21,7 @@ namespace GamesTan.ECS.Game {
         public AnimRenderData AnimRenderData;
         public AnimData AnimInternalData;
         
+         
         public override string ToString() {
             return __Data.ToString();
         }
