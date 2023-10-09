@@ -108,6 +108,7 @@ namespace Gamestan.Spatial {
 
                 if (offset == 0) {
                     lastGrid->NextGridPtr = Region.AllocExtGrid();
+                    lastGrid = Region.GetExtraGrid(lastGrid->NextGridPtr);
                 }
 
                 lastGrid->Entities[offset] = (UInt64)entityData;
