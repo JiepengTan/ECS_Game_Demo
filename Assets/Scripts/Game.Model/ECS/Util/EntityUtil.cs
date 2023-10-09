@@ -49,7 +49,7 @@ namespace GamesTan.ECS.Game {
             var entity = entityMgr.AllocEnemy();
             var entityPtr = entityMgr.GetEnemy(entity);
             entityPtr->TransformData.Scale = new float3(1, 1, 1);
-            entityPtr->AssetData.PrefabId = services.RandomValue() > 0.3 ? 10001 : 10003;
+            entityPtr->AssetData.PrefabId = services.RandomValue() > 0.3 ? 10003 : 10003;
             entityPtr->AssetData.InstancePrefabIdx = RenderWorld.Instance.GetInstancePrefabIdx(entityPtr->AssetData.PrefabId);
             if (services.IsCreateView) {
                 var obj = GameObject.CreatePrimitive(PrimitiveType.Cube);

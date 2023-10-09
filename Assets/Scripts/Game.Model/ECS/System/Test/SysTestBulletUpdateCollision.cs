@@ -8,7 +8,7 @@ namespace GamesTan.ECS.Game {
         public override void Update(float dt) {
             if (Services.DeleteOrNewCountPerFrame == 0) return;
             int count = EntityManager.BulletCount;
-            if(count >=4) return;
+            if(count >=8) return;
             World.CreateBullet();
         }
     }
@@ -22,7 +22,7 @@ namespace GamesTan.ECS.Game {
                     entity->PhysicData.Speed = 1;
                     entity->PhysicData.RotateSpeed = 10;
                     entity->UnitData.Health = 100;
-                    entity->Scale = 5;
+                    entity->Scale = 10;
                     
                     entity->DegY = Services.RandomValue()*360;
                     //WorldRegion.AddEntity(item, ref entity->PhysicData.GridCoord,entity->TransformData.Pos);
