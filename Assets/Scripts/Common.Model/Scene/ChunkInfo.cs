@@ -6,6 +6,7 @@ using Unity.Mathematics;
 using Debug = UnityEngine.Debug;
 
 namespace Gamestan.Spatial {
+    [System.Serializable]
     public unsafe class ChunkInfo {
         public int EntityCount;
 
@@ -17,7 +18,16 @@ namespace Gamestan.Spatial {
 
         public bool IsNeedFree;
 
-        public Region Region;
+        [NonSerialized] public Region Region;
+
+        public override bool Equals(object obj) {
+            var chunk = obj as ChunkInfo;
+            return math.all(chunk.Coord == Coord);
+        }
+
+        public override int GetHashCode() {
+            return Coord.x*10000+Coord.y;
+        }
 
         public override string ToString() {
             return $"WorldCoord:{WorldPos} EntityCount{EntityCount} \n {(Ptr == null ? "null" : Ptr->ToString())}";

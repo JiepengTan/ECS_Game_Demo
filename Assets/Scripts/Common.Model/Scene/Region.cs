@@ -5,13 +5,18 @@ using GamesTan.ECS;
 using JetBrains.Annotations;
 using Lockstep.InternalUnsafeECS;
 using Unity.Mathematics;
+using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Serialization;
 using Debug = UnityEngine.Debug;
 
 
 namespace Gamestan.Spatial {
+    [System.Serializable]
     public unsafe class Region {
+#if UNITY_EDITOR
+        public List<ChunkInfo> _debugChunkList = new List<ChunkInfo>();
+#endif
         private Dictionary<int2, ChunkInfo> _chunkCoord2Info = new Dictionary<int2, ChunkInfo>();
         private Stack<ChunkInfo> _freeList = new Stack<ChunkInfo>();
 
@@ -20,11 +25,15 @@ namespace Gamestan.Spatial {
         private Stack<UInt32> _freeExtraGrids = new Stack<UInt32>();
         private int _extGridsCapacity;
         public int TotalChunkCount => _chunkCoord2Info.Count;
-        public int TotalEntityCount;
+        [SerializeField] private int _totalEntityCount;
+        [SerializeField]  private int _extraGridUsedCount = 0;
 
         public static bool IsDebugMode = false;
 
         public void DoAwake(int initSizeKB = 1024) {
+            _totalEntityCount = 0;
+            _extraGridUsedCount = 0;
+            _debugChunkList.Clear();
             initSizeKB = math.max(initSizeKB, 128);
             DebugUtil.Assert(Grid.MemSize == sizeof(Grid),
                 "Grid size is diff with GridMemSize , but some code is dependent on it");
@@ -77,6 +86,7 @@ namespace Gamestan.Spatial {
             }
 
             _chunkCoord2Info.Clear();
+            _debugChunkList.Clear();
 
             if (_extraGrids != null) {
                 UnsafeUtility.Free(_extraGrids);
@@ -133,7 +143,7 @@ namespace Gamestan.Spatial {
             coord = WorldPos2GridCoord(worldPos);
             var chunkInfo = GetOrAddChunk(worldPos);
             chunkInfo.AddEntity(data, worldPos);
-            TotalEntityCount++;
+            _totalEntityCount++;
             return WorldPos2GridCoord(worldPos);
         }
 
@@ -143,7 +153,7 @@ namespace Gamestan.Spatial {
             var chunkInfo = GetOrAddChunk(worldPos);
             var isSucc = chunkInfo.RemoveEntity(data, worldPos);
             if (isSucc) {
-                TotalEntityCount--;
+                _totalEntityCount--;
                 if (chunkInfo.EntityCount == 0) {
                     FreeChunk(chunkInfo);
                 }
@@ -174,6 +184,9 @@ namespace Gamestan.Spatial {
             UnsafeUtility.MemClear(chunkInfo.Ptr, Chunk.MemSize);
             _freeList.Push(chunkInfo);
             _chunkCoord2Info.Remove(chunkInfo.Coord);
+#if UNITY_EDITOR
+            _debugChunkList.Remove(chunkInfo);
+#endif
         }
 
         private ChunkInfo GetOrAddChunk(int2 worldPos) {
@@ -183,6 +196,9 @@ namespace Gamestan.Spatial {
                 chunkInfo = AllocChunk();
                 chunkInfo.Coord = chunkCoord;
                 _chunkCoord2Info[chunkCoord] = chunkInfo;
+#if UNITY_EDITOR
+                _debugChunkList.Add(chunkInfo);
+#endif
             }
 
             return chunkInfo;
@@ -205,6 +221,7 @@ namespace Gamestan.Spatial {
                 Debug.Log($"AllocExtGrid {id}  remain:{_freeExtraGrids.Count}"  );
             }
 
+            _extraGridUsedCount++;
             return id;
         }
 
@@ -219,6 +236,8 @@ namespace Gamestan.Spatial {
             if (IsDebugMode) {
                 Debug.Log($"FreeExtraGrid {extraGridPtr}  remain:{_freeExtraGrids.Count}"  );
             }
+
+            _extraGridUsedCount--;
         }
 
         public Grid* GetExtraGrid(UInt32 extraGridPtr) {

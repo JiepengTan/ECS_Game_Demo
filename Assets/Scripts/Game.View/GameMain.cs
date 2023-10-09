@@ -25,7 +25,7 @@ namespace GamesTan.Game.View {
         [Header("Config")]
         [SerializeField] private GameServices _curService;
 
-        private GameEcsWorld _curWorld;
+        [SerializeField]  private GameEcsWorld _curWorld;
 
         public void Awake() {
 #if UNITY_STANDALONE
