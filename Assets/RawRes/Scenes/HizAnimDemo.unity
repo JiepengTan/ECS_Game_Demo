@@ -9509,7 +9509,7 @@ MonoBehaviour:
     DebugStopAnimation: 0
     CurEnemyCount: 0
     IsCreateView: 0
-    ViewRoot: {fileID: 0}
+    ViewRoot: {fileID: 365310895}
     GlobalViewId: 0
     BulletMaterial: {fileID: 2100000, guid: fe461aafd6ce382478d80b5fee24f963, type: 2}
   _curWorld:
@@ -31635,14 +31635,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: 10001_GpuEcsAnimator_Final
       objectReference: {fileID: 0}
-    - target: {fileID: 2325878198092101215, guid: b6a6530fe999a824e932a2a37f2dd973, type: 3}
-      propertyPath: m_Mesh
-      value: 
-      objectReference: {fileID: 4300000, guid: 4091eb895c8d44c4c877d838b60a0cf0, type: 2}
-    - target: {fileID: 4335932187083955367, guid: b6a6530fe999a824e932a2a37f2dd973, type: 3}
-      propertyPath: m_Mesh
-      value: 
-      objectReference: {fileID: 4300000, guid: 5e12879c1ba86d846908da8f20d03916, type: 2}
     - target: {fileID: 5394745227563377758, guid: b6a6530fe999a824e932a2a37f2dd973, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -31683,14 +31675,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5647306627273173117, guid: b6a6530fe999a824e932a2a37f2dd973, type: 3}
-      propertyPath: m_Mesh
-      value: 
-      objectReference: {fileID: 4300000, guid: 4315a4b9d93227148869ad91b67a3e55, type: 2}
-    - target: {fileID: 8152192479902865545, guid: b6a6530fe999a824e932a2a37f2dd973, type: 3}
-      propertyPath: m_Mesh
-      value: 
-      objectReference: {fileID: 4300000, guid: 2e29e2a065ece1e4ebe3427446243eff, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
