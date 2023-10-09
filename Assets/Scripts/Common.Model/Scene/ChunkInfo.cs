@@ -166,6 +166,7 @@ namespace Gamestan.Spatial {
 
                 //3. 覆盖数据，count--;
                 matchGrid->Entities[matchOffset] = lastEntity;
+                grid->Count--;
 
                 //4. 如果最后一个 Grid 空了，记得释放 Grid
                 if (count % Grid.ArySize == 1) {
