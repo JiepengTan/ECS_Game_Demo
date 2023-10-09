@@ -150,8 +150,8 @@ inline void CSMain (
     // Calculate the instance index
     uint tID = _dispatchThreadID.x;
     SortingData sortingData = _SortingData[tID];
-    uint drawCall = (sortingData.drawCallInstanceIndex >> 16);
-    uint index = (sortingData.drawCallInstanceIndex) & 0xFFFF;
+    uint drawCall = (sortingData.drawCallInstanceIndex >> 24);
+    uint index = (sortingData.drawCallInstanceIndex) & 0xFFFFFF;
     sortingData.threadDispatchID = tID;
     // Reset the is visible state
     _IsVisibleBuffer[tID] = 0;

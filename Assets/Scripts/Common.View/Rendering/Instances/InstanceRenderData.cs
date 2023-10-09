@@ -89,14 +89,14 @@ public unsafe class InstanceRenderData {
                 bound.boundsCenter = item.pos;
                 bound.boundsExtents = item.scale * prefabSize[item.prefabIdx];// TODO correct bound size
                 bounds[curIdx] = bound;
-                sortingData[curIdx].drawCallInstanceIndex =(((uint)prefabIdx  << 16) + ((uint)instanceIdx));
+                sortingData[curIdx].drawCallInstanceIndex =(((uint)prefabIdx  << 24) + ((uint)curIdx));
                 animData[curIdx] = item.anim;
             }
             offset+= info.Count;
         }
         // TODO make sure the sortingdata is correct
         for (int curIdx = totalCount; curIdx < rotations.Length; curIdx++) {
-            sortingData[curIdx].drawCallInstanceIndex =((((uint)0 ) << 16) + ((uint)curIdx));
+            sortingData[curIdx].drawCallInstanceIndex =((((uint)0 ) << 24) + ((uint)curIdx));
         }
         // mark other entity's scale to 0 =>  invalid instance
         var uselessCount = rotations.Length - totalCount;
