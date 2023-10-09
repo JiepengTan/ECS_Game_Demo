@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using GamesTan.ECS.Game;
+using Gamestan.Spatial;
 using Lockstep.InternalUnsafeECS;
 using Lockstep.UnsafeECS;
 using NUnit.Framework;
@@ -10,14 +11,21 @@ using UnityEngine.Serialization;
 
 namespace GamesTan.Game.View {
     public unsafe class GameMain : MonoBehaviour {
-        public bool IsCopyServiceFromThis;
+        [Header("Basic")]
         public float UpdateInterval = 0.03f;
+        
+        [Header("Debug")]
+        public bool IsCopyServiceFromThis;
+        public bool IsRegionDebugMode;
+        
+        [Header("DebugData")]
+        [SerializeField] private long _totalNativeMemoryUsedKB;
+        
         private float _updateTimer;
-
-        private GameEcsWorld _curWorld;
+        [Header("Config")]
         [SerializeField] private GameServices _curService;
 
-        [SerializeField] private long _totalNativeMemoryUsedKB;
+        private GameEcsWorld _curWorld;
 
         public void Awake() {
 #if UNITY_STANDALONE
@@ -48,6 +56,7 @@ namespace GamesTan.Game.View {
             }
 
             _totalNativeMemoryUsedKB = UnsafeUtility.TotalAllocSize / 1024;
+            Region.IsDebugMode = IsRegionDebugMode;
         }
 
         private void OnDestroy() {

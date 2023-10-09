@@ -9493,8 +9493,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eba7ac13814eec14499ea088dad1917c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsCopyServiceFromThis: 1
   UpdateInterval: 0.03
+  IsCopyServiceFromThis: 1
+  IsRegionDebugMode: 1
+  _totalNativeMemoryUsedKB: 0
   _curService:
     DeltaTime: 0
     TimeSinceLevelLoad: 0
@@ -9502,8 +9504,8 @@ MonoBehaviour:
     DeleteProbability: 0
     DeleteOrNewCountPerFrame: 162
     DebugOnlyOneEntity: 1
-    DebugEntityCount: 8000
-    DebugEntityBornPosRange: 150
+    DebugEntityCount: 30
+    DebugEntityBornPosRange: 10
     DebugStopAnimation: 0
     CurEnemyCount: 0
     IsCreateView: 0
