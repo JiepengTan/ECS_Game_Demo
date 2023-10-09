@@ -14,25 +14,27 @@ using Debug = UnityEngine.Debug;
 namespace Gamestan.Spatial {
     [System.Serializable]
     public unsafe class Region {
-#if UNITY_EDITOR
-        public List<ChunkInfo> _debugChunkList = new List<ChunkInfo>();
-#endif
-        private Dictionary<int2, ChunkInfo> _chunkCoord2Info = new Dictionary<int2, ChunkInfo>();
-        private Stack<ChunkInfo> _freeList = new Stack<ChunkInfo>();
+        public static Region Instance { get; private set; }
+        public static bool IsDebugMode = false;
 
-        public static Region Instance;
+        [SerializeField] private int _totalEntityCount;
+        [SerializeField] private int _extraGridUsedCount = 0;
+        [SerializeField] private int _totalChunkCount = 0;
+        public List<ChunkInfo> _debugChunkList = new List<ChunkInfo>();
+        
+        private Dictionary<int2, ChunkInfo> _chunkCoord2Info = new Dictionary<int2, ChunkInfo>();
+        private Stack<ChunkInfo> _freeChunkList = new Stack<ChunkInfo>();
+
         private Grid* _extraGrids = null;
         private Stack<UInt32> _freeExtraGrids = new Stack<UInt32>();
         private int _extGridsCapacity;
-        public int TotalChunkCount => _chunkCoord2Info.Count;
-        [SerializeField] private int _totalEntityCount;
-        [SerializeField]  private int _extraGridUsedCount = 0;
-
-        public static bool IsDebugMode = false;
+        public int TotalUsedChunkCount => _chunkCoord2Info.Count;
+        public int TotalChunkCount => _chunkCoord2Info.Count + _freeChunkList.Count;
 
         public void DoAwake(int initSizeKB = 1024) {
             _totalEntityCount = 0;
             _extraGridUsedCount = 0;
+            _totalChunkCount = 0;
             _debugChunkList.Clear();
             initSizeKB = math.max(initSizeKB, 128);
             DebugUtil.Assert(Grid.MemSize == sizeof(Grid),
@@ -51,7 +53,8 @@ namespace Gamestan.Spatial {
                     chunk.Ptr = chunkPtr;
                     chunk.Region = this;
                     chunk.IsNeedFree = i == 0; // only the first chunk need to free
-                    _freeList.Push(chunk);
+                    _freeChunkList.Push(chunk);
+                    _totalChunkCount ++;
                 }
             }
             {
@@ -68,7 +71,7 @@ namespace Gamestan.Spatial {
         }
 
         public void DoDestroy() {
-            foreach (var chunk in _freeList) {
+            foreach (var chunk in _freeChunkList) {
                 if (chunk.IsNeedFree && chunk.Ptr != null) {
                     UnsafeUtility.Free((void*)chunk.Ptr);
                     chunk.Ptr = null;
@@ -77,7 +80,7 @@ namespace Gamestan.Spatial {
                 chunk.Ptr = null;
             }
 
-            _freeList.Clear();
+            _freeChunkList.Clear();
             foreach (var chunk in _chunkCoord2Info.Values) {
                 if (chunk.IsNeedFree && chunk.Ptr != null) {
                     UnsafeUtility.Free((void*)chunk.Ptr);
@@ -164,8 +167,8 @@ namespace Gamestan.Spatial {
 
         private ChunkInfo AllocChunk() {
             ChunkInfo info = null;
-            if (_freeList.Count > 0) {
-                info = _freeList.Pop();
+            if (_freeChunkList.Count > 0) {
+                info = _freeChunkList.Pop();
             }
             else {
                 var ptr = UnsafeUtility.Malloc(Chunk.MemSize);
@@ -173,6 +176,7 @@ namespace Gamestan.Spatial {
                 info = new ChunkInfo();
                 info.Ptr = (Chunk*)ptr;
                 info.Region = this;
+                _totalChunkCount++;
             }
 
             info.EntityCount = 0;
@@ -182,7 +186,7 @@ namespace Gamestan.Spatial {
 
         public void FreeChunk(ChunkInfo chunkInfo) {
             UnsafeUtility.MemClear(chunkInfo.Ptr, Chunk.MemSize);
-            _freeList.Push(chunkInfo);
+            _freeChunkList.Push(chunkInfo);
             _chunkCoord2Info.Remove(chunkInfo.Coord);
 #if UNITY_EDITOR
             _debugChunkList.Remove(chunkInfo);

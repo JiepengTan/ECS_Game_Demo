@@ -9495,22 +9495,127 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   UpdateInterval: 0.03
   IsCopyServiceFromThis: 1
-  IsRegionDebugMode: 1
+  IsRegionDebugMode: 0
   _totalNativeMemoryUsedKB: 0
   _curService:
     DeltaTime: 0
     TimeSinceLevelLoad: 0
     Frame: 0
-    DeleteProbability: 0
-    DeleteOrNewCountPerFrame: 162
+    DeleteProbability: 0.477
+    DeleteOrNewCountPerFrame: 112
     DebugOnlyOneEntity: 1
-    DebugEntityCount: 600
-    DebugEntityBornPosRange: 10
+    DebugEntityCount: 10000
+    DebugEntityBornPosRange: 100
     DebugStopAnimation: 0
     CurEnemyCount: 0
     IsCreateView: 0
-    ViewRoot: {fileID: 365310895}
+    ViewRoot: {fileID: 0}
     GlobalViewId: 0
+  _curWorld:
+    _services:
+      DeltaTime: 0
+      TimeSinceLevelLoad: 0
+      Frame: 0
+      DeleteProbability: 0.5
+      DeleteOrNewCountPerFrame: 20
+      DebugOnlyOneEntity: 0
+      DebugEntityCount: 1
+      DebugEntityBornPosRange: 100
+      DebugStopAnimation: 0
+      CurEnemyCount: 0
+      IsCreateView: 1
+      ViewRoot: {fileID: 0}
+      GlobalViewId: 0
+    EntityManager:
+      World:
+        _services:
+          DeltaTime: 0
+          TimeSinceLevelLoad: 0
+          Frame: 0
+          DeleteProbability: 0.5
+          DeleteOrNewCountPerFrame: 20
+          DebugOnlyOneEntity: 0
+          DebugEntityCount: 1
+          DebugEntityBornPosRange: 100
+          DebugStopAnimation: 0
+          CurEnemyCount: 0
+          IsCreateView: 1
+          ViewRoot: {fileID: 0}
+          GlobalViewId: 0
+        EntityManager:
+          World:
+            _services:
+              DeltaTime: 0
+              TimeSinceLevelLoad: 0
+              Frame: 0
+              DeleteProbability: 0.5
+              DeleteOrNewCountPerFrame: 20
+              DebugOnlyOneEntity: 0
+              DebugEntityCount: 1
+              DebugEntityBornPosRange: 100
+              DebugStopAnimation: 0
+              CurEnemyCount: 0
+              IsCreateView: 1
+              ViewRoot: {fileID: 0}
+              GlobalViewId: 0
+            EntityManager:
+              World:
+                _services:
+                  DeltaTime: 0
+                  TimeSinceLevelLoad: 0
+                  Frame: 0
+                  DeleteProbability: 0.5
+                  DeleteOrNewCountPerFrame: 20
+                  DebugOnlyOneEntity: 0
+                  DebugEntityCount: 1
+                  DebugEntityBornPosRange: 100
+                  DebugStopAnimation: 0
+                  CurEnemyCount: 0
+                  IsCreateView: 1
+                  ViewRoot: {fileID: 0}
+                  GlobalViewId: 0
+                EntityManager:
+                  World:
+                    _services:
+                      DeltaTime: 0
+                      TimeSinceLevelLoad: 0
+                      Frame: 0
+                      DeleteProbability: 0.5
+                      DeleteOrNewCountPerFrame: 20
+                      DebugOnlyOneEntity: 0
+                      DebugEntityCount: 1
+                      DebugEntityBornPosRange: 100
+                      DebugStopAnimation: 0
+                      CurEnemyCount: 0
+                      IsCreateView: 1
+                      ViewRoot: {fileID: 0}
+                      GlobalViewId: 0
+                    EntityManager: {}
+                    WorldRegion:
+                      _totalEntityCount: 0
+                      _extraGridUsedCount: 0
+                      _totalChunkCount: 0
+                      _debugChunkList: []
+                WorldRegion:
+                  _totalEntityCount: 0
+                  _extraGridUsedCount: 0
+                  _totalChunkCount: 0
+                  _debugChunkList: []
+            WorldRegion:
+              _totalEntityCount: 0
+              _extraGridUsedCount: 0
+              _totalChunkCount: 0
+              _debugChunkList: []
+        WorldRegion:
+          _totalEntityCount: 0
+          _extraGridUsedCount: 0
+          _totalChunkCount: 0
+          _debugChunkList: []
+    WorldRegion:
+      _totalEntityCount: 0
+      _extraGridUsedCount: 0
+      _totalChunkCount: 0
+      _debugChunkList: []
 --- !u!4 &365310895
 Transform:
   m_ObjectHideFlags: 0

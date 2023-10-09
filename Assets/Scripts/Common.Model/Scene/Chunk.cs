@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using GamesTan.ECS;
 using Unity.Mathematics;
+using UnityEngine;
 
 namespace Gamestan.Spatial {
     [System.Serializable]
@@ -24,8 +25,10 @@ namespace Gamestan.Spatial {
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Grid* GetGrid(int2 localCoord) {
-            DebugUtil.Assert(localCoord.x >= 0 && localCoord.y >= 0 && localCoord.x < SizeX && localCoord.y < SizeY,
-                " coord out of range " + localCoord.ToString());
+            if (!(localCoord.x >= 0 && localCoord.y >= 0 && localCoord.x < SizeX && localCoord.y < SizeY)) {
+                Debug.LogError(" coord out of range " + localCoord.ToString());
+                return null;
+            }
             var offset = (localCoord.y * SizeX + localCoord.x) * Grid.MemSize;
             fixed (void* ptr = &this.Data[offset])
                 return (Grid*)ptr;

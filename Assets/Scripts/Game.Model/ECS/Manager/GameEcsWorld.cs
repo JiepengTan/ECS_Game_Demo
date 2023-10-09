@@ -2,13 +2,17 @@
 using System.Collections.Generic;
 using GamesTan.Rendering;
 using Gamestan.Spatial;
+using UnityEngine;
 using UnityEngine.Profiling;
 
 namespace GamesTan.ECS.Game {
     [System.Serializable]
     public unsafe partial class GameEcsWorld {
-        public GameServices _services = new GameServices();
-        public GameServices Services => _services;
+        [SerializeField] private GameServices _services = new GameServices();
+        public GameServices Services {
+            get => _services;
+            set => _services = value;
+        }
         public GameEntityManager EntityManager = new GameEntityManager();
         public List<IEcsSystem> _systems = new List<IEcsSystem>();
         public Region WorldRegion = new Region();

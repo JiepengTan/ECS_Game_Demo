@@ -24,7 +24,6 @@ namespace GamesTan.Game.View {
         private float _updateTimer;
         [Header("Config")]
         [SerializeField] private GameServices _curService;
-
         [SerializeField]  private GameEcsWorld _curWorld;
 
         public void Awake() {
@@ -35,7 +34,7 @@ namespace GamesTan.Game.View {
             _curWorld = new GameEcsWorld();
             // just for debug
             if (IsCopyServiceFromThis) {
-                _curWorld._services = _curService;
+                _curWorld.Services = _curService;
             }
             else {
                 _curWorld.Services.ViewRoot = transform;
