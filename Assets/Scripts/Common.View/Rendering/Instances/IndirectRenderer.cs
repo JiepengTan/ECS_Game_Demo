@@ -19,6 +19,9 @@ public struct InstanceBound
 {
     public float3 boundsCenter;       // 3
     public float3 boundsExtents;      // 6
+    public override string ToString() {
+        return $"center:{boundsCenter} ext:{boundsExtents}";
+    }
 }
 
 // 8 * 4 bytes = 32 bytes
