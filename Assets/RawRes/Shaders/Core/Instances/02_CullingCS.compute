@@ -211,12 +211,14 @@ inline void CSMain (
  
     // Calculate the correct index to the arguments buffers
     // (indexCount, instanceCount, startIndex, baseVertex, startInstance)
-    uint argsIndex = drawCall* NUMBER_OF_ARGS_PER_INSTANCE_TYPE + 1;    
+    uint argsIndex = drawCall* NUMBER_OF_ARGS_PER_INSTANCE_TYPE + 1;
+    uint shadowArgsIndex = argsIndex;
     argsIndex += 5 * (minDistanceToCamera > lod00Range);
     argsIndex += 5 * (minDistanceToCamera > lod01Range);
     argsIndex = _ShouldLOD * argsIndex + ((_ShouldLOD == 0) * (drawCall + 11));
-    
-    uint shadowArgsIndex = argsIndex;//_ShouldOnlyUseLOD02Shadows ? drawCall + 11 : argsIndex;
+
+    shadowArgsIndex += 5 ;// shadow do not use lod0
+    shadowArgsIndex += 5 * (minDistanceToCamera > lod00Range);
 
     // Mark it as a shadow caster if it's within shadow distance...
     uint isCastingShadow = minDistanceToCamera < _ShadowDistance ? 1 : 0;
