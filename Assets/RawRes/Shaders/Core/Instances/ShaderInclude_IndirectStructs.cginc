@@ -12,6 +12,7 @@ struct Indirect2x2Matrix
 {
     float4 row0;    // 4
     float4 row1;    // 8
+    float4 row2;    // 12
 };
 
 struct AnimData

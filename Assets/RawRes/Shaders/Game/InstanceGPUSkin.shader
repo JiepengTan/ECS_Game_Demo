@@ -67,8 +67,6 @@ Shader "GamesTan/InstanceGUPSkin"
             uniform uint _ArgsOffset;
             StructuredBuffer<uint> _ArgsBuffer;
             StructuredBuffer<Indirect2x2Matrix> _InstancesDrawMatrixRows01;
-            StructuredBuffer<Indirect2x2Matrix> _InstancesDrawMatrixRows23;
-            StructuredBuffer<Indirect2x2Matrix> _InstancesDrawMatrixRows45;
             StructuredBuffer<AnimData> _InstancesDrawAnimData;
 
 
@@ -79,12 +77,10 @@ Shader "GamesTan/InstanceGUPSkin"
                 uint index = v.inst + _ArgsBuffer[_ArgsOffset];
                 
                 Indirect2x2Matrix rows01 = _InstancesDrawMatrixRows01[index];
-                Indirect2x2Matrix rows23 = _InstancesDrawMatrixRows23[index];
-                Indirect2x2Matrix rows45 = _InstancesDrawMatrixRows45[index];
 				AnimData compAnimData = _InstancesDrawAnimData[index];
 
             	if(_EnableInstance) {
-            		unity_ObjectToWorld = float4x4(rows01.row0, rows01.row1, rows23.row0, float4(0, 0, 0, 1));
+            		unity_ObjectToWorld = float4x4(rows01.row0, rows01.row1, rows01.row2, float4(0, 0, 0, 1));
             	}
             	
             	float3 animPos = v.vertex.xyz;

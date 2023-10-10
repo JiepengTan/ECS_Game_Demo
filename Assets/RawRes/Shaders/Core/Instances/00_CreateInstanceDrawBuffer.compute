@@ -32,8 +32,6 @@ StructuredBuffer<float3> _Scales;
 StructuredBuffer<float3> _Rotations;
 // why not use Indirect3x3Matrix?
 RWStructuredBuffer<Indirect2x2Matrix> _InstancesDrawMatrixRows01;
-RWStructuredBuffer<Indirect2x2Matrix> _InstancesDrawMatrixRows23;
-RWStructuredBuffer<Indirect2x2Matrix> _InstancesDrawMatrixRows45;
 
 //--------------------------------------------------------------------------------------
 // Kernels & Functions
@@ -92,40 +90,31 @@ inline void CSMain (
 		in uint3 _groupThreadID    : SV_GroupThreadID // uint3 GroupThreadId = indices for each dimension inside a group of the current thread
 	)        
 {
-    uint tID = _dispatchThreadID.x;
+	uint tID = _dispatchThreadID.x;
 
 	float3 position = _Positions[tID];
 	float3 scale = _Scales[tID];
-    float3 rotation = _Rotations[tID];
-    
+	float3 rotation = _Rotations[tID];
+
+	// TODO direct build the rotation matrix by euler
 	float4x4 xRotationMatrix = rotationMatrix(float3(1, 0, 0), radians(rotation.x));
 	float4x4 yRotationMatrix = rotationMatrix(float3(0, 1, 0), radians(rotation.y));
 	float4x4 zRotationMatrix = rotationMatrix(float3(0, 0, 1), radians(rotation.z));
 	float4x4 rotMatrix = mul(yRotationMatrix, mul(zRotationMatrix, xRotationMatrix));
-
 	float4x4 translation = {
 		scale.x, 0, 0, position.x,
 		0, scale.y, 0, position.y,
 		0, 0, scale.z, position.z,
 		0, 0, 0, 1
 	};
-	
 	float4x4 objectToWorld = mul(translation, rotMatrix);
-	float4x4 worldToObject = inverse(objectToWorld);
+	//float4x4 worldToObject = inverse(objectToWorld);
     
-    Indirect2x2Matrix rows01;
-    Indirect2x2Matrix rows23;
-    Indirect2x2Matrix rows45;
-    
-    rows01.row0 = objectToWorld[0];
-    rows01.row1 = objectToWorld[1];
-    rows23.row0 = objectToWorld[2];
-    
-    rows23.row1 = worldToObject[0];
-    rows45.row0 = worldToObject[1];
-    rows45.row1 = worldToObject[2];
-    
-    _InstancesDrawMatrixRows01[tID] = rows01;
-    _InstancesDrawMatrixRows23[tID] = rows23;
-    _InstancesDrawMatrixRows45[tID] = rows45;
+	Indirect2x2Matrix rows01;
+
+	rows01.row0 = objectToWorld[0];
+	rows01.row1 = objectToWorld[1];
+	rows01.row2 = objectToWorld[2];
+
+	_InstancesDrawMatrixRows01[tID] = rows01;
 }
