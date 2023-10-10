@@ -10,7 +10,7 @@
 // why not use transform ?
 StructuredBuffer<TransformData> _TransformData;
 // why not use Indirect3x3Matrix?
-RWStructuredBuffer<Indirect2x2Matrix> _InstancesDrawMatrixRows01;
+RWStructuredBuffer<IndirectMatrix> _InstancesDrawMatrixRows;
 
 float4x4 rotationMatrix(float3 axis, float angle)
 {
@@ -85,11 +85,11 @@ inline void CSMain (
 	float4x4 objectToWorld = mul(translation, rotMatrix);
 	//float4x4 worldToObject = inverse(objectToWorld);
     
-	Indirect2x2Matrix rows01;
+	IndirectMatrix rows01;
 
 	rows01.row0 = objectToWorld[0];
 	rows01.row1 = objectToWorld[1];
 	rows01.row2 = objectToWorld[2];
 
-	_InstancesDrawMatrixRows01[tID] = rows01;
+	_InstancesDrawMatrixRows[tID] = rows01;
 }

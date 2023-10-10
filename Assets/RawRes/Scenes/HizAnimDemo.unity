@@ -9893,8 +9893,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 374771437}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.06368886, y: 0.834801, z: -0.09885252, w: -0.53784686}
-  m_LocalPosition: {x: 22.856134, y: 2.8131473, z: 11.751754}
+  m_LocalRotation: {x: 0.2518854, y: 0.2981516, z: -0.08189443, w: 0.91703475}
+  m_LocalPosition: {x: -9.558488, y: 39.19648, z: -25.897047}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -37788,8 +37788,6 @@ MonoBehaviour:
   createDrawDataBufferCS: {fileID: 7200000, guid: ec8dc736dcd73488db5f21571d3708f7, type: 3}
   sortingCS: {fileID: 7200000, guid: 345cad655c4d3473eb2f23a4da170421, type: 3}
   occlusionCS: {fileID: 7200000, guid: 4aeff498554ed42f289ac4c6051b7dba, type: 3}
-  scanInstancesCS: {fileID: 7200000, guid: 8d1519117e824406eb9f6db7e9f6d3a7, type: 3}
-  scanGroupSumsCS: {fileID: 7200000, guid: 8f8e810ba77054780b3f030b49d12500, type: 3}
   copyInstanceDataCS: {fileID: 7200000, guid: fdb14c3f77a774768b35472d4d5444de, type: 3}
   hiZBuffer: {fileID: 1867192519}
   mainCamera: {fileID: 374771441}

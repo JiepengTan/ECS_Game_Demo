@@ -8,7 +8,7 @@ struct InstanceData
     float3 boundsExtents;        // 6
 };
 
-struct Indirect2x2Matrix
+struct IndirectMatrix
 {
     float4 row0;    // 4
     float4 row1;    // 8

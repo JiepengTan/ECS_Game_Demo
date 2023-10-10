@@ -15,12 +15,12 @@ cbuffer CB
 }
 
 StructuredBuffer<SortingData> _SortingData;
-StructuredBuffer<Indirect2x2Matrix> _InstancesDrawMatrixRows01;
+StructuredBuffer<IndirectMatrix> _InstancesDrawMatrixRows;
 StructuredBuffer<AnimData> _InstancesDrawAnimData;
 
 StructuredBuffer<uint> _InstancePredicatesIn;
 RWStructuredBuffer<uint> _DrawcallDataOut;
-RWStructuredBuffer<Indirect2x2Matrix> _InstancesCulledMatrixRows01;
+RWStructuredBuffer<IndirectMatrix> _InstancesCulledMatrixRows01;
 RWStructuredBuffer<AnimData> _InstancesCulledAnimData;
 RWStructuredBuffer<uint> _InstancesCulledIndexRemap; 
 
@@ -41,7 +41,7 @@ inline void CSMain (
     if (_InstancePredicatesIn[sortedTID] == 1) 
     {
         uint instanceDataOutIndex = tID;
-        _InstancesCulledMatrixRows01[instanceDataOutIndex] = _InstancesDrawMatrixRows01[sortedTID];
+        _InstancesCulledMatrixRows01[instanceDataOutIndex] = _InstancesDrawMatrixRows[sortedTID];
         _InstancesCulledAnimData[instanceDataOutIndex] = _InstancesDrawAnimData[sortedTID];
         _InstancesCulledIndexRemap[instanceDataOutIndex] = sortedTID;
     }

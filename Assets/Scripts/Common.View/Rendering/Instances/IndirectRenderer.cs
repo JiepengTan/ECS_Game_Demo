@@ -26,7 +26,7 @@ public struct InstanceBound
 
 // 8 * 4 bytes = 32 bytes
 [StructLayout(LayoutKind.Sequential)]
-public struct Indirect2x2Matrix
+public struct IndirectMatrix
 {
     public Vector4 row0;    // 4
     public Vector4 row1;    // 8
@@ -226,7 +226,7 @@ public class IndirectRenderer : MonoBehaviour
     private static readonly int _SortingData = Shader.PropertyToID("_SortingData");
     private static readonly int _InstanceDataBuffer = Shader.PropertyToID("_InstanceDataBuffer");
     private static readonly int _InstancePredicatesIn = Shader.PropertyToID("_InstancePredicatesIn");
-    private static readonly int _InstancesDrawMatrixRows01 = Shader.PropertyToID("_InstancesDrawMatrixRows01");
+    private static readonly int _InstancesDrawMatrixRows = Shader.PropertyToID("_InstancesDrawMatrixRows");
     private static readonly int _InstancesCulledMatrixRows01 = Shader.PropertyToID("_InstancesCulledMatrixRows01");
     
     private static readonly int _InstancesCulledAnimData = Shader.PropertyToID("_InstancesCulledAnimData");
@@ -655,7 +655,7 @@ public class IndirectRenderer : MonoBehaviour
     {
         Debug.LogWarning("InitInstanceBuffers " + m_numberOfInstances);
         int computeShaderInputSize = Marshal.SizeOf(typeof(InstanceBound));
-        int computeShaderDrawMatrixSize = Marshal.SizeOf(typeof(Indirect2x2Matrix));
+        int computeShaderDrawMatrixSize = Marshal.SizeOf(typeof(IndirectMatrix));
         int computeSortingDataSize = Marshal.SizeOf(typeof(SortingData));
         int computeAnimDataSize = Marshal.SizeOf(typeof(AnimRenderData));
         int computeIndexRemapDataSize = Marshal.SizeOf(typeof(uint));
@@ -717,9 +717,9 @@ public class IndirectRenderer : MonoBehaviour
             irm.lod02MatPropBlock.SetBuffer(_InstancesCulledIndexRemap, m_instancesCulledIndexRemap);
             
             
-            irm.lod00MatPropBlock.SetBuffer(_InstancesDrawMatrixRows01, m_instancesCulledMatrixRows01);
-            irm.lod01MatPropBlock.SetBuffer(_InstancesDrawMatrixRows01, m_instancesCulledMatrixRows01);
-            irm.lod02MatPropBlock.SetBuffer(_InstancesDrawMatrixRows01, m_instancesCulledMatrixRows01);
+            irm.lod00MatPropBlock.SetBuffer(_InstancesDrawMatrixRows, m_instancesCulledMatrixRows01);
+            irm.lod01MatPropBlock.SetBuffer(_InstancesDrawMatrixRows, m_instancesCulledMatrixRows01);
+            irm.lod02MatPropBlock.SetBuffer(_InstancesDrawMatrixRows, m_instancesCulledMatrixRows01);
             
             
             irm.shadowLod00MatPropBlock.SetBuffer(_InstancesDrawAnimData, m_shadowCulledAnimData);
@@ -730,9 +730,9 @@ public class IndirectRenderer : MonoBehaviour
             irm.shadowLod01MatPropBlock.SetBuffer(_InstancesCulledIndexRemap, m_shadowCulledIndexRemap);
             irm.shadowLod02MatPropBlock.SetBuffer(_InstancesCulledIndexRemap, m_shadowCulledIndexRemap);
             
-            irm.shadowLod00MatPropBlock.SetBuffer(_InstancesDrawMatrixRows01, m_shadowCulledMatrixRows01);
-            irm.shadowLod01MatPropBlock.SetBuffer(_InstancesDrawMatrixRows01, m_shadowCulledMatrixRows01);
-            irm.shadowLod02MatPropBlock.SetBuffer(_InstancesDrawMatrixRows01, m_shadowCulledMatrixRows01);
+            irm.shadowLod00MatPropBlock.SetBuffer(_InstancesDrawMatrixRows, m_shadowCulledMatrixRows01);
+            irm.shadowLod01MatPropBlock.SetBuffer(_InstancesDrawMatrixRows, m_shadowCulledMatrixRows01);
+            irm.shadowLod02MatPropBlock.SetBuffer(_InstancesDrawMatrixRows, m_shadowCulledMatrixRows01);
             
         }
         
@@ -745,7 +745,7 @@ public class IndirectRenderer : MonoBehaviour
         m_transformDataBuffer = new ComputeBuffer(m_numberOfInstances, Marshal.SizeOf(typeof(TransformData)), ComputeBufferType.Default);
         
         createDrawDataBufferCS.SetBuffer(m_createDrawDataBufferKernelID, _TransformData, m_transformDataBuffer);
-        createDrawDataBufferCS.SetBuffer(m_createDrawDataBufferKernelID, _InstancesDrawMatrixRows01, m_instancesMatrixRows01);
+        createDrawDataBufferCS.SetBuffer(m_createDrawDataBufferKernelID, _InstancesDrawMatrixRows, m_instancesMatrixRows01);
 
         
         //-----------------------------------
@@ -777,7 +777,7 @@ public class IndirectRenderer : MonoBehaviour
         
         copyInstanceDataCS.SetInt(_NumOfDrawcalls, m_numberOfInstanceTypes * NUMBER_OF_DRAW_CALLS);
         copyInstanceDataCS.SetBuffer(m_copyInstanceDataKernelID, _InstanceDataBuffer, m_instanceDataBuffer);
-        copyInstanceDataCS.SetBuffer(m_copyInstanceDataKernelID, _InstancesDrawMatrixRows01, m_instancesMatrixRows01);
+        copyInstanceDataCS.SetBuffer(m_copyInstanceDataKernelID, _InstancesDrawMatrixRows, m_instancesMatrixRows01);
         copyInstanceDataCS.SetBuffer(m_copyInstanceDataKernelID, _SortingData, m_instancesSortingData);
         copyInstanceDataCS.SetBuffer(m_copyInstanceDataKernelID, _InstancesDrawAnimData, m_instancesDrawAnimData);
         
@@ -1385,7 +1385,7 @@ public class IndirectRenderer : MonoBehaviour
         }
         sb.AppendLine("======== CulledMatrix ===========");
         {
-            Indirect2x2Matrix[] matrix1 = new Indirect2x2Matrix[m_numberOfInstances];
+            IndirectMatrix[] matrix1 = new IndirectMatrix[m_numberOfInstances];
             m_instancesCulledMatrixRows01.GetData(matrix1);
             
             for (int i = 0; i < count; i++)
@@ -1402,7 +1402,7 @@ public class IndirectRenderer : MonoBehaviour
         sb.AppendLine("======== RawMatrix ===========");
         string prefix = "";
         {
-            Indirect2x2Matrix[] matrix1 = new Indirect2x2Matrix[m_numberOfInstances];
+            IndirectMatrix[] matrix1 = new IndirectMatrix[m_numberOfInstances];
             m_instancesMatrixRows01.GetData(matrix1);
         
             for (int i = 0; i < count; i++)
@@ -1424,7 +1424,7 @@ public class IndirectRenderer : MonoBehaviour
     }
     private void LogInstanceDrawMatrices(string prefix = "")
     {
-        Indirect2x2Matrix[] matrix1 = new Indirect2x2Matrix[m_numberOfInstances];
+        IndirectMatrix[] matrix1 = new IndirectMatrix[m_numberOfInstances];
         m_instancesMatrixRows01.GetData(matrix1);
         
         StringBuilder sb = new StringBuilder();
@@ -1523,10 +1523,10 @@ public class IndirectRenderer : MonoBehaviour
     
     private void LogCulledInstancesAnimData(string instancePrefix = "", string shadowPrefix = "")
     {
-        Indirect2x2Matrix[] instancesMatrix1 = new Indirect2x2Matrix[m_numberOfInstances];
+        IndirectMatrix[] instancesMatrix1 = new IndirectMatrix[m_numberOfInstances];
         m_instancesCulledMatrixRows01.GetData(instancesMatrix1);
         
-        Indirect2x2Matrix[] shadowsMatrix1 = new Indirect2x2Matrix[m_numberOfInstances];
+        IndirectMatrix[] shadowsMatrix1 = new IndirectMatrix[m_numberOfInstances];
         m_shadowCulledMatrixRows01.GetData(shadowsMatrix1);
         
         StringBuilder instancesSB = new StringBuilder();
@@ -1560,10 +1560,10 @@ public class IndirectRenderer : MonoBehaviour
         
     private void LogCulledInstancesDrawMatrices(string instancePrefix = "", string shadowPrefix = "")
     {
-        Indirect2x2Matrix[] instancesMatrix1 = new Indirect2x2Matrix[m_numberOfInstances];
+        IndirectMatrix[] instancesMatrix1 = new IndirectMatrix[m_numberOfInstances];
         m_instancesCulledMatrixRows01.GetData(instancesMatrix1);
         
-        Indirect2x2Matrix[] shadowsMatrix1 = new Indirect2x2Matrix[m_numberOfInstances];
+        IndirectMatrix[] shadowsMatrix1 = new IndirectMatrix[m_numberOfInstances];
         m_shadowCulledMatrixRows01.GetData(shadowsMatrix1);
         
         StringBuilder instancesSB = new StringBuilder();

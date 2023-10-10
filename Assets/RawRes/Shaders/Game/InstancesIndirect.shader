@@ -23,7 +23,7 @@ Shader "IndirectRendering/Instance"
                 #include "../Core/Instances/ShaderInclude_IndirectStructs.cginc"
                 uniform uint _ArgsOffset;
                 StructuredBuffer<uint> _ArgsBuffer;
-                StructuredBuffer<Indirect2x2Matrix> _InstancesDrawMatrixRows01;
+                StructuredBuffer<IndirectMatrix> _InstancesDrawMatrixRows;
                 
                 void setup()
                 {
@@ -33,7 +33,7 @@ Shader "IndirectRendering/Instance"
                         uint index = unity_InstanceID + _ArgsBuffer[_ArgsOffset];
                     #endif
                     
-                    Indirect2x2Matrix rows012 = _InstancesDrawMatrixRows01[index];
+                    IndirectMatrix rows012 = _InstancesDrawMatrixRows[index];
                     
                     unity_ObjectToWorld = float4x4(rows01.row0, rows01.row1, rows01.row2, float4(0, 0, 0, 1));
                     unity_WorldToObject = float4x4(rows01.row1, rows01.row0, rows01.row1, float4(0, 0, 0, 1));

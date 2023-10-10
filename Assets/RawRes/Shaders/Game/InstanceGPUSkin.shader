@@ -66,7 +66,7 @@ Shader "GamesTan/InstanceGUPSkin"
             #include "../Core/GPUSkin/GPUSkin.cginc"
             uniform uint _ArgsOffset;
             StructuredBuffer<uint> _ArgsBuffer;
-            StructuredBuffer<Indirect2x2Matrix> _InstancesDrawMatrixRows01;
+            StructuredBuffer<IndirectMatrix> _InstancesDrawMatrixRows;
             StructuredBuffer<AnimData> _InstancesDrawAnimData;
 
 
@@ -76,7 +76,7 @@ Shader "GamesTan/InstanceGUPSkin"
 				v2f o;
                 uint index = v.inst + _ArgsBuffer[_ArgsOffset];
                 
-                Indirect2x2Matrix rows01 = _InstancesDrawMatrixRows01[index];
+                IndirectMatrix rows01 = _InstancesDrawMatrixRows[index];
 				AnimData compAnimData = _InstancesDrawAnimData[index];
 
             	if(_EnableInstance) {
