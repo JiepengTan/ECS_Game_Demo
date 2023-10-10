@@ -1,20 +1,8 @@
-﻿//--------------------------------------------------------------------------------------
-// Includes
-//--------------------------------------------------------------------------------------
-
+﻿
 #include "ShaderInclude_IndirectStructs.cginc"
-#include "UnityCG.cginc"
-#include "UnityDeferredLibrary.cginc"
-
-//--------------------------------------------------------------------------------------
-// Pragmas
-//--------------------------------------------------------------------------------------
 
 #pragma kernel CSMain
 
-//--------------------------------------------------------------------------------------
-// Constants
-//--------------------------------------------------------------------------------------
 #define THREAD_GROUP_SIZE_X 64
 #define THREAD_GROUP_SIZE_Y 1
 #define THREAD_GROUP_SIZE_Z 1
@@ -28,9 +16,6 @@
 #define  NUMBER_OF_ARGS_PER_DRAW  5 
 // 3draws * 5args = 15args
 #define  NUMBER_OF_ARGS_PER_INSTANCE_TYPE  (NUMBER_OF_DRAW_CALLS * NUMBER_OF_ARGS_PER_DRAW) 
-//--------------------------------------------------------------------------------------
-// Constant Buffers
-//--------------------------------------------------------------------------------------
 
 cbuffer CB
 {
@@ -53,9 +38,6 @@ cbuffer CB
     SamplerState sampler_HiZMap; // "sampler" + “_HiZMap”
 };
 
-//--------------------------------------------------------------------------------------
-// Structured Buffers
-//--------------------------------------------------------------------------------------
 
 StructuredBuffer<InstanceData> _InstanceDataBuffer;
 RWStructuredBuffer<uint> _ArgsBuffer;
@@ -64,9 +46,6 @@ RWStructuredBuffer<uint> _ShadowArgsBuffer;
 RWStructuredBuffer<uint> _ShadowIsVisibleBuffer;
 RWStructuredBuffer<SortingData> _SortingData;
 
-//--------------------------------------------------------------------------------------
-// Kernels & Functions
-//--------------------------------------------------------------------------------------
 
 inline uint IsCameraOutsideObjBounds(float3 pos, float3 minPos, float3 maxPos)
 {
@@ -135,9 +114,6 @@ inline uint IsVisibleAfterFrustumCulling(float4 clipPos)
             ? 0 : 1;
 }
 
-//--------------------------------------------------------------------------------------
-// Kernels
-//--------------------------------------------------------------------------------------
 
 [numthreads(THREAD_GROUP_SIZE_X, THREAD_GROUP_SIZE_Y, THREAD_GROUP_SIZE_Z)]
 inline void CSMain (

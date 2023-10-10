@@ -3,33 +3,16 @@
 //--------------------------------------------------------------------------------------
 
 #include "ShaderInclude_IndirectStructs.cginc"
-
-//--------------------------------------------------------------------------------------
-// Pragmas
-//--------------------------------------------------------------------------------------
-
 #pragma kernel CSMain
-
-//--------------------------------------------------------------------------------------
-// Constants
-//--------------------------------------------------------------------------------------
 
 #define THREAD_GROUP_SIZE_X 128
 #define THREAD_GROUP_SIZE_Y 1
 #define THREAD_GROUP_SIZE_Z 1
 
-//--------------------------------------------------------------------------------------
-// Constant Buffers
-//--------------------------------------------------------------------------------------
-
 cbuffer CB
 {
     uint _NumOfDrawcalls;
 }
-
-//--------------------------------------------------------------------------------------
-// Structured Buffers
-//--------------------------------------------------------------------------------------
 
 StructuredBuffer<SortingData> _SortingData;
 StructuredBuffer<Indirect2x2Matrix> _InstancesDrawMatrixRows01;
@@ -40,10 +23,6 @@ RWStructuredBuffer<uint> _DrawcallDataOut;
 RWStructuredBuffer<Indirect2x2Matrix> _InstancesCulledMatrixRows01;
 RWStructuredBuffer<AnimData> _InstancesCulledAnimData;
 RWStructuredBuffer<uint> _InstancesCulledIndexRemap; 
-
-//--------------------------------------------------------------------------------------
-// Kernels & Functions
-//--------------------------------------------------------------------------------------
 
 // Based on Parallel Prefix Sum (Scan) with CUDA by Mark Harris
 [numthreads(THREAD_GROUP_SIZE_X, THREAD_GROUP_SIZE_Y, THREAD_GROUP_SIZE_Z)]
