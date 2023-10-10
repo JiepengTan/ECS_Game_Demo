@@ -4,7 +4,7 @@ cd $dir/CodeGenerator/Bin
 
 pwd
 echo "gen codes..."
-./GamesTan.Game.CodeGenerator.exe
+./GamesTan.Game.CodeGenerator.exe ../Config/UnsafeECS.json
 
 pwd
 echo "done"
