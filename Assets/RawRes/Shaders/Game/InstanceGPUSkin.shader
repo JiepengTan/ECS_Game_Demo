@@ -74,10 +74,9 @@ Shader "GamesTan/InstanceGUPSkin"
             v2f vert (appdata v)
             {
 				v2f o;
-                #if defined(SHADER_API_METAL) || defined(SHADER_API_GLES3) || defined(SHADER_API_GLES) 
-                uint index = v.inst ;
-                #else
-                uint index = v.inst + _ArgsBuffer[_ArgsOffset];
+            	uint index = v.inst ;
+                #if defined(SHADER_API_D3D11) 
+                index +=  _ArgsBuffer[_ArgsOffset];
                 #endif
                 IndirectMatrix rows01 = _InstancesDrawMatrixRows[index];
 				AnimData compAnimData = _InstancesDrawAnimData[index];
