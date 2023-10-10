@@ -14,17 +14,16 @@ using UnityEngine.Serialization;
 
 public struct RendererData {
     public int prefabIdx;
-    public float3 pos;
-    public float3 rot;
-    public float3 scale;
+    
+    public TransformData trans;
     public AnimRenderData anim;
+    public InstanceBound bound;// TODO 
 
-    public RendererData(int prefabIdx, float3 pos, float3 rot, float3 scale,  AnimRenderData anim) {
+    public RendererData(int prefabIdx, TransformData trans,  AnimRenderData anim) {
         this.prefabIdx = prefabIdx;
-        this.rot = rot;
-        this.pos = pos;
-        this.scale = scale;
         this.anim = anim;
+        this.trans = trans;
+        this.bound = new InstanceBound();
     }
 }
 
@@ -34,20 +33,16 @@ public struct RendererData {
 public unsafe class InstanceRenderData {
     public const int MIN_CAPACITY = 4096; // 最小大小为4096
     public int Capacity;
-    public int Count;
     
     public List<float3> prefabSize = new List<float3>();
     public List<List<RendererData>> RenderData = new List<List<RendererData>>();
     private List<int> _configs = new List<int>();
     private List<int> _counts = new List<int>();
     
-    public List<int> InstanceCounter = new List<int>();
 
     public bool isDirty;
 
-    public Vector3[] positions;
-    public Vector3[] rotations;
-    public Vector3[] scales;
+    public TransformData[] transformData;
 
     public InstanceBound[] bounds;
 
@@ -81,25 +76,25 @@ public unsafe class InstanceRenderData {
             for (int instanceIdx = 0; instanceIdx < count; instanceIdx++) {
                 var item = info[instanceIdx];
                 var curIdx = offset + instanceIdx;
-                positions[curIdx] = item.pos;
-                rotations[curIdx] = item.rot;
-                scales[curIdx] = item.scale;
+                transformData[curIdx] = item.trans;
                 
                 InstanceBound bound = new InstanceBound();
-                bound.boundsCenter = item.pos;
-                bound.boundsExtents = item.scale * prefabSize[item.prefabIdx];// TODO correct bound size
+                bound.boundsCenter = item.trans.Pos;
+                bound.boundsExtents = item.trans.Scale * prefabSize[item.prefabIdx];// TODO correct bound size
                 bounds[curIdx] = bound;
                 sortingData[curIdx].drawCallInstanceIndex =(((uint)prefabIdx  << 24) + ((uint)curIdx));
                 animData[curIdx] = item.anim;
             }
             offset+= info.Count;
         }
+
+        var capacity = sortingData.Length;
         // TODO make sure the sortingdata is correct
-        for (int curIdx = totalCount; curIdx < rotations.Length; curIdx++) {
+        for (int curIdx = totalCount; curIdx < capacity; curIdx++) {
             sortingData[curIdx].drawCallInstanceIndex =((((uint)0 ) << 24) + ((uint)curIdx));
         }
         // mark other entity's scale to 0 =>  invalid instance
-        var uselessCount = rotations.Length - totalCount;
+        var uselessCount = capacity - totalCount;
         if (uselessCount > 0) {
             fixed (InstanceBound* ptr = &bounds[0]) {
                 UnsafeUtility.MemClear(ptr+offset,sizeof(InstanceBound) * uselessCount);
@@ -148,9 +143,7 @@ public unsafe class InstanceRenderData {
     private void ResetCapacity(int capacity) {
         Debug.LogWarning("OnRenderResetCapacity" + capacity);
         Capacity = capacity;
-        positions = new Vector3[capacity];
-        scales = new Vector3[capacity];
-        rotations = new Vector3[capacity];
+        transformData = new TransformData[capacity];
 
         bounds = new InstanceBound[capacity];
         sortingData = new SortingData[capacity];

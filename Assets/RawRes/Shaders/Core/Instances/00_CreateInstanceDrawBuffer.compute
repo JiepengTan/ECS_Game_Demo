@@ -8,9 +8,7 @@
 #define THREAD_GROUP_SIZE_Z 1
 
 // why not use transform ?
-StructuredBuffer<float3> _Positions;
-StructuredBuffer<float3> _Scales;
-StructuredBuffer<float3> _Rotations;
+StructuredBuffer<TransformData> _TransformData;
 // why not use Indirect3x3Matrix?
 RWStructuredBuffer<Indirect2x2Matrix> _InstancesDrawMatrixRows01;
 
@@ -68,10 +66,10 @@ inline void CSMain (
 	)        
 {
 	uint tID = _dispatchThreadID.x;
-
-	float3 position = _Positions[tID];
-	float3 scale = _Scales[tID];
-	float3 rotation = _Rotations[tID];
+	TransformData transData = _TransformData[tID];
+	float3 position = transData.pos;
+	float3 scale = transData.scale;
+	float3 rotation = transData.rot;
 
 	// TODO direct build the rotation matrix by euler
 	float4x4 xRotationMatrix = rotationMatrix(float3(1, 0, 0), radians(rotation.x));

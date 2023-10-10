@@ -138,9 +138,7 @@ public class IndirectRenderer : MonoBehaviour
     private ComputeBuffer m_shadowCulledMatrixRows01;
 
     // update buffers
-    private ComputeBuffer m_positionsBuffer;
-    private ComputeBuffer m_scaleBuffer;
-    private ComputeBuffer m_rotationBuffer;
+    private ComputeBuffer m_transformDataBuffer;
     // animation
     private ComputeBuffer m_instancesDrawAnimData;
     private ComputeBuffer m_instancesCulledAnimData;
@@ -217,20 +215,13 @@ public class IndirectRenderer : MonoBehaviour
     private static readonly int _Lod1Distance = Shader.PropertyToID("_Lod1Distance");
     
     private static readonly int _HiZMap = Shader.PropertyToID("_HiZMap");
-    private static readonly int _NumOfGroups = Shader.PropertyToID("_NumOfGroups");
     private static readonly int _NumOfDrawcalls = Shader.PropertyToID("_NumOfDrawcalls");
     private static readonly int _ArgsOffset = Shader.PropertyToID("_ArgsOffset");
-    private static readonly int _Positions = Shader.PropertyToID("_Positions");
-    private static readonly int _Scales = Shader.PropertyToID("_Scales");
-    private static readonly int _Rotations = Shader.PropertyToID("_Rotations");
+    private static readonly int _TransformData = Shader.PropertyToID("_TransformData");
     private static readonly int _ArgsBuffer = Shader.PropertyToID("_ArgsBuffer");
     private static readonly int _ShadowArgsBuffer = Shader.PropertyToID("_ShadowArgsBuffer");
     private static readonly int _IsVisibleBuffer = Shader.PropertyToID("_IsVisibleBuffer");
     private static readonly int _ShadowIsVisibleBuffer = Shader.PropertyToID("_ShadowIsVisibleBuffer");
-    private static readonly int _GroupSumArray = Shader.PropertyToID("_GroupSumArray");
-    private static readonly int _ScannedInstancePredicates = Shader.PropertyToID("_ScannedInstancePredicates");
-    private static readonly int _GroupSumArrayIn = Shader.PropertyToID("_GroupSumArrayIn");
-    private static readonly int _GroupSumArrayOut = Shader.PropertyToID("_GroupSumArrayOut");
     private static readonly int _DrawcallDataOut = Shader.PropertyToID("_DrawcallDataOut");
     private static readonly int _SortingData = Shader.PropertyToID("_SortingData");
     private static readonly int _InstanceDataBuffer = Shader.PropertyToID("_InstanceDataBuffer");
@@ -480,9 +471,7 @@ public class IndirectRenderer : MonoBehaviour
         //if (_rendererData.isDirty) 
         {
             _rendererData.isDirty = false;
-            m_positionsBuffer.SetData(_rendererData.positions);
-            m_scaleBuffer.SetData(_rendererData.scales);
-            m_rotationBuffer.SetData(_rendererData.rotations);
+            m_transformDataBuffer.SetData(_rendererData.transformData);
         
             m_instanceDataBuffer.SetData(_rendererData.bounds ); // bounds
             
@@ -753,14 +742,9 @@ public class IndirectRenderer : MonoBehaviour
         
         
         // Create the buffer containing draw data for all instances
-        m_positionsBuffer = new ComputeBuffer(m_numberOfInstances, Marshal.SizeOf(typeof(Vector3)), ComputeBufferType.Default);
-        m_scaleBuffer = new ComputeBuffer(m_numberOfInstances, Marshal.SizeOf(typeof(Vector3)), ComputeBufferType.Default);
-        m_rotationBuffer = new ComputeBuffer(m_numberOfInstances, Marshal.SizeOf(typeof(Vector3)), ComputeBufferType.Default);
+        m_transformDataBuffer = new ComputeBuffer(m_numberOfInstances, Marshal.SizeOf(typeof(TransformData)), ComputeBufferType.Default);
         
-        
-        createDrawDataBufferCS.SetBuffer(m_createDrawDataBufferKernelID, _Positions, m_positionsBuffer);
-        createDrawDataBufferCS.SetBuffer(m_createDrawDataBufferKernelID, _Scales, m_scaleBuffer);
-        createDrawDataBufferCS.SetBuffer(m_createDrawDataBufferKernelID, _Rotations, m_rotationBuffer);
+        createDrawDataBufferCS.SetBuffer(m_createDrawDataBufferKernelID, _TransformData, m_transformDataBuffer);
         createDrawDataBufferCS.SetBuffer(m_createDrawDataBufferKernelID, _InstancesDrawMatrixRows01, m_instancesMatrixRows01);
 
         
@@ -921,9 +905,7 @@ public class IndirectRenderer : MonoBehaviour
         ReleaseComputeBuffer(ref m_shadowsIsVisibleBuffer);
         ReleaseComputeBuffer(ref m_shadowCulledMatrixRows01);
         
-        ReleaseComputeBuffer(ref m_positionsBuffer);
-        ReleaseComputeBuffer(ref m_scaleBuffer);
-        ReleaseComputeBuffer(ref m_rotationBuffer);
+        ReleaseComputeBuffer(ref m_transformDataBuffer);
 
         ReleaseComputeBuffer(ref m_instancesDrawAnimData);
         ReleaseComputeBuffer(ref m_instancesCulledAnimData);
@@ -1350,7 +1332,7 @@ public class IndirectRenderer : MonoBehaviour
         }
         sb.AppendLine("======== positions ===========");
         {
-            var datas = _rendererData.positions;
+            var datas = _rendererData.transformData;
             for (int i = 0; i < count; i++)
             {
                 sb.Append(i+": "+datas[i] +  " instId: " + _rendererData.sortingData[i].drawCallInstanceIndex+ "\n");
