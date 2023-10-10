@@ -15,8 +15,11 @@ namespace GamesTan.ECS.Game {
         
         [Header("Debug")]
         public bool DebugOnlyOneEntity;
+        [Range(0,40)]
         public int DebugAreaCount = 8;
+        [Range(1,30000)]
         public int DebugEntityCount = 1;
+        [Range(1,1000)]
         public int DebugEntityBornPosRange = 100;
         public bool DebugStopAnimation = false;
         public bool DebugStopAI = false;
