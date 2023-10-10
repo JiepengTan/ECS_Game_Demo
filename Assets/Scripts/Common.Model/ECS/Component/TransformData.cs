@@ -9,6 +9,9 @@ namespace GamesTan.ECS {
         public float3 Pos;
         public float3 Rot;
         public float3 Scale;
-        
+
+        public override string ToString() {
+            return $"pos{Pos} rot:{Rot} scale:{Scale}";
+        }
     }
 }

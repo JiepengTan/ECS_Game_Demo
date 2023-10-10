@@ -7,6 +7,7 @@ namespace GamesTan.ECS.Game {
         
         [BurstCompile]
         protected override void Update(ref Enemy entity, float dt) {
+            if(Services.DebugStopAI) return;
             entity.AIData.AITimer += dt;
             if (entity.AIData.AITimer > 3) { // update ai
                 entity.AIData.AITimer = Services.RandomValue();

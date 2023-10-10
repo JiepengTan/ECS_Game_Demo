@@ -9504,9 +9504,11 @@ MonoBehaviour:
     DeleteProbability: 0.477
     DeleteOrNewCountPerFrame: 112
     DebugOnlyOneEntity: 1
+    DebugAreaCount: 6
     DebugEntityCount: 3000
     DebugEntityBornPosRange: 100
     DebugStopAnimation: 0
+    DebugStopAI: 0
     CurEnemyCount: 0
     IsCreateView: 0
     ViewRoot: {fileID: 365310895}
@@ -9520,9 +9522,11 @@ MonoBehaviour:
       DeleteProbability: 0.5
       DeleteOrNewCountPerFrame: 20
       DebugOnlyOneEntity: 0
+      DebugAreaCount: 8
       DebugEntityCount: 1
       DebugEntityBornPosRange: 100
       DebugStopAnimation: 0
+      DebugStopAI: 0
       CurEnemyCount: 0
       IsCreateView: 1
       ViewRoot: {fileID: 0}
@@ -9537,9 +9541,11 @@ MonoBehaviour:
           DeleteProbability: 0.5
           DeleteOrNewCountPerFrame: 20
           DebugOnlyOneEntity: 0
+          DebugAreaCount: 8
           DebugEntityCount: 1
           DebugEntityBornPosRange: 100
           DebugStopAnimation: 0
+          DebugStopAI: 0
           CurEnemyCount: 0
           IsCreateView: 1
           ViewRoot: {fileID: 0}
@@ -9554,9 +9560,11 @@ MonoBehaviour:
               DeleteProbability: 0.5
               DeleteOrNewCountPerFrame: 20
               DebugOnlyOneEntity: 0
+              DebugAreaCount: 8
               DebugEntityCount: 1
               DebugEntityBornPosRange: 100
               DebugStopAnimation: 0
+              DebugStopAI: 0
               CurEnemyCount: 0
               IsCreateView: 1
               ViewRoot: {fileID: 0}
@@ -9571,9 +9579,11 @@ MonoBehaviour:
                   DeleteProbability: 0.5
                   DeleteOrNewCountPerFrame: 20
                   DebugOnlyOneEntity: 0
+                  DebugAreaCount: 8
                   DebugEntityCount: 1
                   DebugEntityBornPosRange: 100
                   DebugStopAnimation: 0
+                  DebugStopAI: 0
                   CurEnemyCount: 0
                   IsCreateView: 1
                   ViewRoot: {fileID: 0}
@@ -9588,9 +9598,11 @@ MonoBehaviour:
                       DeleteProbability: 0.5
                       DeleteOrNewCountPerFrame: 20
                       DebugOnlyOneEntity: 0
+                      DebugAreaCount: 8
                       DebugEntityCount: 1
                       DebugEntityBornPosRange: 100
                       DebugStopAnimation: 0
+                      DebugStopAI: 0
                       CurEnemyCount: 0
                       IsCreateView: 1
                       ViewRoot: {fileID: 0}
