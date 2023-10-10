@@ -1,11 +1,11 @@
 {
-  "DllSourceDir": "../Src/GamesTan.Game.ECS.Define/Src",
+  "DllSourceDir": "../../../Assets/Scripts/Game.Model/ECS/_EcsDefines",
   "DllPath": "./GamesTan.Game.ECS.Define.dll",
   "DllNameTag": "GamesTan.Game.ECS.Define",
   "IgnoreDll": "Lockstep.ECS.ECDefine.dll",
   "MacroDefinePath": "../Config/ECSGenerator/MacroDefine.json",
   "SrcFileDir": "../Config/ECSGenerator/TemplateInput/",
-  "DesFileDir": "../Config/ECSGenerator/TemplateOutput/",
+  "DesFileDir": "../../../Assets/Scripts/Game.Model/ECS/__CodeGen",
   "FileExtension": "*.cs",
   "CopySrcDir": "",
   "CopyDstDir": "../Src/ECS.ECSOutput/Src/Unsafe/Common",
