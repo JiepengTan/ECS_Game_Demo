@@ -1,0 +1,13 @@
+{
+  "#REF": "typeof IRef",
+  "#ENUM": "typeof IEnum",
+  "#COLLISION": "typeof ICollision",
+  "#ASSET": "typeof IAsset",
+  "#ENTITY": "typeof IEntity; use(#ALL_SIZE,#SIZE)",
+  "#COMPONENT": "typeof IComponent",
+  "#FIELDS": "typeof IFields",
+  "#SIGNAL": "typeof ISignal",
+  "#EVENT": "typeof IEvent",
+  "#BITSET": "typeof IBitset; use(#SIZE_OF_BITSET)",
+  "#BUILDIN_COMPS": "call GetBuildInComponents"
+}
