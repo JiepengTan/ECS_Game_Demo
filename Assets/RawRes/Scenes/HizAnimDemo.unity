@@ -9504,142 +9504,17 @@ MonoBehaviour:
     DeleteProbability: 0.477
     DeleteOrNewCountPerFrame: 112
     DebugOnlyOneEntity: 1
-    DebugAreaCount: 6
-    DebugEntityCount: 3000
-    DebugEntityBornPosRange: 100
+    DebugAreaCount: 3
+    DebugEntityCount: 6000
+    DebugEntityBornPosRange: 200
     DebugStopAnimation: 0
     DebugStopAI: 0
-    IsOnlyOnePreafb: 1
+    IsOnlyOnePreafb: 0
     CurEnemyCount: 0
     IsCreateView: 0
     ViewRoot: {fileID: 365310895}
     GlobalViewId: 0
     BulletMaterial: {fileID: 2100000, guid: e97944cd67d52674e8075679da5f7d9a, type: 2}
-  _curWorld:
-    _services:
-      DeltaTime: 0
-      TimeSinceLevelLoad: 0
-      Frame: 0
-      DeleteProbability: 0.5
-      DeleteOrNewCountPerFrame: 20
-      DebugOnlyOneEntity: 0
-      DebugAreaCount: 8
-      DebugEntityCount: 1
-      DebugEntityBornPosRange: 100
-      DebugStopAnimation: 0
-      DebugStopAI: 0
-      IsOnlyOnePreafb: 0
-      CurEnemyCount: 0
-      IsCreateView: 1
-      ViewRoot: {fileID: 0}
-      GlobalViewId: 0
-      BulletMaterial: {fileID: 0}
-    EntityManager:
-      World:
-        _services:
-          DeltaTime: 0
-          TimeSinceLevelLoad: 0
-          Frame: 0
-          DeleteProbability: 0.5
-          DeleteOrNewCountPerFrame: 20
-          DebugOnlyOneEntity: 0
-          DebugAreaCount: 8
-          DebugEntityCount: 1
-          DebugEntityBornPosRange: 100
-          DebugStopAnimation: 0
-          DebugStopAI: 0
-          IsOnlyOnePreafb: 0
-          CurEnemyCount: 0
-          IsCreateView: 1
-          ViewRoot: {fileID: 0}
-          GlobalViewId: 0
-          BulletMaterial: {fileID: 0}
-        EntityManager:
-          World:
-            _services:
-              DeltaTime: 0
-              TimeSinceLevelLoad: 0
-              Frame: 0
-              DeleteProbability: 0.5
-              DeleteOrNewCountPerFrame: 20
-              DebugOnlyOneEntity: 0
-              DebugAreaCount: 8
-              DebugEntityCount: 1
-              DebugEntityBornPosRange: 100
-              DebugStopAnimation: 0
-              DebugStopAI: 0
-              IsOnlyOnePreafb: 0
-              CurEnemyCount: 0
-              IsCreateView: 1
-              ViewRoot: {fileID: 0}
-              GlobalViewId: 0
-              BulletMaterial: {fileID: 0}
-            EntityManager:
-              World:
-                _services:
-                  DeltaTime: 0
-                  TimeSinceLevelLoad: 0
-                  Frame: 0
-                  DeleteProbability: 0.5
-                  DeleteOrNewCountPerFrame: 20
-                  DebugOnlyOneEntity: 0
-                  DebugAreaCount: 8
-                  DebugEntityCount: 1
-                  DebugEntityBornPosRange: 100
-                  DebugStopAnimation: 0
-                  DebugStopAI: 0
-                  IsOnlyOnePreafb: 0
-                  CurEnemyCount: 0
-                  IsCreateView: 1
-                  ViewRoot: {fileID: 0}
-                  GlobalViewId: 0
-                  BulletMaterial: {fileID: 0}
-                EntityManager:
-                  World:
-                    _services:
-                      DeltaTime: 0
-                      TimeSinceLevelLoad: 0
-                      Frame: 0
-                      DeleteProbability: 0.5
-                      DeleteOrNewCountPerFrame: 20
-                      DebugOnlyOneEntity: 0
-                      DebugAreaCount: 8
-                      DebugEntityCount: 1
-                      DebugEntityBornPosRange: 100
-                      DebugStopAnimation: 0
-                      DebugStopAI: 0
-                      IsOnlyOnePreafb: 0
-                      CurEnemyCount: 0
-                      IsCreateView: 1
-                      ViewRoot: {fileID: 0}
-                      GlobalViewId: 0
-                      BulletMaterial: {fileID: 0}
-                    EntityManager: {}
-                    WorldRegion:
-                      _totalEntityCount: 0
-                      _extraGridUsedCount: 0
-                      _totalChunkCount: 0
-                      _debugChunkList: []
-                WorldRegion:
-                  _totalEntityCount: 0
-                  _extraGridUsedCount: 0
-                  _totalChunkCount: 0
-                  _debugChunkList: []
-            WorldRegion:
-              _totalEntityCount: 0
-              _extraGridUsedCount: 0
-              _totalChunkCount: 0
-              _debugChunkList: []
-        WorldRegion:
-          _totalEntityCount: 0
-          _extraGridUsedCount: 0
-          _totalChunkCount: 0
-          _debugChunkList: []
-    WorldRegion:
-      _totalEntityCount: 0
-      _extraGridUsedCount: 0
-      _totalChunkCount: 0
-      _debugChunkList: []
 --- !u!4 &365310895
 Transform:
   m_ObjectHideFlags: 0
@@ -16420,8 +16295,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   eventSystem: {fileID: 0}
   lockXRotation: 0
-  minSpeed: 10
-  mainSpeed: 20
+  minSpeed: 20
+  mainSpeed: 40
   shiftMultiplier: 2
   maxShift: 1000
   camSens: 0.35
@@ -18234,7 +18109,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &796050692
 Transform:
   m_ObjectHideFlags: 0
@@ -26185,7 +26060,7 @@ Light:
   m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
   m_Shadows:
-    m_Type: 2
+    m_Type: 1
     m_Resolution: -1
     m_CustomResolution: -1
     m_Strength: 1
@@ -37821,7 +37696,7 @@ MonoBehaviour:
   enableDetailCulling: 1
   enableLOD: 1
   enableOnlyLOD02Shadows: 0
-  detailCullingPercentage: 0.005
+  detailCullingPercentage: 0.122
   shadowDistance: 100
   lod0Distance: 20
   lod1Distance: 40

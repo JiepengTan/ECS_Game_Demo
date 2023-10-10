@@ -131,6 +131,7 @@ public class IndirectRenderer : MonoBehaviour
     private ComputeBuffer m_instancesIsVisibleBuffer;
     private ComputeBuffer m_instanceDataBuffer;
     private ComputeBuffer m_instancesSortingData;
+    private ComputeBuffer m_instancesShadowSortingData;
     private ComputeBuffer m_instancesSortingDataTemp;
     private ComputeBuffer m_instancesMatrixRows01;
     private ComputeBuffer m_instancesCulledMatrixRows01;
@@ -224,6 +225,7 @@ public class IndirectRenderer : MonoBehaviour
     private static readonly int _ShadowIsVisibleBuffer = Shader.PropertyToID("_ShadowIsVisibleBuffer");
     private static readonly int _DrawcallDataOut = Shader.PropertyToID("_DrawcallDataOut");
     private static readonly int _SortingData = Shader.PropertyToID("_SortingData");
+    private static readonly int _ShadowSortingData = Shader.PropertyToID("_ShadowSortingData");
     private static readonly int _InstanceDataBuffer = Shader.PropertyToID("_InstanceDataBuffer");
     private static readonly int _InstancePredicatesIn = Shader.PropertyToID("_InstancePredicatesIn");
     private static readonly int _InstancesDrawMatrixRows = Shader.PropertyToID("_InstancesDrawMatrixRows");
@@ -477,6 +479,7 @@ public class IndirectRenderer : MonoBehaviour
             
             m_instancesDrawAnimData.SetData(_rendererData.animData);// anim data
             m_instancesSortingData.SetData(_rendererData.sortingData);// sorting data
+            m_instancesShadowSortingData.SetData(_rendererData.sortingData);// sorting data
         }
 
         
@@ -520,7 +523,8 @@ public class IndirectRenderer : MonoBehaviour
         Profiler.BeginSample("02 LOD Sorting");
         {
             m_lastCamPosition = m_camPosition;
-            SortRenderDatas();
+            SortRenderDatas(m_instancesSortingData);
+            SortRenderDatas(m_instancesShadowSortingData);
             if (logSortingData|| logDebugAll)
             {
                 logSortingData = false;
@@ -537,18 +541,23 @@ public class IndirectRenderer : MonoBehaviour
         Profiler.BeginSample("05 Copy Instance Data");
         {
             // Normal
+            copyInstanceDataCS.SetBuffer(m_copyInstanceDataKernelID, _SortingData,                  m_instancesSortingData);
             copyInstanceDataCS.SetBuffer(m_copyInstanceDataKernelID, _InstancePredicatesIn,         m_instancesIsVisibleBuffer);
+            
+            copyInstanceDataCS.SetBuffer(m_copyInstanceDataKernelID, _DrawcallDataOut,              m_instancesArgsBuffer);
             copyInstanceDataCS.SetBuffer(m_copyInstanceDataKernelID, _InstancesCulledAnimData,      m_instancesCulledAnimData);
             copyInstanceDataCS.SetBuffer(m_copyInstanceDataKernelID, _InstancesCulledMatrixRows01,  m_instancesCulledMatrixRows01);
-            copyInstanceDataCS.SetBuffer(m_copyInstanceDataKernelID, _DrawcallDataOut,              m_instancesArgsBuffer);
             copyInstanceDataCS.SetBuffer(m_copyInstanceDataKernelID, _InstancesCulledIndexRemap,    m_instancesCulledIndexRemap);
             copyInstanceDataCS.Dispatch(m_copyInstanceDataKernelID, m_copyInstanceDataGroupX, 1, 1);
             
+            
             // Shadows
+            copyInstanceDataCS.SetBuffer(m_copyInstanceDataKernelID, _SortingData,                  m_instancesShadowSortingData);
             copyInstanceDataCS.SetBuffer(m_copyInstanceDataKernelID, _InstancePredicatesIn,         m_shadowsIsVisibleBuffer);
+            
+            copyInstanceDataCS.SetBuffer(m_copyInstanceDataKernelID, _DrawcallDataOut,              m_shadowArgsBuffer);
             copyInstanceDataCS.SetBuffer(m_copyInstanceDataKernelID, _InstancesCulledAnimData,      m_shadowCulledAnimData);
             copyInstanceDataCS.SetBuffer(m_copyInstanceDataKernelID, _InstancesCulledMatrixRows01,  m_shadowCulledMatrixRows01);
-            copyInstanceDataCS.SetBuffer(m_copyInstanceDataKernelID, _DrawcallDataOut,              m_shadowArgsBuffer);
             copyInstanceDataCS.SetBuffer(m_copyInstanceDataKernelID, _InstancesCulledIndexRemap,    m_shadowCulledIndexRemap);
             
             copyInstanceDataCS.Dispatch(m_copyInstanceDataKernelID, m_copyInstanceDataGroupX, 1, 1);
@@ -581,7 +590,7 @@ public class IndirectRenderer : MonoBehaviour
     }
     
     
-    private void SortRenderDatas()
+    private void SortRenderDatas(ComputeBuffer sortingDataBuffer )
     {
         uint BITONIC_BLOCK_SIZE = 256;
         uint TRANSPOSE_BLOCK_SIZE = 8;
@@ -598,7 +607,7 @@ public class IndirectRenderer : MonoBehaviour
             SetGPUSortConstants( ref sortingCS, ref level, ref level, ref MATRIX_HEIGHT, ref MATRIX_WIDTH);
 
             // Sort the row data
-            sortingCS.SetBuffer( m_sortingCSKernelID, _Data, m_instancesSortingData);
+            sortingCS.SetBuffer( m_sortingCSKernelID, _Data, sortingDataBuffer);
             sortingCS.Dispatch(m_sortingCSKernelID, (int)(NUM_ELEMENTS / BITONIC_BLOCK_SIZE), 1, 1);
         }
 
@@ -611,7 +620,7 @@ public class IndirectRenderer : MonoBehaviour
             var inff = (level & ~NUM_ELEMENTS);
             uint lm = inff / BITONIC_BLOCK_SIZE;
             SetGPUSortConstants(ref sortingCS, ref l, ref lm, ref MATRIX_WIDTH, ref MATRIX_HEIGHT);
-            sortingCS.SetBuffer(m_sortingTransposeKernelID, _Input, m_instancesSortingData);
+            sortingCS.SetBuffer(m_sortingTransposeKernelID, _Input, sortingDataBuffer);
             sortingCS.SetBuffer( m_sortingTransposeKernelID, _Data, m_instancesSortingDataTemp);
             sortingCS.Dispatch( m_sortingTransposeKernelID, (int)(MATRIX_WIDTH / TRANSPOSE_BLOCK_SIZE), (int)(MATRIX_HEIGHT / TRANSPOSE_BLOCK_SIZE), 1);
 
@@ -622,11 +631,11 @@ public class IndirectRenderer : MonoBehaviour
             // Transpose the data from buffer 2 back into buffer 1
             SetGPUSortConstants(ref sortingCS, ref BITONIC_BLOCK_SIZE, ref level, ref MATRIX_HEIGHT, ref MATRIX_WIDTH);
             sortingCS.SetBuffer( m_sortingTransposeKernelID, _Input, m_instancesSortingDataTemp);
-            sortingCS.SetBuffer( m_sortingTransposeKernelID, _Data, m_instancesSortingData);
+            sortingCS.SetBuffer( m_sortingTransposeKernelID, _Data, sortingDataBuffer);
             sortingCS.Dispatch(m_sortingTransposeKernelID, (int)(MATRIX_HEIGHT / TRANSPOSE_BLOCK_SIZE), (int)(MATRIX_WIDTH / TRANSPOSE_BLOCK_SIZE), 1);
 
             // Sort the row data
-            sortingCS.SetBuffer( m_sortingCSKernelID, _Data, m_instancesSortingData);
+            sortingCS.SetBuffer( m_sortingCSKernelID, _Data, sortingDataBuffer);
             sortingCS.Dispatch(m_sortingCSKernelID, (int)(NUM_ELEMENTS / BITONIC_BLOCK_SIZE), 1, 1);
         }
     }
@@ -671,6 +680,7 @@ public class IndirectRenderer : MonoBehaviour
             
         m_instanceDataBuffer              = new ComputeBuffer(m_numberOfInstances, computeShaderInputSize, ComputeBufferType.Default);
         m_instancesSortingData            = new ComputeBuffer(m_numberOfInstances, computeSortingDataSize, ComputeBufferType.Default);
+        m_instancesShadowSortingData            = new ComputeBuffer(m_numberOfInstances, computeSortingDataSize, ComputeBufferType.Default);
         m_instancesSortingDataTemp        = new ComputeBuffer(m_numberOfInstances, computeSortingDataSize, ComputeBufferType.Default);
         m_instancesMatrixRows01           = new ComputeBuffer(m_numberOfInstances, computeShaderDrawMatrixSize, ComputeBufferType.Default);
         m_instancesCulledMatrixRows01     = new ComputeBuffer(m_numberOfInstances, computeShaderDrawMatrixSize, ComputeBufferType.Default);
@@ -774,11 +784,11 @@ public class IndirectRenderer : MonoBehaviour
         occlusionCS.SetBuffer(m_occlusionKernelID, _ShadowIsVisibleBuffer, m_shadowsIsVisibleBuffer);
         occlusionCS.SetTexture(m_occlusionKernelID, _HiZMap, hiZBuffer.Texture);
         occlusionCS.SetBuffer(m_occlusionKernelID, _SortingData, m_instancesSortingData);
+        occlusionCS.SetBuffer(m_occlusionKernelID, _ShadowSortingData, m_instancesShadowSortingData);
         
         copyInstanceDataCS.SetInt(_NumOfDrawcalls, m_numberOfInstanceTypes * NUMBER_OF_DRAW_CALLS);
         copyInstanceDataCS.SetBuffer(m_copyInstanceDataKernelID, _InstanceDataBuffer, m_instanceDataBuffer);
         copyInstanceDataCS.SetBuffer(m_copyInstanceDataKernelID, _InstancesDrawMatrixRows, m_instancesMatrixRows01);
-        copyInstanceDataCS.SetBuffer(m_copyInstanceDataKernelID, _SortingData, m_instancesSortingData);
         copyInstanceDataCS.SetBuffer(m_copyInstanceDataKernelID, _InstancesDrawAnimData, m_instancesDrawAnimData);
         
         //CreateCommandBuffers();
@@ -898,6 +908,7 @@ public class IndirectRenderer : MonoBehaviour
         ReleaseComputeBuffer(ref m_instancesIsVisibleBuffer);
         ReleaseComputeBuffer(ref m_instanceDataBuffer);
         ReleaseComputeBuffer(ref m_instancesSortingData);
+        ReleaseComputeBuffer(ref m_instancesShadowSortingData);
         ReleaseComputeBuffer(ref m_instancesSortingDataTemp);
         ReleaseComputeBuffer(ref m_instancesMatrixRows01);
         ReleaseComputeBuffer(ref m_instancesCulledMatrixRows01);
@@ -1359,6 +1370,17 @@ public class IndirectRenderer : MonoBehaviour
                 sb.Append(instanceIndex + " ");
             }
             sb.AppendLine();
+            
+        }     
+        sb.AppendLine("======== SortedShadowInstanceId ===========");
+        {
+            SortingData[] sortingData = new SortingData[m_numberOfInstances];
+            m_instancesShadowSortingData.GetData(sortingData);
+            for (int i = 0; i < count; i++) {
+                uint instanceIndex = (sortingData[i].drawCallInstanceIndex) & 0xFFFF;
+                sb.Append(instanceIndex + " ");
+            }
+            sb.AppendLine();
         }
         
         sb.AppendLine("======== IndexRemap ===========");
@@ -1375,6 +1397,18 @@ public class IndirectRenderer : MonoBehaviour
         {
             SortingData[] sortingData = new SortingData[m_numberOfInstances];
             m_instancesSortingData.GetData(sortingData);
+        
+            uint lastDrawCallIndex = 0;
+            for (int i = 0; i < count; i++)
+            {
+                sb.AppendLine(sortingData[i].ToString());
+            
+            }
+        }
+        sb.AppendLine("======== SortShadowData ===========");
+        {
+            SortingData[] sortingData = new SortingData[m_numberOfInstances];
+            m_instancesShadowSortingData.GetData(sortingData);
         
             uint lastDrawCallIndex = 0;
             for (int i = 0; i < count; i++)

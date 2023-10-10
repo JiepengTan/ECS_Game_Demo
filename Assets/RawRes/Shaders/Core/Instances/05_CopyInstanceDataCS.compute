@@ -13,12 +13,16 @@ cbuffer CB
 {
     uint _NumOfDrawcalls;
 }
-
-StructuredBuffer<SortingData> _SortingData;
+// raw input data
+StructuredBuffer<SortingData> _ShadowSortingData;
 StructuredBuffer<IndirectMatrix> _InstancesDrawMatrixRows;
 StructuredBuffer<AnimData> _InstancesDrawAnimData;
 
+// cur input data
+StructuredBuffer<SortingData> _SortingData;
 StructuredBuffer<uint> _InstancePredicatesIn;
+
+// output data
 RWStructuredBuffer<uint> _DrawcallDataOut;
 RWStructuredBuffer<IndirectMatrix> _InstancesCulledMatrixRows01;
 RWStructuredBuffer<AnimData> _InstancesCulledAnimData;

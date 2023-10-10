@@ -42,9 +42,11 @@ cbuffer CB
 StructuredBuffer<InstanceData> _InstanceDataBuffer;
 RWStructuredBuffer<uint> _ArgsBuffer;
 RWStructuredBuffer<uint> _IsVisibleBuffer;
+RWStructuredBuffer<SortingData> _SortingData;
+
 RWStructuredBuffer<uint> _ShadowArgsBuffer;
 RWStructuredBuffer<uint> _ShadowIsVisibleBuffer;
-RWStructuredBuffer<SortingData> _SortingData;
+RWStructuredBuffer<SortingData> _ShadowSortingData;
 
 
 inline uint IsCameraOutsideObjBounds(float3 pos, float3 minPos, float3 maxPos)
@@ -125,7 +127,7 @@ inline void CSMain (
 {
     // Calculate the instance index
     uint tID = _dispatchThreadID.x;
-    SortingData sortingData = _SortingData[tID];
+    SortingData sortingData = _SortingData[tID];    
     uint drawCall = (sortingData.drawCallInstanceIndex >> 24);
     uint index = (sortingData.drawCallInstanceIndex) & 0xFFFFFF;
     sortingData.threadDispatchID = tID;
@@ -212,25 +214,30 @@ inline void CSMain (
     // Calculate the correct index to the arguments buffers
     // (indexCount, instanceCount, startIndex, baseVertex, startInstance)
     uint argsIndex = drawCall* NUMBER_OF_ARGS_PER_INSTANCE_TYPE + 1;
-    uint shadowArgsIndex = argsIndex;
     argsIndex += 5 * (minDistanceToCamera > lod00Range);
     argsIndex += 5 * (minDistanceToCamera > lod01Range);
     argsIndex = _ShouldLOD * argsIndex + ((_ShouldLOD == 0) * (drawCall + 11));
-
-    shadowArgsIndex += 5 ;// shadow do not use lod0
-    shadowArgsIndex += 5 * (minDistanceToCamera > lod00Range);
-
-    // Mark it as a shadow caster if it's within shadow distance...
-    uint isCastingShadow = minDistanceToCamera < _ShadowDistance ? 1 : 0;
 
     // Output
     _IsVisibleBuffer[tID] = isVisible;
     InterlockedAdd(_ArgsBuffer[argsIndex], isVisible);
 
-    _ShadowIsVisibleBuffer[tID] = isCastingShadow;
-    InterlockedAdd(_ShadowArgsBuffer[shadowArgsIndex], isCastingShadow);
     // 4096*100 < 4096*128 <  (1<<12 * 1<<7)
     uint head = ((1-isVisible)<<31 ) + (drawCall <<22 );
     sortingData.distanceToCam = head + floor(minDistanceToCamera*100) ;
     _SortingData[tID] = sortingData;
+
+    // Output shadow
+    uint shadowArgsIndex = drawCall* NUMBER_OF_ARGS_PER_INSTANCE_TYPE + 1;
+    shadowArgsIndex += 5 ;// shadow do not use lod0
+    shadowArgsIndex += 5 * (minDistanceToCamera > lod00Range);
+    // Mark it as a shadow caster if it's within shadow distance...
+    uint isShadowVisible = minDistanceToCamera < _ShadowDistance ? 1 : 0;
+     
+    _ShadowIsVisibleBuffer[tID] = isShadowVisible;
+    InterlockedAdd(_ShadowArgsBuffer[shadowArgsIndex], isShadowVisible);
+    
+    uint headShadow = ((1-isShadowVisible)<<31 ) + (drawCall <<22 );
+    sortingData.distanceToCam = headShadow + floor(minDistanceToCamera*100) ;
+    _ShadowSortingData[tID] = sortingData;
 }
