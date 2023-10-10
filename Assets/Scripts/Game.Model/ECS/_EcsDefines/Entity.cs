@@ -2,11 +2,13 @@
 
 using System.Collections.Generic;
 using GamesTan.UnsafeECSDefine;
+using GamesTan.UnsafeECSDefineBuiltIn;
 
 namespace GamesTan.UnsafeECSDefine {
 
     [InitEntityCount(1)]
-    public partial class BaseGameEntity : IEntity {
+    [Abstract]
+    public partial class BaseGameEntity  {
         public BasicData BasicData;
         public AssetData AssetData;
         public PhysicData PhysicData;
@@ -17,23 +19,23 @@ namespace GamesTan.UnsafeECSDefine {
         }
     }
     [InitEntityCount(1)]
-    public partial class Enemy : BaseGameEntity {
+    public partial class Enemy : BaseGameEntity,IEntity{
         public EnemyTag EnemyTag;
         public UnitData UnitData;
         public AIData AIData;
         public AnimRenderData AnimRenderData;
-        public AnimData AnimInternalData;
-        
+        public AnimData AnimData;
+
     }
     
     [InitEntityCount(1)]
-    public partial class Bullet :BaseGameEntity{
+    public partial class Bullet :BaseGameEntity,IEntity{
         public BulletTag BulletTag;
         public UnitData UnitData;
     }
     
     [InitEntityCount(1)]
-    public partial class BulletEmitter: IEntity  {
+    public partial class BulletEmitter: BaseGameEntity,IEntity  {
         public SpawnerTag SpawnerTag;
         public EmitterData EmitterData;
     }

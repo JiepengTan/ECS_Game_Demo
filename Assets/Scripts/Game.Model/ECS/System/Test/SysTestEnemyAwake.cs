@@ -20,9 +20,9 @@ namespace GamesTan.ECS.Game {
                     enemy->TransformData.Position = new float3(Services.RandomValue() * dist, 0, Services.RandomValue() * dist);
                     
                     enemy->DegY = Services.RandomValue()*360;
-                    enemy->AnimInternalData.Timer = Services.RandomValue() * 3;
-                    enemy->AnimInternalData.AnimId1[0] = Services.RandomRange(0,3) ;
-                    enemy->AnimInternalData.AnimId1[1] = Services.RandomRange(0,3) ;  
+                    enemy->AnimData.Timer = Services.RandomValue() * 3;
+                    enemy->AnimData.AnimId1[0] = Services.RandomRange(0,3) ;
+                    enemy->AnimData.AnimId1[1] = Services.RandomRange(0,3) ;  
                     WorldRegion.AddEntity(item, ref enemy->PhysicData.GridCoord,enemy->TransformData.Position);
                 }
             }

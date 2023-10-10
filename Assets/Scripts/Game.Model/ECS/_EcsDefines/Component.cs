@@ -3,19 +3,19 @@
 using GamesTan.UnsafeECSDefine;
 
 namespace GamesTan.UnsafeECSDefine {
-    public partial struct EnemyTag : IComponent {
+    public partial class EnemyTag : IGameComponent {
         public int Padding;
     }
 
-    public partial struct BulletTag : IComponent {
+    public partial class BulletTag : IGameComponent {
         public int Padding;
     }
 
-    public partial struct SpawnerTag : IComponent {
+    public partial class SpawnerTag : IGameComponent {
         public int Padding;
     }
 
-    public partial struct UnitData : IComponent {
+    public partial class UnitData : IGameComponent {
         /// <summary> 攻  /// </summary>
         public int Attack;
 
@@ -26,7 +26,7 @@ namespace GamesTan.UnsafeECSDefine {
         public int Health;
     }
 
-    public partial struct EmitterData : IComponent {
+    public partial class EmitterData : IGameComponent {
         public int Deg;
         public int Count;
         public float LiveTime;
@@ -34,7 +34,7 @@ namespace GamesTan.UnsafeECSDefine {
         public float Timer;
     }
 
-    public partial struct AIData : IComponent {
+    public partial class AIData : IGameComponent {
         /// <summary> AI 计时器   /// </summary>
         public float AITimer;
 
@@ -43,7 +43,7 @@ namespace GamesTan.UnsafeECSDefine {
         public float LerpTimer;
     }
 
-    public partial struct AnimData : IComponent {
+    public partial class AnimData : IGameComponent {
         public Vector4 Timer;
         public Vector4 LerpTimer;
         public Vector4Int AnimId1;

@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace Lockstep.NativeUtil
+namespace Lockstep.UnsafeECS
 {
     [StructLayout(LayoutKind.Sequential, Pack = 4)]
     public unsafe partial struct Bitset32

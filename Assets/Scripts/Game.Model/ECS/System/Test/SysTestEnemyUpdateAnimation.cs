@@ -14,7 +14,7 @@ namespace GamesTan.ECS.Game {
         public unsafe partial class SysTestEnemyUpdateAnimation : BaseEntityUpdateSystem {
         [BurstCompile]
         protected override void Update(ref Enemy entity, float dt) {
-            ref var internalData = ref entity.AnimInternalData;
+            ref var internalData = ref entity.AnimData;
             if (!Services.DebugStopAnimation) {
                 internalData.Timer += dt;
             }

@@ -5,6 +5,7 @@
   "#ASSET": "typeof IAsset",
   "#ENTITY": "typeof IEntity; use(#ALL_SIZE,#SIZE)",
   "#COMPONENT": "typeof IComponent",
+  "#GAME_COMPONENT": "typeof IGameComponent",
   "#FIELDS": "typeof IFields",
   "#SIGNAL": "typeof ISignal",
   "#EVENT": "typeof IEvent",

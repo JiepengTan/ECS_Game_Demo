@@ -1,8 +1,4 @@
     public unsafe partial struct __default {
-        //enum 
-#_ME_FOR #ENUM
-        public static #CLS_NAME #CLS_NAME;
-#_ME_ENDFOR
         //IRef 
 #_ME_FOR #REF
         public static #CLS_NAME #CLS_NAME;

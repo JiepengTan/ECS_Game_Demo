@@ -1,5 +1,5 @@
-﻿
-namespace GamesTan.UnsafeECSDefine {
+﻿using GamesTan.UnsafeECSDefine;
+namespace GamesTan.UnsafeECSDefineBuiltIn {
 
     public partial struct TransformData :IBuildInComponent{
         public Vector3 Position;

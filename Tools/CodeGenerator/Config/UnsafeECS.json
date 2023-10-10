@@ -18,10 +18,11 @@
     "\nusing System.Runtime.InteropServices;                                                           ",
     "\nusing System;                                                                                   ",
     "\nusing System.Collections.Generic;                                                               ",
-    "\nnamespace GamesTan.ECS.Game{                                                                    ",
-    "\n#if !DONT_USE_GENERATE_CODE                                                                     ",
+    "\nusing Lockstep.UnsafeECS;                                                                       ",
+    "\nusing Unity.Burst;                                                                              ",
+    "\nusing Unity.Mathematics;                                                                        ",
+    "\nnamespace GamesTan.ECS.Game{                                                                         ",
     "\n#TYPES_EXTENSIONS                                                                               ",
-    "\n#endif                                                                                          ",
     "\n}                                                                                               "
   ]
 }
