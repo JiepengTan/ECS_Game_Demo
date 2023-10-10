@@ -20,6 +20,7 @@ namespace GamesTan.ECS.Game {
         public int DebugEntityBornPosRange = 100;
         public bool DebugStopAnimation = false;
         public bool DebugStopAI = false;
+        public bool IsOnlyOnePreafb = false;
         
         [Header("Status")]
         public int CurEnemyCount;

@@ -1,6 +1,6 @@
 //UNITY_SHADER_NO_UPGRADE
-#ifndef GPUSKIN_ANIM_INCLUDED
-#define GPUSKIN_ANIM_INCLUDED
+#ifndef GPUSKIN_CGINC
+#define GPUSKIN_CGINC
 
 #define GPUSKIN_BONE_COUNT  4
 #define GPUSKIN_BLEND_COUNT 2
@@ -112,4 +112,4 @@ void AnimateBlend_float(float3 position, float3 normal, float3 tangent,
         }        
     }
 }
-#endif //GPUSKIN_ANIM_INCLUDED
+#endif 

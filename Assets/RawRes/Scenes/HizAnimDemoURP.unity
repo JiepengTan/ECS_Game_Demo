@@ -9509,12 +9509,11 @@ MonoBehaviour:
     DebugEntityBornPosRange: 100
     DebugStopAnimation: 0
     DebugStopAI: 0
-    IsOnlyOnePreafb: 1
     CurEnemyCount: 0
     IsCreateView: 0
     ViewRoot: {fileID: 365310895}
     GlobalViewId: 0
-    BulletMaterial: {fileID: 2100000, guid: e97944cd67d52674e8075679da5f7d9a, type: 2}
+    BulletMaterial: {fileID: 2100000, guid: fe461aafd6ce382478d80b5fee24f963, type: 2}
   _curWorld:
     _services:
       DeltaTime: 0
@@ -9528,7 +9527,6 @@ MonoBehaviour:
       DebugEntityBornPosRange: 100
       DebugStopAnimation: 0
       DebugStopAI: 0
-      IsOnlyOnePreafb: 0
       CurEnemyCount: 0
       IsCreateView: 1
       ViewRoot: {fileID: 0}
@@ -9548,7 +9546,6 @@ MonoBehaviour:
           DebugEntityBornPosRange: 100
           DebugStopAnimation: 0
           DebugStopAI: 0
-          IsOnlyOnePreafb: 0
           CurEnemyCount: 0
           IsCreateView: 1
           ViewRoot: {fileID: 0}
@@ -9568,7 +9565,6 @@ MonoBehaviour:
               DebugEntityBornPosRange: 100
               DebugStopAnimation: 0
               DebugStopAI: 0
-              IsOnlyOnePreafb: 0
               CurEnemyCount: 0
               IsCreateView: 1
               ViewRoot: {fileID: 0}
@@ -9588,7 +9584,6 @@ MonoBehaviour:
                   DebugEntityBornPosRange: 100
                   DebugStopAnimation: 0
                   DebugStopAI: 0
-                  IsOnlyOnePreafb: 0
                   CurEnemyCount: 0
                   IsCreateView: 1
                   ViewRoot: {fileID: 0}
@@ -9608,7 +9603,6 @@ MonoBehaviour:
                       DebugEntityBornPosRange: 100
                       DebugStopAnimation: 0
                       DebugStopAI: 0
-                      IsOnlyOnePreafb: 0
                       CurEnemyCount: 0
                       IsCreateView: 1
                       ViewRoot: {fileID: 0}
@@ -17219,51 +17213,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3637134996410565414, guid: 9c6178fe943216540b276b975dafae16, type: 3}
   m_PrefabInstance: {fileID: 1203597973}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &754076697
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 754076698}
-  - component: {fileID: 754076699}
-  m_Layer: 0
-  m_Name: RenderPipline
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &754076698
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 754076697}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &754076699
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 754076697}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 37964ea177b96524fa269d4346e6d79f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  renderPipelineAsset: {fileID: 0}
 --- !u!4 &754306753 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5707813131339434805, guid: b995a96a7ca36d04b851e46870b5aadf, type: 3}
@@ -18234,7 +18183,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &796050692
 Transform:
   m_ObjectHideFlags: 0
@@ -24437,7 +24386,7 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: ef50fa25332f40949a30cf24d57aba23, type: 2}
     - target: {fileID: 1683119748869744866, guid: 94814e7d6d48f774d8a7db069f9bf6ad, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.83
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1683119748869744866, guid: 94814e7d6d48f774d8a7db069f9bf6ad, type: 3}
       propertyPath: m_LocalPosition.y
@@ -25709,6 +25658,51 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1810836374240881437, guid: 962996e23ffcbc44d92fb20cd03940cd, type: 3}
   m_PrefabInstance: {fileID: 236224118}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1199003567
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1199003569}
+  - component: {fileID: 1199003568}
+  m_Layer: 0
+  m_Name: RenderPipline
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1199003568
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1199003567}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37964ea177b96524fa269d4346e6d79f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  renderPipelineAsset: {fileID: 11400000, guid: 48a6d5e02abc21b45a7fa001a6907965, type: 2}
+--- !u!4 &1199003569
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1199003567}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &1199321114 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1810836374240881437, guid: 962996e23ffcbc44d92fb20cd03940cd, type: 3}
@@ -42779,7 +42773,7 @@ MeshRenderer:
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 04aae44fd0c134ed8a51aea73c55341c, type: 2}
+  - {fileID: 2100000, guid: 7ba0c81beb35d0848bbc77ec6848891d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -42847,4 +42841,4 @@ SceneRoots:
   - {fileID: 691982075}
   - {fileID: 1144584217}
   - {fileID: 1504279297}
-  - {fileID: 754076698}
+  - {fileID: 1199003569}
