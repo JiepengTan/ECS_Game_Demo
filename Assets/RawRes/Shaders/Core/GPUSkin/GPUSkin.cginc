@@ -2,6 +2,8 @@
 #ifndef GPUSKIN_ANIM_INCLUDED
 #define GPUSKIN_ANIM_INCLUDED
 
+#define GPUSKIN_BONE_COUNT  4
+#define GPUSKIN_BLEND_COUNT 2
 float3 doTransform(float4x4 transform, float3 pt)
 {
     return mul(transform, float4(pt.x, pt.y, pt.z, 1)).xyz;
@@ -55,11 +57,11 @@ float4x4 extractRotationMatrix(float4x4 m)
 
 void calculateFrameValues(float2 texSize,float3 position, float3 normal, float3 tangent,
     sampler2D animatedBoneMatrices, 
-    float2 boneWeights[6], int frameIndex, 
+    float2 boneWeights[GPUSKIN_BONE_COUNT], int frameIndex, 
     out float3 positionOut, out float3 normalOut, out float3 tangentOut)
 {
     positionOut = normalOut = tangentOut = float3(0, 0, 0);
-    for(int i = 0; i < 6; i++)
+    for(int i = 0; i < GPUSKIN_BONE_COUNT; i++)
     {
         float boneWeight = boneWeights[i].y;
         if(boneWeight == 0) break;
@@ -79,7 +81,7 @@ void calculateFrameValues(float2 texSize,float3 position, float3 normal, float3 
         tangentOut += boneWeight * doTransform(rotationMatrix, tangent); 
     }
 }
-
+// GPU Skin is only for those massive render (simple animation), so we do not need those complex blend
 void AnimateBlend_float(float3 position, float3 normal, float3 tangent,
     float3x4 uvs, sampler2D animatedBoneMatrices, float2 texSize, float4x4 animationState,
     out float3 positionOut, out float3 normalOut, out float3 tangentOut) 
@@ -87,17 +89,16 @@ void AnimateBlend_float(float3 position, float3 normal, float3 tangent,
     positionOut = float3(0, 0, 0);
     normalOut = float3(0, 0, 0);
     tangentOut = float3(0, 0, 0);
-    float2 boneWeights[6] = {
+    float2 boneWeights[GPUSKIN_BONE_COUNT] = {
         float2(uvs._m00, uvs._m01),  float2(uvs._m02, uvs._m03),
-        float2(uvs._m10, uvs._m11),  float2(uvs._m12, uvs._m13),
-        float2(uvs._m20, uvs._m21),  float2(uvs._m22, uvs._m23) };
+        float2(uvs._m10, uvs._m11),  float2(uvs._m12, uvs._m13) };
     
-    for(int blendIndex = 0; blendIndex < 4; blendIndex++)
+    for(int blendIndex = 0; blendIndex < GPUSKIN_BLEND_COUNT; blendIndex++)
     {
         float blendFactor = animationState[blendIndex][0]; 
         if(blendFactor > 0.01)
         {
-            float transitionNextFrame =0;// animationState[blendIndex][1];
+            float transitionNextFrame = animationState[blendIndex][1];
             float prevFrameFrac = 1.0 - transitionNextFrame;
             float frameIndex = animationState[blendIndex][2];
             float3 posOutBefore, posOutAfter, normalOutBefore, normalOutAfter, tangentOutBefore, tangentOutAfter;
