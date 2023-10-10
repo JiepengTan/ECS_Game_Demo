@@ -1,6 +1,6 @@
 ﻿namespace GamesTan.ECS {
     public interface IEntity {
-        EntityData __EntityData {
+        EntityRef __EntityData {
             get;
             set;
         }

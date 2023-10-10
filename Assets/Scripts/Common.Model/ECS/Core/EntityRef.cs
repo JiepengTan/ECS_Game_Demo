@@ -3,8 +3,8 @@ using System.Runtime.CompilerServices;
 using UnityEngine;
 
 namespace GamesTan.ECS {
-    public unsafe struct EntityData {
-        public static EntityData DefaultObject = new EntityData();
+    public unsafe struct EntityRef {
+        public static EntityRef DefaultObject = new EntityRef();
 
         // 无效数据格式
         public static UInt64 DefaultObjectIntData = 0;
@@ -31,24 +31,24 @@ namespace GamesTan.ECS {
         public UInt32 _InternalData2;
 
 
-        public EntityData(int typeId, int slotId, int version) {
+        public EntityRef(int typeId, int slotId, int version) {
             DebugUtil.Assert(typeId < 1 << TypeIdBitCount, "TypeId out of range " + typeId);
             DebugUtil.Assert(slotId < 1 << SlotBitCount, "EntityId out of range " + slotId);
             _InternalData = (uint)typeId << SlotBitCount | (uint)slotId;
             _InternalData2 = (UInt32)version;
         }
 
-        private EntityData(UInt32 data1, UInt32 data2) {
+        private EntityRef(UInt32 data1, UInt32 data2) {
             _InternalData = data1;
             _InternalData2 = data2;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static explicit operator EntityData (UInt64 data) {
-            return new EntityData((UInt32)(data>>32),(UInt32)(data &0xFFFFFFFF));
+        public static explicit operator EntityRef (UInt64 data) {
+            return new EntityRef((UInt32)(data>>32),(UInt32)(data &0xFFFFFFFF));
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static explicit operator UInt64 (EntityData data) {
+        public static explicit operator UInt64 (EntityRef data) {
             return (UInt64)data._InternalData << 32 | data._InternalData2;
         }
 
@@ -56,10 +56,10 @@ namespace GamesTan.ECS {
             return $" typeId{TypeId} SlotId:{SlotId} Version:{Version} _data:{_InternalData}";
         }
 
-        public static bool operator ==(EntityData lhs, EntityData rhs) {
+        public static bool operator ==(EntityRef lhs, EntityRef rhs) {
             return lhs._InternalData == rhs._InternalData;
         }
-        public static bool operator != (EntityData lhs, EntityData rhs) {
+        public static bool operator != (EntityRef lhs, EntityRef rhs) {
             return !(lhs == rhs);
         }
 

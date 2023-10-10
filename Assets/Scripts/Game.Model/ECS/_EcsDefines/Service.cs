@@ -5,7 +5,5 @@ using System.Collections.Generic;
 using GamesTan.UnsafeECSDefine;
 
 namespace GamesTan.UnsafeECSDefine {
-	public partial class GameStateService : IGameService{}
-	public partial class GameConfigService : IGameService{}
-	public partial class GameEventService : IGameService{}
+
 }

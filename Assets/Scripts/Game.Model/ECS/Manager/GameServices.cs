@@ -27,7 +27,7 @@ namespace GamesTan.ECS.Game {
         
         [Header("Status")]
         public int CurEnemyCount;
-        public List<EntityData> AllUnits = new List<EntityData>();
+        public List<EntityRef> AllUnits = new List<EntityRef>();
         
         [Header("View")]
         public bool IsCreateView = true;

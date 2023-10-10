@@ -5,7 +5,7 @@ using System.Text;
 namespace Lockstep.NativeUtil
 {
     [StructLayout(LayoutKind.Sequential, Pack = 4)]
-    public unsafe partial struct BitSet32
+    public unsafe partial struct Bitset32
     {
         public const int BitsSize = 32;
         public UInt32 bits;

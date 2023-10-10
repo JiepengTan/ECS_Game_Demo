@@ -1,17 +1,18 @@
 ﻿using System.Runtime.InteropServices;
 using Unity.Mathematics;
+using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace GamesTan.ECS {
     [System.Serializable]
     [StructLayout(LayoutKind.Sequential)]
     public partial struct TransformData :IComponent{
-        /// <summary> 旋转   /// </summary>
-        public float3 Pos;
-        public float3 Rot;
+        public float3 Position;
+        public float3 Rotation;
         public float3 Scale;
-
+        
         public override string ToString() {
-            return $"pos{Pos} rot:{Rot} scale:{Scale}";
+            return $"pos{Position} rot:{Rotation} scale:{Scale}";
         }
     }
 }

@@ -8,8 +8,8 @@ namespace GamesTan.ECS.Game {
     [StructLayout(LayoutKind.Sequential)]
     public partial struct Bullet : IEntity {
         /// <summary> Entity Data   /// </summary>
-        public EntityData __Data;
-        public EntityData __EntityData {
+        public EntityRef __Data;
+        public EntityRef __EntityData {
             get => __Data;
             set => __Data = value;
         }
@@ -34,20 +34,20 @@ namespace GamesTan.ECS.Game {
 
         /// <summary> 旋转   /// </summary>
         public float DegY {
-            get => TransformData.Rot.y;
-            set => TransformData.Rot.y = value;
+            get => TransformData.Rotation.y;
+            set => TransformData.Rotation.y = value;
         }
         public float Radius {
             get => PhysicData.Radius;
             set => PhysicData.Radius = value;
         }
         public float3 Pos3 {
-            get => TransformData.Pos;
-            set => TransformData.Pos = value;
+            get => TransformData.Position;
+            set => TransformData.Position = value;
         }
         public float3 Rot3 {
-            get => TransformData.Rot;
-            set => TransformData.Rot = value;
+            get => TransformData.Rotation;
+            set => TransformData.Rotation = value;
         }
         public float3 Scale3 {
             get => TransformData.Scale;
@@ -81,8 +81,8 @@ namespace GamesTan.ECS.Game {
     [StructLayout(LayoutKind.Sequential)]
     public partial struct Enemy : IEntity {
         /// <summary> Entity Data   /// </summary>
-        public EntityData __Data;
-        public EntityData __EntityData {
+        public EntityRef __Data;
+        public EntityRef __EntityData {
             get => __Data;
             set => __Data = value;
         }
@@ -107,8 +107,8 @@ namespace GamesTan.ECS.Game {
 
         /// <summary> 旋转   /// </summary>
         public float DegY {
-            get => TransformData.Rot.y;
-            set => TransformData.Rot.y = value;
+            get => TransformData.Rotation.y;
+            set => TransformData.Rotation.y = value;
         }
 
         public float3 Forward {
@@ -129,12 +129,12 @@ namespace GamesTan.ECS.Game {
             set => PhysicData.Radius = value;
         }
         public float3 Pos3 {
-            get => TransformData.Pos;
-            set => TransformData.Pos = value;
+            get => TransformData.Position;
+            set => TransformData.Position = value;
         }
         public float3 Rot3 {
-            get => TransformData.Rot;
-            set => TransformData.Rot = value;
+            get => TransformData.Rotation;
+            set => TransformData.Rotation = value;
         }
         public float3 Scale3 {
             get => TransformData.Scale;

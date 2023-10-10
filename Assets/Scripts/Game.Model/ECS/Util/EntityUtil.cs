@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace GamesTan.ECS.Game {
     public unsafe static class EntityUtil {
-        public static EntityData CreateBullet(this GameEcsWorld world) {
+        public static EntityRef CreateBullet(this GameEcsWorld world) {
             var services = world.Services;
             var entityMgr = world.EntityManager;
             var entity = entityMgr.AllocBullet();
@@ -28,7 +28,7 @@ namespace GamesTan.ECS.Game {
           
             return entityPtr->__Data;
         }
-        public static void DestroyBullet(this GameEcsWorld world, EntityData unit) {
+        public static void DestroyBullet(this GameEcsWorld world, EntityRef unit) {
             var entityMgr = world.EntityManager;
             var services = world.Services;
             var ptr = entityMgr.GetBullet(unit);
@@ -43,7 +43,7 @@ namespace GamesTan.ECS.Game {
             entityMgr.FreeEnemy(unit);
         }
         
-        public static EntityData CreateEnemy(this GameEcsWorld world) {
+        public static EntityRef CreateEnemy(this GameEcsWorld world) {
             var services = world.Services;
             var entityMgr = world.EntityManager;
             var entity = entityMgr.AllocEnemy();
@@ -66,7 +66,7 @@ namespace GamesTan.ECS.Game {
             return entityPtr->__Data;
         }
 
-        public static void DestroyEnemy(this GameEcsWorld world, EntityData unit) {
+        public static void DestroyEnemy(this GameEcsWorld world, EntityRef unit) {
             var entityMgr = world.EntityManager;
             var services = world.Services;
             var ptr = entityMgr.GetEnemy(unit);

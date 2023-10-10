@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace GamesTan.ECS.Game {
     public unsafe partial class SysTestDestroyEnemy : BaseGameSystem {
-        private List<EntityData> _testUnits => Services.AllUnits;
+        private List<EntityRef> _testUnits => Services.AllUnits;
 
         public override void Update(float dt) {
             if (Services.DebugOnlyOneEntity) return;

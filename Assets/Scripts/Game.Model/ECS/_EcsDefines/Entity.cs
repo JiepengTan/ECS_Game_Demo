@@ -4,69 +4,38 @@ using System.Collections.Generic;
 using GamesTan.UnsafeECSDefine;
 
 namespace GamesTan.UnsafeECSDefine {
-    [InitEntityCount(5)]
-    public partial class BoidSpawnerAAF : IEntity{
-        public Transform3D Transform3D2;
-        public Prefab Prefab;
-        public SpawnData Spawn;
-        public AssetData BoidPrefab;
-        public BoidSpawnerTag Tag;
+
+    [InitEntityCount(1)]
+    public partial class BaseGameEntity : IEntity {
+        public BasicData BasicData;
+        public AssetData AssetData;
+        public PhysicData PhysicData;
+        public TransformData TransformData;
 
         public void TestCodeGen(){
             System.Console.WriteLine("TestCodeGen:  1");
         }
     }
-    [InitEntityCount(2)]
-    public partial class BoidSpawner : IEntity{
-        public Transform3D Transform3D2;
-        public Prefab Prefab;
-        public SpawnData Spawn;
-        public AssetData BoidPrefab;
-        public BoidSpawnerTag Tag;
-
-        public void TestCodeGen(){
-            System.Console.WriteLine("TestCodeGen:  1");
-        }
-    }
-    [InitEntityCount(10)]
-    public partial class BoidCell : IEntity{
-        public CellData Cell;
-    }
-
-    [InitEntityCount(10)]
-    public partial class TestDemos : IEntity{
-        public CellData Cell;
-    }
-
-    [InitEntityCount(20)]
-    public partial class Boid: IEntity,IUpdateViewEntity{
-        public Transform2D Transform2D;
-        public Prefab Prefab;
-        public BoidState State;
-        public BoidTag Tag;
+    [InitEntityCount(1)]
+    public partial class Enemy : BaseGameEntity {
+        public EnemyTag EnemyTag;
+        public UnitData UnitData;
+        public AIData AIData;
+        public AnimRenderData AnimRenderData;
+        public AnimData AnimInternalData;
+        
     }
     
-    [InitEntityCount(2)]
-    public partial class BoidTarget: IEntity,IBindViewEntity {
-        public Transform3D Transform3D;
-        public TargetMoveInfo MoveInfo;
-        public BoidTargetTag Tag;
+    [InitEntityCount(1)]
+    public partial class Bullet :BaseGameEntity{
+        public BulletTag BulletTag;
+        public UnitData UnitData;
+    }
+    
+    [InitEntityCount(1)]
+    public partial class BulletEmitter: IEntity  {
+        public SpawnerTag SpawnerTag;
+        public EmitterData EmitterData;
     }
 
-    [InitEntityCount(2)]
-    public partial class BoidObstacle :IEntity,IBindViewEntity,IUpdateViewEntity{
-        public Transform3D Transform3D;
-        public PlayerData Player;
-        public SkillData Skill;
-        public MoveData Move;
-        public BoidObstacleTag Tag;
-    }
-
-
-    [InitEntityCount(20)]
-    public partial class BoidTarget1: IEntity,IBindViewEntity {
-        public Transform3D Transform;
-        public TargetMoveInfo MoveInfo;
-        public BoidTargetTag Tag;
-    }
 }

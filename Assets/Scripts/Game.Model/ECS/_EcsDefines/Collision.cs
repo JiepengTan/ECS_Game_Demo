@@ -4,7 +4,6 @@ using GamesTan.UnsafeECSDefine;
 namespace GamesTan.UnsafeECSDefine {
 
     public class CollisionDefine : ICollisionEvent {
-        public void TestSSS() {
-        }
+  
     }
 }

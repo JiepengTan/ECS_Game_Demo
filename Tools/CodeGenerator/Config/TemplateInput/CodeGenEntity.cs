@@ -1,6 +1,7 @@
 
 #_ME_FOR #ENTITY 
-    [StructLayoutAttribute(LayoutKind.Sequential, Pack = Define.PackSize)]
+    [System.Serializable]
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe partial struct #CLS_NAME :IEntity {
         public const Int32 MAX_COUNT = 4;
         internal Entity _entity;

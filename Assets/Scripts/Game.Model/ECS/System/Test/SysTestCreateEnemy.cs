@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace GamesTan.ECS.Game {
     public unsafe partial class SysTestCreateEnemy : BaseGameSystem {
-        private List<EntityData> _testUnits => Services.AllUnits;
+        private List<EntityRef> _testUnits => Services.AllUnits;
 
         public override void Update(float dt) {
             if (Services.DeleteOrNewCountPerFrame == 0) return;

@@ -55,17 +55,17 @@ namespace Gamestan.Spatial {
             }
         }
 
-        public EntityData GetGridEntity(Grid* grid, uint idx) {
-            if (idx > grid->Count) return EntityData.DefaultObject;
+        public EntityRef GetGridEntity(Grid* grid, uint idx) {
+            if (idx > grid->Count) return EntityRef.DefaultObject;
             if (grid->IsLocalFull) {
                 Debug.LogError("TODO implements ");
-                return EntityData.DefaultObject;
+                return EntityRef.DefaultObject;
             }
 
-            return (EntityData)(grid->Entities[idx]);
+            return (EntityRef)(grid->Entities[idx]);
         }
 
-        public void MoveEntity(EntityData data, int2 lastPos, ChunkInfo newChunk, int2 newPos) {
+        public void MoveEntity(EntityRef data, int2 lastPos, ChunkInfo newChunk, int2 newPos) {
             DebugDump($"MoveEntity Before CrossChunk {_coord}=>{newChunk._coord} worldPos:{lastPos} =>{newPos} entity:{data}   newChunk {newChunk}");
             var lastGrid = GetGrid(lastPos);
             var succ = RemoveGridEntity(lastGrid, data);
@@ -81,7 +81,7 @@ namespace Gamestan.Spatial {
             DebugUtil.Assert(succ, $"MoveEntity Failed CrossChunk {_coord}=>{newChunk._coord} worldPos:{lastPos} =>{newPos} entity:{data}  {this} newChunk {newChunk} ");
         }
 
-        public void MoveEntity(EntityData data, int2 lastPos, int2 newPos) {
+        public void MoveEntity(EntityRef data, int2 lastPos, int2 newPos) {
             DebugDump($"MoveEntity Before InChunk {_coord} worldPos:{lastPos} =>{newPos}  entity:{data} ");
             var lastGrid = GetGrid(lastPos);
             var succ = RemoveGridEntity(lastGrid, data);
@@ -94,7 +94,7 @@ namespace Gamestan.Spatial {
             DebugUtil.Assert(succ, $"MoveEntity Failed InChunk {_coord} worldPos:{lastPos} =>{newPos}  entity:{data} {this}");
         }
 
-        public bool RemoveEntity(EntityData data, int2 worldPos) {
+        public bool RemoveEntity(EntityRef data, int2 worldPos) {
             var grid = GetGrid(worldPos);
             if (RemoveGridEntity(grid, data)) {
                 EntityCount--;
@@ -106,14 +106,14 @@ namespace Gamestan.Spatial {
             return false;
         }
 
-        public void AddEntity(EntityData data, int2 worldPos) {
+        public void AddEntity(EntityRef data, int2 worldPos) {
             var grid = GetGrid(worldPos);
             AddGridEntity(grid, data);
             EntityCount++;
             DebugDump($"AddEntity {data} pos:{worldPos}");
         }
 
-        public void AddGridEntity(Grid* grid, EntityData entityData) {
+        public void AddGridEntity(Grid* grid, EntityRef entityData) {
             int count = grid->Count;
             if (count >= Grid.ArySize) {
                 var offset = count % Grid.ArySize;
@@ -136,7 +136,7 @@ namespace Gamestan.Spatial {
             grid->Count++;
         }
 
-        public bool RemoveGridEntity(Grid* grid, EntityData entityData) {
+        public bool RemoveGridEntity(Grid* grid, EntityRef entityData) {
             if (Region.IsDebugMode) {
                 Debug.Log($"RemoveGridEntity Before  remainCount:{grid->Count} ");
             }
@@ -203,7 +203,7 @@ namespace Gamestan.Spatial {
                     matchIdx = i;
                     grid->Count--;
                     grid->Entities[i] = grid->Entities[grid->Count];
-                    grid->Entities[grid->Count] = EntityData.DefaultObjectIntData;
+                    grid->Entities[grid->Count] = EntityRef.DefaultObjectIntData;
                     if (Region.IsDebugMode) {
                         Debug.Log($"RemoveGridEntity Local After {matchIdx} remainCount:{grid->Count} ");
                     }

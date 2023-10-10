@@ -1,13 +1,13 @@
 ﻿using System.Runtime.InteropServices;
 using Unity.Mathematics;
 
-namespace GamesTan.ECS.Game {
+namespace GamesTan.ECS {
     [System.Serializable]
     [StructLayout(LayoutKind.Sequential)]
     public partial struct BaseEntity : IEntity {
         /// <summary> Entity Data   /// </summary>
-        public EntityData __Data;
-        public EntityData __EntityData {
+        public EntityRef __Data;
+        public EntityRef __EntityData {
             get => __Data;
             set => __Data = value;
         }
@@ -32,8 +32,8 @@ namespace GamesTan.ECS.Game {
 
         /// <summary> 旋转   /// </summary>
         public float DegY {
-            get => TransformData.Rot.y;
-            set => TransformData.Rot.y = value;
+            get => TransformData.Rotation.y;
+            set => TransformData.Rotation.y = value;
         }
 
         public float3 Forward {

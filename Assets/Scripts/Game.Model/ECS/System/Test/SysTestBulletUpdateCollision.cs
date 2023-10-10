@@ -33,7 +33,7 @@ namespace GamesTan.ECS.Game {
 
     public unsafe partial class SysTestBulletUpdateCollision : BaseGameSystem {
 
-        HashSet<EntityData> _needDestroyEntities = new HashSet<EntityData>();
+        HashSet<EntityRef> _needDestroyEntities = new HashSet<EntityRef>();
         public override void Update(float dt) {
             var pool = EntityManager.BulletPool;
             var count = pool.MaxUsedSlot;
@@ -42,7 +42,7 @@ namespace GamesTan.ECS.Game {
             for (int i = 0; i < count; i++) {
                 ref var entity =ref ptrAry[i];
                 if (entity.IsValid) {
-                    var lst = WorldRegion.QueryCollision(entity.TransformData.Pos, entity.PhysicData.Radius);
+                    var lst = WorldRegion.QueryCollision(entity.TransformData.Position, entity.PhysicData.Radius);
                     foreach (var item in lst) {
                         var target = EntityManager.GetEnemy(item);
                         var isCollision = CollisionUtil.IsCollision(target->Pos3, target->Radius, entity.Pos3, entity.Radius);

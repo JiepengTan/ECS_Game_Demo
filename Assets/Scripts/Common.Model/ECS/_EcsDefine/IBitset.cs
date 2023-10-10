@@ -3,6 +3,9 @@
 using GamesTan.UnsafeECSDefine;
 
 namespace GamesTan.UnsafeECSDefine {
+    
+    public class Bitset32 : IBitset { }
+    public class Bitset64 : IBitset { }
     public class Bitset128 : IBitset { }
 
     public class Bitset256 : IBitset { }

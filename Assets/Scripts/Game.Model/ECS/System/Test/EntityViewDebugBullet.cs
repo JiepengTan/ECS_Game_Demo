@@ -3,7 +3,7 @@
 namespace GamesTan.ECS.Game {
     public unsafe class EntityViewDebugBullet : MonoBehaviour {
         public GameEcsWorld World;
-        public EntityData Entity;
+        public EntityRef Entity;
 
         public bool IsControlByEntity = true;
 
@@ -13,12 +13,12 @@ namespace GamesTan.ECS.Game {
             if (entity != null) {
                 transform.localScale = entity->TransformData.Scale;
                 if (IsControlByEntity) {
-                    transform.position = entity->TransformData.Pos;
-                    transform.eulerAngles = entity->TransformData.Rot;
+                    transform.position = entity->TransformData.Position;
+                    transform.eulerAngles = entity->TransformData.Rotation;
                 }
                 else {
-                    entity->TransformData.Pos = transform.position;
-                    entity->TransformData.Rot = transform.eulerAngles;
+                    entity->TransformData.Position = transform.position;
+                    entity->TransformData.Rotation = transform.eulerAngles;
                 }
             }
             

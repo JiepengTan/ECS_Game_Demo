@@ -79,7 +79,7 @@ public unsafe class InstanceRenderData {
                 transformData[curIdx] = item.trans;
                 
                 InstanceBound bound = new InstanceBound();
-                bound.boundsCenter = item.trans.Pos;
+                bound.boundsCenter = item.trans.Position;
                 bound.boundsExtents = item.trans.Scale * prefabSize[item.prefabIdx];// TODO correct bound size
                 bounds[curIdx] = bound;
                 sortingData[curIdx].drawCallInstanceIndex =(((uint)prefabIdx  << 24) + ((uint)curIdx));

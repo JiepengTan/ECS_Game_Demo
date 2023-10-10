@@ -100,8 +100,8 @@ namespace Gamestan.Spatial {
             _freeExtraGrids.Clear();
         }
 
-        private static List<EntityData> _collisionResult = new List<EntityData>();
-        public List<EntityData> QueryCollision(float3 pos, float radius) {
+        private static List<EntityRef> _collisionResult = new List<EntityRef>();
+        public List<EntityRef> QueryCollision(float3 pos, float radius) {
             var centerWorldPos = FloorWorldPos(pos);
             var centerGridCoord = WorldPos2GridCoord(centerWorldPos);
             var width = ((int)(math.ceil(radius +1 )))>> Grid.WidthBit;
@@ -122,7 +122,7 @@ namespace Gamestan.Spatial {
             return _collisionResult;
         }
 
-        public void Update(EntityData data, ref int2 coord, float3 pos) {
+        public void Update(EntityRef data, ref int2 coord, float3 pos) {
             Instance = this;
             var pos2 = new float2(pos.x, pos.z);
             var worldPos = (int2)math.floor(pos2);
@@ -161,7 +161,7 @@ namespace Gamestan.Spatial {
             }
         }
 
-        public int2 AddEntity(EntityData data,ref int2 coord, float3 pos) {
+        public int2 AddEntity(EntityRef data,ref int2 coord, float3 pos) {
             //if (IsDebugMode) Debug.Log($"AddEntity {data} pos:{pos}");
             var worldPos = FloorWorldPos(pos);
             coord = WorldPos2GridCoord(worldPos);
@@ -171,7 +171,7 @@ namespace Gamestan.Spatial {
             return WorldPos2GridCoord(worldPos);
         }
 
-        public bool RemoveEntity(EntityData data, int2 gridCoord) {
+        public bool RemoveEntity(EntityRef data, int2 gridCoord) {
             //if (IsDebugMode) Debug.Log($"RemoveEntity {data} gridCoord:{gridCoord}");
             var worldPos = GridCoord2WorldPos(gridCoord);
             var chunkInfo = GetOrAddChunk(worldPos);

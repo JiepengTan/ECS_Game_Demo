@@ -16,7 +16,7 @@ namespace GamesTan.Game.View.Test {
         public int CurCapacity;
         public int CurGoId;
 
-        private List<EntityData> _testUnits = new List<EntityData>();
+        private List<EntityRef> _testUnits = new List<EntityRef>();
 
         private NativePoolEnemy _pool;
 

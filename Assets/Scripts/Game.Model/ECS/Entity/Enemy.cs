@@ -17,7 +17,6 @@ namespace GamesTan.ECS.Game {
 
         public UnitData UnitData;
         public AIData AIData;
-        /// <summary> Animation   /// </summary>
         public AnimRenderData AnimRenderData;
         public AnimData AnimInternalData;
         

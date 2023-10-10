@@ -17,13 +17,13 @@ namespace GamesTan.ECS.Game {
                     enemy->PhysicData.RotateSpeed = 10;
                     enemy->UnitData.Health = 100;
                     enemy->Scale = (Services.RandomValue()*0.5f+0.5f);
-                    enemy->TransformData.Pos = new float3(Services.RandomValue() * dist, 0, Services.RandomValue() * dist);
+                    enemy->TransformData.Position = new float3(Services.RandomValue() * dist, 0, Services.RandomValue() * dist);
                     
                     enemy->DegY = Services.RandomValue()*360;
                     enemy->AnimInternalData.Timer = Services.RandomValue() * 3;
                     enemy->AnimInternalData.AnimId1[0] = Services.RandomRange(0,3) ;
                     enemy->AnimInternalData.AnimId1[1] = Services.RandomRange(0,3) ;  
-                    WorldRegion.AddEntity(item, ref enemy->PhysicData.GridCoord,enemy->TransformData.Pos);
+                    WorldRegion.AddEntity(item, ref enemy->PhysicData.GridCoord,enemy->TransformData.Position);
                 }
             }
         }

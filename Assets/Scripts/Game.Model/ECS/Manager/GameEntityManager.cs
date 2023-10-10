@@ -29,19 +29,19 @@ namespace GamesTan.ECS.Game {
         public EntityList EnemyList => _enemyList;
         public int EnemyCount => _enemyPool.Count;
         private EntityList _enemyList = new EntityList();
-        public List<EntityData> GetAllEnemy() {
+        public List<EntityRef> GetAllEnemy() {
             return _enemyList.GetInternalData();
         }
-        public Enemy* GetEnemy(EntityData data) {
+        public Enemy* GetEnemy(EntityRef data) {
             return _enemyPool.GetData(data);
         }
 
-        public EntityData AllocEnemy() {
+        public EntityRef AllocEnemy() {
             var data = _enemyPool.Alloc();
             _enemyList.Add(data);
             return data;
         }
-        public void FreeEnemy(EntityData item) {
+        public void FreeEnemy(EntityRef item) {
             if (_enemyList.Remove(item)) {
                 _enemyPool.QueueFree(item);
             }
@@ -53,19 +53,19 @@ namespace GamesTan.ECS.Game {
         public EntityList BulletList => _bulletList;
         public int BulletCount => _bulletPool.Count;
         private EntityList _bulletList = new EntityList();
-        public List<EntityData> GetAllBullet() {
+        public List<EntityRef> GetAllBullet() {
             return _bulletList.GetInternalData();
         }
-        public Bullet* GetBullet(EntityData data) {
+        public Bullet* GetBullet(EntityRef data) {
             return _bulletPool.GetData(data);
         }
 
-        public EntityData AllocBullet() {
+        public EntityRef AllocBullet() {
             var data = _bulletPool.Alloc();
             _bulletList.Add(data);
             return data;
         }
-        public void FreeBullet(EntityData item) {
+        public void FreeBullet(EntityRef item) {
             if (_bulletList.Remove(item)) {
                 _bulletPool.QueueFree(item);
             }

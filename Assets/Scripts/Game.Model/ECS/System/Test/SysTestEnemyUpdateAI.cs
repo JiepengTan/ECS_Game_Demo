@@ -25,9 +25,9 @@ namespace GamesTan.ECS.Game {
             }
             else {
                 // auto move
-                entity.TransformData.Pos += entity.Forward * entity.PhysicData.Speed * dt;
+                entity.TransformData.Position += entity.Forward * entity.PhysicData.Speed * dt;
             }
-            WorldRegion.Update(entity.__Data, ref entity.PhysicData.GridCoord, entity.TransformData.Pos);
+            WorldRegion.Update(entity.__Data, ref entity.PhysicData.GridCoord, entity.TransformData.Position);
         }
     }
 }

@@ -9,7 +9,7 @@ namespace GamesTan.ECS.Game {
     public unsafe class NativeEntityPool<TEntity> where TEntity : unmanaged, IEntity {
         private int _typeId;
         private TEntity* _ary = null;
-        private EntityData* _freeList = null;
+        private EntityRef* _freeList = null;
         private int _capacity;
         private int _length;
         private int _maxUsedSlot;
@@ -34,13 +34,13 @@ namespace GamesTan.ECS.Game {
             _typeId = typeId;
             _capacity = capacity;
             _length = 0;
-            DebugUtil.Assert(_capacity < EntityData.MaxSlotId, "Pool size too big !" + _capacity);
+            DebugUtil.Assert(_capacity < EntityRef.MaxSlotId, "Pool size too big !" + _capacity);
             _ary = (TEntity*)UnsafeUtility.Malloc(UnsafeUtility.SizeOf<TEntity>() * capacity);
-            _freeList = (EntityData*)UnsafeUtility.Malloc(UnsafeUtility.SizeOf<EntityData>() * capacity);
+            _freeList = (EntityRef*)UnsafeUtility.Malloc(UnsafeUtility.SizeOf<EntityRef>() * capacity);
 
             for (int i = 0; i < capacity; i++) {
                 // Don't initialize chunk.
-                _freeList[i] = new EntityData(_typeId, i, -1);
+                _freeList[i] = new EntityRef(_typeId, i, -1);
                 _ary[i] = new TEntity();
                 _ary[i].__EntityData = _freeList[i];
             }
@@ -61,7 +61,7 @@ namespace GamesTan.ECS.Game {
             _capacity = 0;
         }
 
-        public EntityData Alloc() {
+        public EntityRef Alloc() {
             if (_capacity == 0) {
                 Init(_typeId);
             }
@@ -70,14 +70,14 @@ namespace GamesTan.ECS.Game {
                 var oldCap = _capacity;
                 _capacity = (int)(_capacity * 1.4f);
                 if (_capacity > 10000) Debug.LogWarning($"{GetType().Name} Realloc {_capacity}");
-                DebugUtil.Assert(_capacity < EntityData.MaxSlotId, "Pool size too big !" + _capacity);
+                DebugUtil.Assert(_capacity < EntityRef.MaxSlotId, "Pool size too big !" + _capacity);
                 _ary = (TEntity*)UnsafeUtility.Realloc(_ary, UnsafeUtility.SizeOf<TEntity>() * oldCap,
                     UnsafeUtility.SizeOf<TEntity>() * _capacity);
-                _freeList = (EntityData*)UnsafeUtility.Realloc(_freeList, UnsafeUtility.SizeOf<EntityData>() * oldCap,
-                    UnsafeUtility.SizeOf<EntityData>() * _capacity);
+                _freeList = (EntityRef*)UnsafeUtility.Realloc(_freeList, UnsafeUtility.SizeOf<EntityRef>() * oldCap,
+                    UnsafeUtility.SizeOf<EntityRef>() * _capacity);
                 for (int i = oldCap; i < _capacity; i++) {
                     // Don't initialize chunk.
-                    _freeList[i] = new EntityData(_typeId, i, -1);
+                    _freeList[i] = new EntityRef(_typeId, i, -1);
                     _ary[i] = new TEntity();
                     _ary[i].__EntityData = _freeList[i];
                 }
@@ -95,7 +95,7 @@ namespace GamesTan.ECS.Game {
             return ret;
         }
 
-        public void QueueFree(EntityData item) {
+        public void QueueFree(EntityRef item) {
             if (_ary == null) {
                 Debug.LogError(GetType().Name + " Not init or has destroyed");
                 return;
@@ -114,7 +114,7 @@ namespace GamesTan.ECS.Game {
             _freeList[_length] = data;
         }
 
-        public TEntity* GetData(EntityData entity) {
+        public TEntity* GetData(EntityRef entity) {
             if (_ary == null) {
                 Debug.LogError(GetType().Name + " Not init or has destroyed");
                 return null;
@@ -166,10 +166,10 @@ namespace GamesTan.ECS.Game {
             return ret;
         }
 
-        EntityData[] DebugGetFreeListData(int startIdx, int count) {
-            var ret = new EntityData[count];
-            fixed (EntityData* ptr = ret) {
-                NativeUtil.Copy(ptr, _freeList, sizeof(EntityData) * count);
+        EntityRef[] DebugGetFreeListData(int startIdx, int count) {
+            var ret = new EntityRef[count];
+            fixed (EntityRef* ptr = ret) {
+                NativeUtil.Copy(ptr, _freeList, sizeof(EntityRef) * count);
             }
 
             return ret;
