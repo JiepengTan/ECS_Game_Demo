@@ -120,8 +120,6 @@ public class IndirectRenderer : MonoBehaviour
     public ComputeShader createDrawDataBufferCS;
     public ComputeShader sortingCS;
     public ComputeShader occlusionCS;
-    public ComputeShader scanInstancesCS;
-    public ComputeShader scanGroupSumsCS;
     public ComputeShader copyInstanceDataCS;
     public HiZBuffer hiZBuffer;
     public Camera mainCamera;
@@ -131,18 +129,12 @@ public class IndirectRenderer : MonoBehaviour
     private ComputeBuffer m_shadowArgsBuffer;
     // Compute Buffers
     private ComputeBuffer m_instancesIsVisibleBuffer;
-    private ComputeBuffer m_instancesGroupSumArrayBuffer;
-    private ComputeBuffer m_instancesScannedGroupSumBuffer;
-    private ComputeBuffer m_instancesScannedPredicates;
     private ComputeBuffer m_instanceDataBuffer;
     private ComputeBuffer m_instancesSortingData;
     private ComputeBuffer m_instancesSortingDataTemp;
     private ComputeBuffer m_instancesMatrixRows01;
     private ComputeBuffer m_instancesCulledMatrixRows01;
     private ComputeBuffer m_shadowsIsVisibleBuffer;
-    private ComputeBuffer m_shadowGroupSumArrayBuffer;
-    private ComputeBuffer m_shadowsScannedGroupSumBuffer;
-    private ComputeBuffer m_shadowScannedInstancePredicates;
     private ComputeBuffer m_shadowCulledMatrixRows01;
 
     // update buffers
@@ -547,60 +539,7 @@ public class IndirectRenderer : MonoBehaviour
             }
         }
         Profiler.EndSample();
-        
-        //////////////////////////////////////////////////////
-        // Perform scan of instance predicates
-        //////////////////////////////////////////////////////
-        Profiler.BeginSample("03 Scan Instances");
-        {
-            // Normal
-            scanInstancesCS.SetBuffer(m_scanInstancesKernelID, _InstancePredicatesIn,         m_instancesIsVisibleBuffer);
-            scanInstancesCS.SetBuffer(m_scanInstancesKernelID, _GroupSumArray,                m_instancesGroupSumArrayBuffer);
-            scanInstancesCS.SetBuffer(m_scanInstancesKernelID, _ScannedInstancePredicates,    m_instancesScannedPredicates);
-            scanInstancesCS.Dispatch(m_scanInstancesKernelID, m_scanInstancesGroupX, 1, 1);
-            
-            // Shadows
-            scanInstancesCS.SetBuffer(m_scanInstancesKernelID, _InstancePredicatesIn,         m_shadowsIsVisibleBuffer);
-            scanInstancesCS.SetBuffer(m_scanInstancesKernelID, _GroupSumArray,                m_shadowGroupSumArrayBuffer);
-            scanInstancesCS.SetBuffer(m_scanInstancesKernelID, _ScannedInstancePredicates,    m_shadowScannedInstancePredicates);
-            scanInstancesCS.Dispatch(m_scanInstancesKernelID, m_scanInstancesGroupX, 1, 1);
-            
-            if (logGroupSumArrayBuffer|| logDebugAll)
-            {
-                logGroupSumArrayBuffer = false;
-                LogGroupSumArrayBuffer("LogGroupSumArrayBuffer() - Instances", "LogGroupSumArrayBuffer() - Shadows");
-            }
-            
-            if (logScannedPredicates|| logDebugAll)
-            {
-                logScannedPredicates = false;
-                LogScannedPredicates("LogScannedPredicates() - Instances", "LogScannedPredicates() - Shadows");
-            }
-        }
-        Profiler.EndSample();
-        
-        //////////////////////////////////////////////////////
-        // Perform scan of group sums
-        //////////////////////////////////////////////////////
-        Profiler.BeginSample("04 Scan Thread Groups");
-        {
-            // Normal
-            scanGroupSumsCS.SetBuffer(m_scanGroupSumsKernelID, _GroupSumArrayIn,     m_instancesGroupSumArrayBuffer);
-            scanGroupSumsCS.SetBuffer(m_scanGroupSumsKernelID, _GroupSumArrayOut,    m_instancesScannedGroupSumBuffer);
-            scanGroupSumsCS.Dispatch(m_scanGroupSumsKernelID, m_scanThreadGroupsGroupX, 1, 1);
-            
-            // Shadows
-            scanGroupSumsCS.SetBuffer(m_scanGroupSumsKernelID, _GroupSumArrayIn,     m_shadowGroupSumArrayBuffer);
-            scanGroupSumsCS.SetBuffer(m_scanGroupSumsKernelID, _GroupSumArrayOut,    m_shadowsScannedGroupSumBuffer);
-            scanGroupSumsCS.Dispatch(m_scanGroupSumsKernelID, m_scanThreadGroupsGroupX, 1, 1);
-            
-            if (logScannedGroupSumsBuffer|| logDebugAll)
-            {
-                logScannedGroupSumsBuffer = false;
-                LogScannedGroupSumBuffer("LogScannedGroupSumBuffer() - Instances", "LogScannedGroupSumBuffer() - Shadows");
-            }
-        }
-        Profiler.EndSample();
+ 
         
         //////////////////////////////////////////////////////
         // Perform stream compaction 
@@ -610,8 +549,6 @@ public class IndirectRenderer : MonoBehaviour
         {
             // Normal
             copyInstanceDataCS.SetBuffer(m_copyInstanceDataKernelID, _InstancePredicatesIn,         m_instancesIsVisibleBuffer);
-            copyInstanceDataCS.SetBuffer(m_copyInstanceDataKernelID, _GroupSumArray,                m_instancesScannedGroupSumBuffer);
-            copyInstanceDataCS.SetBuffer(m_copyInstanceDataKernelID, _ScannedInstancePredicates,    m_instancesScannedPredicates);
             copyInstanceDataCS.SetBuffer(m_copyInstanceDataKernelID, _InstancesCulledAnimData,      m_instancesCulledAnimData);
             copyInstanceDataCS.SetBuffer(m_copyInstanceDataKernelID, _InstancesCulledMatrixRows01,  m_instancesCulledMatrixRows01);
             copyInstanceDataCS.SetBuffer(m_copyInstanceDataKernelID, _DrawcallDataOut,              m_instancesArgsBuffer);
@@ -620,8 +557,6 @@ public class IndirectRenderer : MonoBehaviour
             
             // Shadows
             copyInstanceDataCS.SetBuffer(m_copyInstanceDataKernelID, _InstancePredicatesIn,         m_shadowsIsVisibleBuffer);
-            copyInstanceDataCS.SetBuffer(m_copyInstanceDataKernelID, _GroupSumArray,                m_shadowsScannedGroupSumBuffer);
-            copyInstanceDataCS.SetBuffer(m_copyInstanceDataKernelID, _ScannedInstancePredicates,    m_shadowScannedInstancePredicates);
             copyInstanceDataCS.SetBuffer(m_copyInstanceDataKernelID, _InstancesCulledAnimData,      m_shadowCulledAnimData);
             copyInstanceDataCS.SetBuffer(m_copyInstanceDataKernelID, _InstancesCulledMatrixRows01,  m_shadowCulledMatrixRows01);
             copyInstanceDataCS.SetBuffer(m_copyInstanceDataKernelID, _DrawcallDataOut,              m_shadowArgsBuffer);
@@ -721,8 +656,6 @@ public class IndirectRenderer : MonoBehaviour
             && TryGetKernel("BitonicSort",      ref sortingCS,            ref m_sortingCSKernelID)
             && TryGetKernel("MatrixTranspose",  ref sortingCS,            ref m_sortingTransposeKernelID)
             && TryGetKernel("CSMain",           ref occlusionCS,            ref m_occlusionKernelID)
-            && TryGetKernel("CSMain",           ref scanInstancesCS,        ref m_scanInstancesKernelID)
-            && TryGetKernel("CSMain",           ref scanGroupSumsCS,        ref m_scanGroupSumsKernelID)
             && TryGetKernel("CSMain",           ref copyInstanceDataCS,     ref m_copyInstanceDataKernelID)
         ;
     }
@@ -753,15 +686,9 @@ public class IndirectRenderer : MonoBehaviour
         m_instancesMatrixRows01           = new ComputeBuffer(m_numberOfInstances, computeShaderDrawMatrixSize, ComputeBufferType.Default);
         m_instancesCulledMatrixRows01     = new ComputeBuffer(m_numberOfInstances, computeShaderDrawMatrixSize, ComputeBufferType.Default);
         m_instancesIsVisibleBuffer        = new ComputeBuffer(m_numberOfInstances, sizeof(uint), ComputeBufferType.Default);
-        m_instancesScannedPredicates      = new ComputeBuffer(m_numberOfInstances, sizeof(uint), ComputeBufferType.Default);
-        m_instancesGroupSumArrayBuffer    = new ComputeBuffer(m_numberOfInstances, sizeof(uint), ComputeBufferType.Default);
-        m_instancesScannedGroupSumBuffer  = new ComputeBuffer(m_numberOfInstances, sizeof(uint), ComputeBufferType.Default);
         
         m_shadowCulledMatrixRows01        = new ComputeBuffer(m_numberOfInstances, computeShaderDrawMatrixSize, ComputeBufferType.Default);
         m_shadowsIsVisibleBuffer          = new ComputeBuffer(m_numberOfInstances, sizeof(uint), ComputeBufferType.Default);
-        m_shadowScannedInstancePredicates = new ComputeBuffer(m_numberOfInstances, sizeof(uint), ComputeBufferType.Default);
-        m_shadowGroupSumArrayBuffer       = new ComputeBuffer(m_numberOfInstances, sizeof(uint), ComputeBufferType.Default);
-        m_shadowsScannedGroupSumBuffer    = new ComputeBuffer(m_numberOfInstances, sizeof(uint), ComputeBufferType.Default);
         
         // Setup the Material Property blocks for our meshes...
         for (int i = 0; i < indirectMeshes.Length; i++)
@@ -863,8 +790,6 @@ public class IndirectRenderer : MonoBehaviour
         occlusionCS.SetBuffer(m_occlusionKernelID, _ShadowIsVisibleBuffer, m_shadowsIsVisibleBuffer);
         occlusionCS.SetTexture(m_occlusionKernelID, _HiZMap, hiZBuffer.Texture);
         occlusionCS.SetBuffer(m_occlusionKernelID, _SortingData, m_instancesSortingData);
-        
-        scanGroupSumsCS.SetInt(_NumOfGroups, m_numberOfInstances / (2 * SCAN_THREAD_GROUP_SIZE));
         
         copyInstanceDataCS.SetInt(_NumOfDrawcalls, m_numberOfInstanceTypes * NUMBER_OF_DRAW_CALLS);
         copyInstanceDataCS.SetBuffer(m_copyInstanceDataKernelID, _InstanceDataBuffer, m_instanceDataBuffer);
@@ -987,9 +912,6 @@ public class IndirectRenderer : MonoBehaviour
         //ReleaseCommandBuffer(ref visibleInstancesCB);
         
         ReleaseComputeBuffer(ref m_instancesIsVisibleBuffer);
-        ReleaseComputeBuffer(ref m_instancesGroupSumArrayBuffer);
-        ReleaseComputeBuffer(ref m_instancesScannedGroupSumBuffer);
-        ReleaseComputeBuffer(ref m_instancesScannedPredicates);
         ReleaseComputeBuffer(ref m_instanceDataBuffer);
         ReleaseComputeBuffer(ref m_instancesSortingData);
         ReleaseComputeBuffer(ref m_instancesSortingDataTemp);
@@ -997,9 +919,6 @@ public class IndirectRenderer : MonoBehaviour
         ReleaseComputeBuffer(ref m_instancesCulledMatrixRows01);
         
         ReleaseComputeBuffer(ref m_shadowsIsVisibleBuffer);
-        ReleaseComputeBuffer(ref m_shadowGroupSumArrayBuffer);
-        ReleaseComputeBuffer(ref m_shadowsScannedGroupSumBuffer);
-        ReleaseComputeBuffer(ref m_shadowScannedInstancePredicates);
         ReleaseComputeBuffer(ref m_shadowCulledMatrixRows01);
         
         ReleaseComputeBuffer(ref m_positionsBuffer);
@@ -1449,42 +1368,6 @@ public class IndirectRenderer : MonoBehaviour
             }
             sb.AppendLine();
         }
-        
-        sb.AppendLine("======== SumGroup ===========");
-        {
-            sb.Append("visibleSum: ");
-            uint[] visibleAry = new uint[m_numberOfInstances];
-            m_instancesScannedPredicates.GetData(visibleAry);
-            for (int i = 0; i < count; i++)
-            {
-                sb.Append(visibleAry[i] + " ");
-            }
-            sb.AppendLine();
-            sb.Append("chunkSum: ");
-            uint[] chunkSum = new uint[m_numberOfInstances];
-            m_instancesGroupSumArrayBuffer.GetData(chunkSum);
-            for (int i = 0; i < count; i++)
-            {
-                sb.Append(chunkSum[i] + " ");
-            }
-            sb.AppendLine();
-            sb.Append("groupSum: ");
-            uint[] groupSum = new uint[m_numberOfInstances];
-            m_instancesScannedGroupSumBuffer.GetData(groupSum);
-            for (int i = 0; i < count; i++)
-            {
-                sb.Append(groupSum[i] + " ");
-            }
-            sb.AppendLine();
-            sb.AppendLine("----shadow below----");
-            uint[] shadowsScannedData = new uint[m_numberOfInstances];
-            m_shadowScannedInstancePredicates.GetData(shadowsScannedData);
-            for (int i = 0; i < count; i++)
-            {
-                sb.Append(shadowsScannedData[i] + " ");
-            }
-            sb.AppendLine();
-        }
         sb.AppendLine("======== SortedInstanceId ===========");
         {
             SortingData[] sortingData = new SortingData[m_numberOfInstances];
@@ -1655,74 +1538,7 @@ public class IndirectRenderer : MonoBehaviour
         Debug.Log(shadowsSB.ToString());
     }
     
-    private void LogScannedPredicates(string instancePrefix = "", string shadowPrefix = "")
-    {
-        uint[] instancesScannedData = new uint[m_numberOfInstances];
-        uint[] shadowsScannedData = new uint[m_numberOfInstances];
-        m_instancesScannedPredicates.GetData(instancesScannedData);
-        m_shadowScannedInstancePredicates.GetData(shadowsScannedData);
-        
-        StringBuilder instancesSB = new StringBuilder();
-        StringBuilder shadowsSB = new StringBuilder();
-        
-        if (!string.IsNullOrEmpty(instancePrefix)){ instancesSB.AppendLine(instancePrefix); }
-        if (!string.IsNullOrEmpty(shadowPrefix))  { shadowsSB.AppendLine(shadowPrefix); }
-        
-        for (int i = 0; i < instancesScannedData.Length; i++)
-        {
-            instancesSB.AppendLine(i + ": " + instancesScannedData[i]);
-            shadowsSB.AppendLine(i + ": " + shadowsScannedData[i]);
-        }
-
-        Debug.Log(instancesSB.ToString());
-        Debug.Log(shadowsSB.ToString());
-    }
     
-    private void LogGroupSumArrayBuffer(string instancePrefix = "", string shadowPrefix = "")
-    {
-        uint[] instancesScannedData = new uint[m_numberOfInstances];
-        uint[] shadowsScannedData = new uint[m_numberOfInstances];
-        m_instancesGroupSumArrayBuffer.GetData(instancesScannedData);
-        m_shadowsScannedGroupSumBuffer.GetData(shadowsScannedData);
-        
-        StringBuilder instancesSB = new StringBuilder();
-        StringBuilder shadowsSB = new StringBuilder();
-        
-        if (!string.IsNullOrEmpty(instancePrefix)){ instancesSB.AppendLine(instancePrefix); }
-        if (!string.IsNullOrEmpty(shadowPrefix))  { shadowsSB.AppendLine(shadowPrefix); }
-        
-        for (int i = 0; i < instancesScannedData.Length; i++)
-        {
-            instancesSB.AppendLine(i + ": " + instancesScannedData[i]);
-            shadowsSB.AppendLine(i + ": " + shadowsScannedData[i]);
-        }
-
-        Debug.Log(instancesSB.ToString());
-        Debug.Log(shadowsSB.ToString());
-    }
-    
-    private void LogScannedGroupSumBuffer(string instancePrefix = "", string shadowPrefix = "")
-    {
-        uint[] instancesScannedData = new uint[m_numberOfInstances];
-        uint[] shadowsScannedData = new uint[m_numberOfInstances];
-        m_instancesScannedPredicates.GetData(instancesScannedData);
-        m_shadowScannedInstancePredicates.GetData(shadowsScannedData);
-        
-        StringBuilder instancesSB = new StringBuilder();
-        StringBuilder shadowsSB = new StringBuilder();
-        
-        if (!string.IsNullOrEmpty(instancePrefix)){ instancesSB.AppendLine(instancePrefix); }
-        if (!string.IsNullOrEmpty(shadowPrefix))  { shadowsSB.AppendLine(shadowPrefix); }
-        
-        for (int i = 0; i < instancesScannedData.Length; i++)
-        {
-            instancesSB.AppendLine(i + ": " + instancesScannedData[i]);
-            shadowsSB.AppendLine(i + ": " + shadowsScannedData[i]);
-        }
-
-        Debug.Log(instancesSB.ToString());
-        Debug.Log(shadowsSB.ToString());
-    }
     private void LogCulledInstancesAnimData(string instancePrefix = "", string shadowPrefix = "")
     {
         Indirect2x2Matrix[] instancesMatrix1 = new Indirect2x2Matrix[m_numberOfInstances];

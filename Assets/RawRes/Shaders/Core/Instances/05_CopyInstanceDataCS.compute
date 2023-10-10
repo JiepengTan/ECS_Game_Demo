@@ -36,12 +36,10 @@ StructuredBuffer<Indirect2x2Matrix> _InstancesDrawMatrixRows01;
 StructuredBuffer<AnimData> _InstancesDrawAnimData;
 
 StructuredBuffer<uint> _InstancePredicatesIn;
-StructuredBuffer<uint> _GroupSumArray;
-StructuredBuffer<uint> _ScannedInstancePredicates;
 RWStructuredBuffer<uint> _DrawcallDataOut;
 RWStructuredBuffer<Indirect2x2Matrix> _InstancesCulledMatrixRows01;
 RWStructuredBuffer<AnimData> _InstancesCulledAnimData;
-RWStructuredBuffer<uint> _InstancesCulledIndexRemap;
+RWStructuredBuffer<uint> _InstancesCulledIndexRemap; 
 
 //--------------------------------------------------------------------------------------
 // Kernels & Functions
@@ -58,11 +56,10 @@ inline void CSMain (
 {
     uint tID = _dispatchThreadID.x;
     uint groupID = _groupID.x;
-    uint groupSum = _groupID.x > 0 ? _GroupSumArray[_groupID.x] : 0;
 
     uint sortedTID = _SortingData[tID].threadDispatchID;
     //scatter results
-    if (_InstancePredicatesIn[sortedTID] == 1)
+    if (_InstancePredicatesIn[sortedTID] == 1) 
     {
         uint instanceDataOutIndex = tID;
         _InstancesCulledMatrixRows01[instanceDataOutIndex] = _InstancesDrawMatrixRows01[sortedTID];
