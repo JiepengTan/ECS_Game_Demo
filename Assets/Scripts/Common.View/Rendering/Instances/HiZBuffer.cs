@@ -5,7 +5,9 @@ using UnityEngine.Rendering;
 using System.Collections.Generic;
 
 namespace GamesTan.Rendering {
-    public class HiZBuffer : MonoBehaviour {
+
+
+    public class HiZBuffer : MonoBehaviour ,IHierarchyZBuffer{
         #region Variables
 
         [Header("References")] public RenderTexture topDownView = null;
@@ -32,6 +34,7 @@ namespace GamesTan.Rendering {
         // Public Properties
         public int DebugLodLevel { get; set; }
 
+        public bool Enabled { get=> enabled; set=>enabled = value; }
         public Vector2 TextureSize {
             get { return m_textureSize; }
         }
