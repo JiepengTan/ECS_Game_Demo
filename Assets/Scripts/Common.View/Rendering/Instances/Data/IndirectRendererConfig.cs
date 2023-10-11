@@ -1,9 +1,15 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.Serialization;
 
 namespace GamesTan.Rendering {
     [CreateAssetMenu(menuName = "Assets/IndirectRendererConfig")]
     public partial class IndirectRendererConfig: ScriptableObject {
+        
+        public InstanceConfig InstanceConfig;
+        public List<int> InitInstanceCount = new List<int>();
+        
+        
         [Header("References")]
         public ComputeShader createDrawDataBufferCS;
         public ComputeShader sortingCS;

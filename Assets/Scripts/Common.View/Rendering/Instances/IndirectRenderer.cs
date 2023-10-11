@@ -3,23 +3,45 @@ using UnityEngine;
 using UnityEngine.Profiling;
 using UnityEngine.Rendering;
 using System.Collections.Generic;
+using System.Linq;
+using UnityEngine.Serialization;
 
 namespace GamesTan.Rendering {
     public partial class IndirectRenderer : MonoBehaviour {
         public IndirectRendererConfig Config;
         public IndirectRendererRuntimeData RuntimeData;
+        public InstanceRenderData RendererData = new InstanceRenderData();
         
         public HiZBuffer hiZBuffer;
         public Camera mainCamera;
         public Camera debugCamera;
         
         private int _curFrameNum = 0;
+        private Dictionary<int, int> _prefabId2PrefabIdx = new Dictionary<int, int>();
         public bool IsSrp =>  GraphicsSettings.renderPipelineAsset != null;
         
-        public void DoAwake(InstanceRenderData data,List<IndirectInstanceData> prefabInfos) {
+        
+        public void DoAwake() {
+            var dict = new HashSet<int>();
+            foreach (var info in Config.InitInstanceCount) {
+                dict.Add(info);
+            }
+            var configs = Config.InstanceConfig.Infos.Where(a => dict.Contains(a.prefabId)).ToList();
+            var counts = configs.Select(a => 1).ToList();
+            RendererData.ResetLayout(configs.Select(a=>a.prefabId).ToList(),counts,true);
+            for (int i = 0; i < configs.Count; i++) {
+                _prefabId2PrefabIdx[configs[i].prefabId] = i;
+            }
+            
             RuntimeData = new IndirectRendererRuntimeData(Config);
-            RuntimeData.DoAwake(data, prefabInfos,hiZBuffer, transform);
+            RuntimeData.DoAwake(RendererData, configs,hiZBuffer, transform);
             IndirectRendererRuntimeData.SetInstance(RuntimeData);
+            
+        }   
+        public int GetInstancePrefabIdx(int prefabId) {
+            if (_prefabId2PrefabIdx.TryGetValue(prefabId, out var idx))
+                return idx;
+            return -1;
         }
         public void DoDestroy()
         {

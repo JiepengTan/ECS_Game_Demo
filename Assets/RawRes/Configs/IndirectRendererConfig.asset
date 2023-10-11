@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e34d2e25524ebd4186584c703c5a8b0, type: 3}
   m_Name: IndirectRendererConfig
   m_EditorClassIdentifier: 
+  InstanceConfig: {fileID: 11400000, guid: a0d17860acdcc6f4cb0ffa438506fefc, type: 2}
+  InitInstanceCount: 1127000013270000
   createDrawDataBufferCS: {fileID: 7200000, guid: ec8dc736dcd73488db5f21571d3708f7, type: 3}
   sortingCS: {fileID: 7200000, guid: 345cad655c4d3473eb2f23a4da170421, type: 3}
   occlusionCS: {fileID: 7200000, guid: 4aeff498554ed42f289ac4c6051b7dba, type: 3}
