@@ -26,11 +26,11 @@ MonoBehaviour:
   enableDetailCulling: 1
   enableLOD: 1
   enableOnlyLOD02Shadows: 0
-  detailCullingPercentage: 0.015
-  shadowDistance: 100
-  lod0Distance: 20
-  lod1Distance: 60
-  debugShowUI: 1
+  detailCullingPercentage: 0.043
+  shadowDistance: 94
+  lod0Distance: 24
+  lod1Distance: 86
+  debugShowUI: 0
   debugDrawLOD: 0
   debugDrawBoundsInSceneView: 0
   debugDrawHiZ: 0
