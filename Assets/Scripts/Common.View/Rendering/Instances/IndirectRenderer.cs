@@ -13,11 +13,9 @@ using UnityEngine.Serialization;
 
 
 namespace GamesTan.Rendering {
-
-    public class IndirectRenderer : MonoBehaviour
-    {
+    public class IndirectRenderer : MonoBehaviour {
+        public IndirectRendererConfig Config;
         #region Variables
-        
         [Header("Settings")]
         public bool runCompute = true;
         public bool drawInstances = true;
@@ -41,11 +39,6 @@ namespace GamesTan.Rendering {
         [Range(0, 10)] public int debugHiZLOD;
         public GameObject debugUIPrefab;
         
-        
-        [Header("Data")]
-        [ReadOnly] public IndirectRenderingMesh[] indirectMeshes;
-        private InstanceRenderData _rendererData = new InstanceRenderData();
-        
         [Header("Logging")]
         public bool logInstanceAnimation = false;
         public bool logInstanceDrawMatrices = false;
@@ -68,9 +61,68 @@ namespace GamesTan.Rendering {
         public ComputeShader sortingCS;
         public ComputeShader occlusionCS;
         public ComputeShader copyInstanceDataCS;
+        
+        // Constants
+        private const int NUMBER_OF_DRAW_CALLS = 3; // (LOD00 + LOD01 + LOD02)
+        private const int NUMBER_OF_ARGS_PER_DRAW = 5; // (indexCount, instanceCount, startIndex, baseVertex, startInstance)
+        public const int NUMBER_OF_ARGS_PER_INSTANCE_TYPE = NUMBER_OF_DRAW_CALLS * NUMBER_OF_ARGS_PER_DRAW; // 3draws * 5args = 15args
+        private const int ARGS_BYTE_SIZE_PER_DRAW_CALL = NUMBER_OF_ARGS_PER_DRAW * sizeof(uint); // 5args * 4bytes = 20 bytes
+        private const int ARGS_BYTE_SIZE_PER_INSTANCE_TYPE = NUMBER_OF_ARGS_PER_INSTANCE_TYPE * sizeof(uint); // 15args * 4bytes = 60bytes
+        private const int SCAN_THREAD_GROUP_SIZE = 64;
+        private const string DEBUG_UI_RED_COLOR =   "<color=#ff6666>";
+        private const string DEBUG_UI_WHITE_COLOR = "<color=#ffffff>";
+        private const string DEBUG_SHADER_LOD_KEYWORD = "INDIRECT_DEBUG_LOD";
+        
+        // Shader Property ID's
+        private static readonly int _Data = Shader.PropertyToID("_Data");
+        private static readonly int _Input = Shader.PropertyToID("_Input");
+        private static readonly int _ShouldFrustumCull = Shader.PropertyToID("_ShouldFrustumCull");
+        private static readonly int _ShouldOcclusionCull = Shader.PropertyToID("_ShouldOcclusionCull");
+        private static readonly int _ShouldLOD = Shader.PropertyToID("_ShouldLOD");
+        private static readonly int _ShouldDetailCull = Shader.PropertyToID("_ShouldDetailCull");
+        private static readonly int _ShouldOnlyUseLOD02Shadows = Shader.PropertyToID("_ShouldOnlyUseLOD02Shadows");
+        private static readonly int _UNITY_MATRIX_MVP = Shader.PropertyToID("_UNITY_MATRIX_MVP");
+        private static readonly int _CamPosition = Shader.PropertyToID("_CamPosition");
+        private static readonly int _HiZTextureSize = Shader.PropertyToID("_HiZTextureSize");
+        private static readonly int _Level = Shader.PropertyToID("_Level");
+        private static readonly int _LevelMask = Shader.PropertyToID("_LevelMask");
+        private static readonly int _Width = Shader.PropertyToID("_Width");
+        private static readonly int _Height = Shader.PropertyToID("_Height");
+        private static readonly int _ShadowDistance = Shader.PropertyToID("_ShadowDistance");
+        private static readonly int _DetailCullingScreenPercentage = Shader.PropertyToID("_DetailCullingScreenPercentage");
+        private static readonly int _Lod0Distance = Shader.PropertyToID("_Lod0Distance");
+        private static readonly int _Lod1Distance = Shader.PropertyToID("_Lod1Distance");
+        
+        private static readonly int _HiZMap = Shader.PropertyToID("_HiZMap");
+        private static readonly int _NumOfDrawcalls = Shader.PropertyToID("_NumOfDrawcalls");
+        private static readonly int _ArgsOffset = Shader.PropertyToID("_ArgsOffset");
+        private static readonly int _TransformData = Shader.PropertyToID("_TransformData");
+        private static readonly int _ArgsBuffer = Shader.PropertyToID("_ArgsBuffer");
+        private static readonly int _ShadowArgsBuffer = Shader.PropertyToID("_ShadowArgsBuffer");
+        private static readonly int _IsVisibleBuffer = Shader.PropertyToID("_IsVisibleBuffer");
+        private static readonly int _ShadowIsVisibleBuffer = Shader.PropertyToID("_ShadowIsVisibleBuffer");
+        private static readonly int _DrawcallDataOut = Shader.PropertyToID("_DrawcallDataOut");
+        private static readonly int _SortingData = Shader.PropertyToID("_SortingData");
+        private static readonly int _ShadowSortingData = Shader.PropertyToID("_ShadowSortingData");
+        private static readonly int _InstanceDataBuffer = Shader.PropertyToID("_InstanceDataBuffer");
+        private static readonly int _InstancePredicatesIn = Shader.PropertyToID("_InstancePredicatesIn");
+        private static readonly int _InstancesDrawMatrixRows = Shader.PropertyToID("_InstancesDrawMatrixRows");
+        private static readonly int _InstancesCulledMatrixRows01 = Shader.PropertyToID("_InstancesCulledMatrixRows01");
+        
+        private static readonly int _InstancesCulledAnimData = Shader.PropertyToID("_InstancesCulledAnimData");
+        private static readonly int _InstancesDrawAnimData = Shader.PropertyToID("_InstancesDrawAnimData");
+        private static readonly int _InstancesCulledIndexRemap = Shader.PropertyToID("_InstancesCulledIndexRemap");
+        
+        
+        
+        [Header("Data")]
+        [ReadOnly] public IndirectRenderingMesh[] indirectMeshes;
+        private InstanceRenderData _rendererData = new InstanceRenderData();
+        
         public HiZBuffer hiZBuffer;
         public Camera mainCamera;
         public Camera debugCamera;
+        
         // prefab buffers
         private ComputeBuffer m_instancesArgsBuffer;
         private ComputeBuffer m_shadowArgsBuffer;
@@ -131,56 +183,6 @@ namespace GamesTan.Rendering {
         private Text m_uiText;
         private GameObject m_uiObj;
         
-        // Constants
-        private const int NUMBER_OF_DRAW_CALLS = 3; // (LOD00 + LOD01 + LOD02)
-        private const int NUMBER_OF_ARGS_PER_DRAW = 5; // (indexCount, instanceCount, startIndex, baseVertex, startInstance)
-        public const int NUMBER_OF_ARGS_PER_INSTANCE_TYPE = NUMBER_OF_DRAW_CALLS * NUMBER_OF_ARGS_PER_DRAW; // 3draws * 5args = 15args
-        private const int ARGS_BYTE_SIZE_PER_DRAW_CALL = NUMBER_OF_ARGS_PER_DRAW * sizeof(uint); // 5args * 4bytes = 20 bytes
-        private const int ARGS_BYTE_SIZE_PER_INSTANCE_TYPE = NUMBER_OF_ARGS_PER_INSTANCE_TYPE * sizeof(uint); // 15args * 4bytes = 60bytes
-        private const int SCAN_THREAD_GROUP_SIZE = 64;
-        private const string DEBUG_UI_RED_COLOR =   "<color=#ff6666>";
-        private const string DEBUG_UI_WHITE_COLOR = "<color=#ffffff>";
-        private const string DEBUG_SHADER_LOD_KEYWORD = "INDIRECT_DEBUG_LOD";
-        
-        // Shader Property ID's
-        private static readonly int _Data = Shader.PropertyToID("_Data");
-        private static readonly int _Input = Shader.PropertyToID("_Input");
-        private static readonly int _ShouldFrustumCull = Shader.PropertyToID("_ShouldFrustumCull");
-        private static readonly int _ShouldOcclusionCull = Shader.PropertyToID("_ShouldOcclusionCull");
-        private static readonly int _ShouldLOD = Shader.PropertyToID("_ShouldLOD");
-        private static readonly int _ShouldDetailCull = Shader.PropertyToID("_ShouldDetailCull");
-        private static readonly int _ShouldOnlyUseLOD02Shadows = Shader.PropertyToID("_ShouldOnlyUseLOD02Shadows");
-        private static readonly int _UNITY_MATRIX_MVP = Shader.PropertyToID("_UNITY_MATRIX_MVP");
-        private static readonly int _CamPosition = Shader.PropertyToID("_CamPosition");
-        private static readonly int _HiZTextureSize = Shader.PropertyToID("_HiZTextureSize");
-        private static readonly int _Level = Shader.PropertyToID("_Level");
-        private static readonly int _LevelMask = Shader.PropertyToID("_LevelMask");
-        private static readonly int _Width = Shader.PropertyToID("_Width");
-        private static readonly int _Height = Shader.PropertyToID("_Height");
-        private static readonly int _ShadowDistance = Shader.PropertyToID("_ShadowDistance");
-        private static readonly int _DetailCullingScreenPercentage = Shader.PropertyToID("_DetailCullingScreenPercentage");
-        private static readonly int _Lod0Distance = Shader.PropertyToID("_Lod0Distance");
-        private static readonly int _Lod1Distance = Shader.PropertyToID("_Lod1Distance");
-        
-        private static readonly int _HiZMap = Shader.PropertyToID("_HiZMap");
-        private static readonly int _NumOfDrawcalls = Shader.PropertyToID("_NumOfDrawcalls");
-        private static readonly int _ArgsOffset = Shader.PropertyToID("_ArgsOffset");
-        private static readonly int _TransformData = Shader.PropertyToID("_TransformData");
-        private static readonly int _ArgsBuffer = Shader.PropertyToID("_ArgsBuffer");
-        private static readonly int _ShadowArgsBuffer = Shader.PropertyToID("_ShadowArgsBuffer");
-        private static readonly int _IsVisibleBuffer = Shader.PropertyToID("_IsVisibleBuffer");
-        private static readonly int _ShadowIsVisibleBuffer = Shader.PropertyToID("_ShadowIsVisibleBuffer");
-        private static readonly int _DrawcallDataOut = Shader.PropertyToID("_DrawcallDataOut");
-        private static readonly int _SortingData = Shader.PropertyToID("_SortingData");
-        private static readonly int _ShadowSortingData = Shader.PropertyToID("_ShadowSortingData");
-        private static readonly int _InstanceDataBuffer = Shader.PropertyToID("_InstanceDataBuffer");
-        private static readonly int _InstancePredicatesIn = Shader.PropertyToID("_InstancePredicatesIn");
-        private static readonly int _InstancesDrawMatrixRows = Shader.PropertyToID("_InstancesDrawMatrixRows");
-        private static readonly int _InstancesCulledMatrixRows01 = Shader.PropertyToID("_InstancesCulledMatrixRows01");
-        
-        private static readonly int _InstancesCulledAnimData = Shader.PropertyToID("_InstancesCulledAnimData");
-        private static readonly int _InstancesDrawAnimData = Shader.PropertyToID("_InstancesDrawAnimData");
-        private static readonly int _InstancesCulledIndexRemap = Shader.PropertyToID("_InstancesCulledIndexRemap");
         #endregion
 
         #region MonoBehaviour
