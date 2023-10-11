@@ -3,7 +3,8 @@ using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
 namespace GamesTan.Rendering {
-    class IndirectDrawRenderPass : ScriptableRenderPass {
+    partial class IndirectDrawRenderPass : ScriptableRenderPass {
+        public IndirectRendererConfig Config;
         private int maxCount;
         private Mesh mesh;
         private Material mat;

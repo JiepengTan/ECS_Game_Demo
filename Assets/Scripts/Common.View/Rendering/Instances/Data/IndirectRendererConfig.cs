@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace GamesTan.Rendering {
     [CreateAssetMenu(menuName = "Assets/IndirectRendererConfig")]
-    [System.Serializable]
-    public class IndirectRendererConfig: MonoBehaviour {
+    public partial class IndirectRendererConfig: ScriptableObject {
         [Header("References")]
         public ComputeShader createDrawDataBufferCS;
         public ComputeShader sortingCS;
@@ -18,11 +18,11 @@ namespace GamesTan.Rendering {
         public bool enableOcclusionCulling = true;
         public bool enableDetailCulling = true;
         public bool enableLOD = true;
-        public bool enableOnlyLOD02Shadows = true;
-        [Range(00.00f, 00.2f)] public float detailCullingPercentage = 0.005f;
+        public bool enableOnlyLOD02Shadows = false;
+        [Range(00.00f, 00.2f)] public float detailCullingPercentage = 0.015f;
         [Range(10, 1000)] public float shadowDistance = 100;
         [Range(10, 300.0f)] public float lod0Distance = 20f;
-        [Range(10, 300.0f)] public float lod1Distance = 100f;
+        [Range(10, 300.0f)] public float lod1Distance = 60f;
         
         // Debugging Variables
         [Header("Debug")]
@@ -36,20 +36,16 @@ namespace GamesTan.Rendering {
         [Header("Logging")]
         public bool logInstanceAnimation = false;
         public bool logInstanceDrawMatrices = false;
-        public bool logInstanceDrawCulledMatrices = false;
         public bool logArgumentsAfterReset = false;
         public bool logSortingData = false;
         public bool logArgumentsAfterOcclusion = false;
         public bool logInstancesIsVisibleBuffer = false;
-        public bool logScannedPredicates = false;
-        public bool logGroupSumArrayBuffer = false;
-        public bool logScannedGroupSumsBuffer = false;
         public bool logArgsBufferAfterCopy = false;
         public bool logCulledInstancesDrawMatrices = false;
         public bool logCulledInstancesAnimData = false;
         public bool logDebugAll = false;
-        public bool LogAllArgBuffer;
-        public int LogAllArgBufferCount = 5;
+        public bool logAllArgBuffer;
+        [Range(3,100)] public int logAllArgBufferCount = 10;
         
         // Constants
         public const int NUMBER_OF_DRAW_CALLS = 3; // (LOD00 + LOD01 + LOD02)

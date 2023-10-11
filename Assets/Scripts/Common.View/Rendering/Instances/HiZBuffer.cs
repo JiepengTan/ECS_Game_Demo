@@ -180,14 +180,14 @@ namespace GamesTan.Rendering {
         }
 
         public bool OnCameraRenderImage(RenderTexture source, RenderTexture destination) {
-            if (m_indirectRenderer.debugDrawHiZ) {
+            if (m_indirectRenderer.Config.debugDrawHiZ) {
                 Camera.main.rect = new Rect(0.0f, 0.5f, 0.5f, 0.5f);
                 Graphics.Blit(source, destination);
 
 
                 Camera.main.rect = new Rect(0.0f, 0.0f, 0.5f, 0.5f);
                 m_debugMaterial.SetInt("_NUM", 0);
-                m_debugMaterial.SetInt("_LOD", m_indirectRenderer.debugHiZLOD);
+                m_debugMaterial.SetInt("_LOD", m_indirectRenderer.Config.debugHiZLOD);
                 Graphics.Blit(m_HiZDepthTexture, destination, m_debugMaterial);
 
                 Camera.main.rect = new Rect(0.5f, 0.0f, 0.5f, 0.5f);

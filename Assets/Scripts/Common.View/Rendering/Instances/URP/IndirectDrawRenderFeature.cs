@@ -5,6 +5,7 @@ using UnityEngine.Rendering.Universal;
 namespace GamesTan.Rendering {
     [CreateAssetMenu]
     public class IndirectDrawRenderFeature : ScriptableRendererFeature {
+        public IndirectRendererConfig Config;
         public int maxCount = 10000;
         public Mesh mesh;
         public Material mat;

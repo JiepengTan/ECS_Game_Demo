@@ -11,110 +11,11 @@ using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine.Serialization;
 
-
 namespace GamesTan.Rendering {
-    public class IndirectRenderer : MonoBehaviour {
+    public partial class IndirectRenderer : MonoBehaviour {
         public IndirectRendererConfig Config;
         #region Variables
-        [Header("Settings")]
-        public bool runCompute = true;
-        public bool drawInstances = true;
-        public bool drawInstanceShadows = true;
-        public bool enableFrustumCulling = true;
-        public bool enableOcclusionCulling = true;
-        public bool enableDetailCulling = true;
-        public bool enableLOD = true;
-        public bool enableOnlyLOD02Shadows = true;
-        [Range(00.00f, 00.2f)] public float detailCullingPercentage = 0.005f;
-        [Range(10, 1000)] public float shadowDistance = 100;
-        [Range(10, 300.0f)] public float lod0Distance = 20f;
-        [Range(10, 300.0f)] public float lod1Distance = 100f;
-        
-        // Debugging Variables
-        [Header("Debug")]
-        public bool debugShowUI;
-        public bool debugDrawLOD;
-        public bool debugDrawBoundsInSceneView;
-        public bool debugDrawHiZ;
-        [Range(0, 10)] public int debugHiZLOD;
-        public GameObject debugUIPrefab;
-        
-        [Header("Logging")]
-        public bool logInstanceAnimation = false;
-        public bool logInstanceDrawMatrices = false;
-        public bool logInstanceDrawCulledMatrices = false;
-        public bool logArgumentsAfterReset = false;
-        public bool logSortingData = false;
-        public bool logArgumentsAfterOcclusion = false;
-        public bool logInstancesIsVisibleBuffer = false;
-        public bool logScannedPredicates = false;
-        public bool logGroupSumArrayBuffer = false;
-        public bool logScannedGroupSumsBuffer = false;
-        public bool logArgsBufferAfterCopy = false;
-        public bool logCulledInstancesDrawMatrices = false;
-        public bool logCulledInstancesAnimData = false;
-        public bool logDebugAll = false;
-        public bool LogAllArgBuffer;
-        public int LogAllArgBufferCount = 5;
-        [Header("References")]
-        public ComputeShader createDrawDataBufferCS;
-        public ComputeShader sortingCS;
-        public ComputeShader occlusionCS;
-        public ComputeShader copyInstanceDataCS;
-        
-        // Constants
-        private const int NUMBER_OF_DRAW_CALLS = 3; // (LOD00 + LOD01 + LOD02)
-        private const int NUMBER_OF_ARGS_PER_DRAW = 5; // (indexCount, instanceCount, startIndex, baseVertex, startInstance)
-        public const int NUMBER_OF_ARGS_PER_INSTANCE_TYPE = NUMBER_OF_DRAW_CALLS * NUMBER_OF_ARGS_PER_DRAW; // 3draws * 5args = 15args
-        private const int ARGS_BYTE_SIZE_PER_DRAW_CALL = NUMBER_OF_ARGS_PER_DRAW * sizeof(uint); // 5args * 4bytes = 20 bytes
-        private const int ARGS_BYTE_SIZE_PER_INSTANCE_TYPE = NUMBER_OF_ARGS_PER_INSTANCE_TYPE * sizeof(uint); // 15args * 4bytes = 60bytes
-        private const int SCAN_THREAD_GROUP_SIZE = 64;
-        private const string DEBUG_UI_RED_COLOR =   "<color=#ff6666>";
-        private const string DEBUG_UI_WHITE_COLOR = "<color=#ffffff>";
-        private const string DEBUG_SHADER_LOD_KEYWORD = "INDIRECT_DEBUG_LOD";
-        
-        // Shader Property ID's
-        private static readonly int _Data = Shader.PropertyToID("_Data");
-        private static readonly int _Input = Shader.PropertyToID("_Input");
-        private static readonly int _ShouldFrustumCull = Shader.PropertyToID("_ShouldFrustumCull");
-        private static readonly int _ShouldOcclusionCull = Shader.PropertyToID("_ShouldOcclusionCull");
-        private static readonly int _ShouldLOD = Shader.PropertyToID("_ShouldLOD");
-        private static readonly int _ShouldDetailCull = Shader.PropertyToID("_ShouldDetailCull");
-        private static readonly int _ShouldOnlyUseLOD02Shadows = Shader.PropertyToID("_ShouldOnlyUseLOD02Shadows");
-        private static readonly int _UNITY_MATRIX_MVP = Shader.PropertyToID("_UNITY_MATRIX_MVP");
-        private static readonly int _CamPosition = Shader.PropertyToID("_CamPosition");
-        private static readonly int _HiZTextureSize = Shader.PropertyToID("_HiZTextureSize");
-        private static readonly int _Level = Shader.PropertyToID("_Level");
-        private static readonly int _LevelMask = Shader.PropertyToID("_LevelMask");
-        private static readonly int _Width = Shader.PropertyToID("_Width");
-        private static readonly int _Height = Shader.PropertyToID("_Height");
-        private static readonly int _ShadowDistance = Shader.PropertyToID("_ShadowDistance");
-        private static readonly int _DetailCullingScreenPercentage = Shader.PropertyToID("_DetailCullingScreenPercentage");
-        private static readonly int _Lod0Distance = Shader.PropertyToID("_Lod0Distance");
-        private static readonly int _Lod1Distance = Shader.PropertyToID("_Lod1Distance");
-        
-        private static readonly int _HiZMap = Shader.PropertyToID("_HiZMap");
-        private static readonly int _NumOfDrawcalls = Shader.PropertyToID("_NumOfDrawcalls");
-        private static readonly int _ArgsOffset = Shader.PropertyToID("_ArgsOffset");
-        private static readonly int _TransformData = Shader.PropertyToID("_TransformData");
-        private static readonly int _ArgsBuffer = Shader.PropertyToID("_ArgsBuffer");
-        private static readonly int _ShadowArgsBuffer = Shader.PropertyToID("_ShadowArgsBuffer");
-        private static readonly int _IsVisibleBuffer = Shader.PropertyToID("_IsVisibleBuffer");
-        private static readonly int _ShadowIsVisibleBuffer = Shader.PropertyToID("_ShadowIsVisibleBuffer");
-        private static readonly int _DrawcallDataOut = Shader.PropertyToID("_DrawcallDataOut");
-        private static readonly int _SortingData = Shader.PropertyToID("_SortingData");
-        private static readonly int _ShadowSortingData = Shader.PropertyToID("_ShadowSortingData");
-        private static readonly int _InstanceDataBuffer = Shader.PropertyToID("_InstanceDataBuffer");
-        private static readonly int _InstancePredicatesIn = Shader.PropertyToID("_InstancePredicatesIn");
-        private static readonly int _InstancesDrawMatrixRows = Shader.PropertyToID("_InstancesDrawMatrixRows");
-        private static readonly int _InstancesCulledMatrixRows01 = Shader.PropertyToID("_InstancesCulledMatrixRows01");
-        
-        private static readonly int _InstancesCulledAnimData = Shader.PropertyToID("_InstancesCulledAnimData");
-        private static readonly int _InstancesDrawAnimData = Shader.PropertyToID("_InstancesDrawAnimData");
-        private static readonly int _InstancesCulledIndexRemap = Shader.PropertyToID("_InstancesCulledIndexRemap");
-        
-        
-        
+      
         [Header("Data")]
         [ReadOnly] public IndirectRenderingMesh[] indirectMeshes;
         private InstanceRenderData _rendererData = new InstanceRenderData();
@@ -533,8 +434,8 @@ namespace GamesTan.Rendering {
             if (logDebugAll) {
                 logDebugAll = false;
             }
-            if (LogAllArgBuffer) {
-                LogAllBuffers(LogAllArgBufferCount);
+            if (logAllArgBuffer) {
+                LogAllBuffers(logAllArgBufferCount);
             }
         }
         
@@ -553,7 +454,7 @@ namespace GamesTan.Rendering {
             // First sort the rows for the levels <= to the block size
             for (uint level = 2; level <= BITONIC_BLOCK_SIZE; level <<= 1)
             {
-                SetGPUSortConstants( ref sortingCS, ref level, ref level, ref MATRIX_HEIGHT, ref MATRIX_WIDTH);
+                SetGPUSortConstants( sortingCS, ref level, ref level, ref MATRIX_HEIGHT, ref MATRIX_WIDTH);
 
                 // Sort the row data
                 sortingCS.SetBuffer( m_sortingCSKernelID, _Data, sortingDataBuffer);
@@ -568,7 +469,7 @@ namespace GamesTan.Rendering {
                 uint l = (level / BITONIC_BLOCK_SIZE);
                 var inff = (level & ~NUM_ELEMENTS);
                 uint lm = inff / BITONIC_BLOCK_SIZE;
-                SetGPUSortConstants(ref sortingCS, ref l, ref lm, ref MATRIX_WIDTH, ref MATRIX_HEIGHT);
+                SetGPUSortConstants(sortingCS, ref l, ref lm, ref MATRIX_WIDTH, ref MATRIX_HEIGHT);
                 sortingCS.SetBuffer(m_sortingTransposeKernelID, _Input, sortingDataBuffer);
                 sortingCS.SetBuffer( m_sortingTransposeKernelID, _Data, m_instancesSortingDataTemp);
                 sortingCS.Dispatch( m_sortingTransposeKernelID, (int)(MATRIX_WIDTH / TRANSPOSE_BLOCK_SIZE), (int)(MATRIX_HEIGHT / TRANSPOSE_BLOCK_SIZE), 1);
@@ -578,7 +479,7 @@ namespace GamesTan.Rendering {
                 sortingCS.Dispatch(m_sortingCSKernelID, (int)(NUM_ELEMENTS / BITONIC_BLOCK_SIZE), 1, 1);
 
                 // Transpose the data from buffer 2 back into buffer 1
-                SetGPUSortConstants(ref sortingCS, ref BITONIC_BLOCK_SIZE, ref level, ref MATRIX_HEIGHT, ref MATRIX_WIDTH);
+                SetGPUSortConstants(sortingCS, ref BITONIC_BLOCK_SIZE, ref level, ref MATRIX_HEIGHT, ref MATRIX_WIDTH);
                 sortingCS.SetBuffer( m_sortingTransposeKernelID, _Input, m_instancesSortingDataTemp);
                 sortingCS.SetBuffer( m_sortingTransposeKernelID, _Data, sortingDataBuffer);
                 sortingCS.Dispatch(m_sortingTransposeKernelID, (int)(MATRIX_HEIGHT / TRANSPOSE_BLOCK_SIZE), (int)(MATRIX_WIDTH / TRANSPOSE_BLOCK_SIZE), 1);
@@ -589,7 +490,7 @@ namespace GamesTan.Rendering {
             }
         }
         
-        private void SetGPUSortConstants( ref ComputeShader cs, ref uint level, ref uint levelMask, ref uint width, ref uint height)
+        private void SetGPUSortConstants( ComputeShader cs, ref uint level, ref uint levelMask, ref uint width, ref uint height)
         {
             cs.SetInt( _Level, (int)level);
             cs.SetInt( _LevelMask, (int)levelMask);
@@ -599,11 +500,11 @@ namespace GamesTan.Rendering {
         
         private bool TryGetKernels()
         {
-            return TryGetKernel("CSMain",           ref createDrawDataBufferCS, ref m_createDrawDataBufferKernelID)
-                && TryGetKernel("BitonicSort",      ref sortingCS,            ref m_sortingCSKernelID)
-                && TryGetKernel("MatrixTranspose",  ref sortingCS,            ref m_sortingTransposeKernelID)
-                && TryGetKernel("CSMain",           ref occlusionCS,            ref m_occlusionKernelID)
-                && TryGetKernel("CSMain",           ref copyInstanceDataCS,     ref m_copyInstanceDataKernelID)
+            return TryGetKernel("CSMain",           createDrawDataBufferCS, ref m_createDrawDataBufferKernelID)
+                && TryGetKernel("BitonicSort",      sortingCS,            ref m_sortingCSKernelID)
+                && TryGetKernel("MatrixTranspose",  sortingCS,            ref m_sortingTransposeKernelID)
+                && TryGetKernel("CSMain",           occlusionCS,            ref m_occlusionKernelID)
+                && TryGetKernel("CSMain",           copyInstanceDataCS,     ref m_copyInstanceDataKernelID)
             ;
         }
 
@@ -899,7 +800,7 @@ namespace GamesTan.Rendering {
             _buffer = null;
         }
         
-        private static bool TryGetKernel(string kernelName, ref ComputeShader cs, ref int kernelID)
+        private static bool TryGetKernel(string kernelName, ComputeShader cs, ref int kernelID)
         {
             if (!cs.HasKernel(kernelName))
             {
