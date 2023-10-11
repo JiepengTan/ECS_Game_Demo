@@ -59,6 +59,7 @@ namespace GamesTan.Rendering {
         public const string DEBUG_SHADER_LOD_KEYWORD = "INDIRECT_DEBUG_LOD";
         
         // Shader Property ID's
+        public static readonly int _UseHiZ = Shader.PropertyToID("_UseHiZ");
         public static readonly int _Data = Shader.PropertyToID("_Data");
         public static readonly int _Input = Shader.PropertyToID("_Input");
         public static readonly int _ShouldFrustumCull = Shader.PropertyToID("_ShouldFrustumCull");

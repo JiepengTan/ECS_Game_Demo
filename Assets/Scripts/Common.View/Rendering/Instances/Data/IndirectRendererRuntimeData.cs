@@ -8,10 +8,6 @@ using UnityEngine.UI;
 
 namespace GamesTan.Rendering {
     public partial class IndirectRendererRuntimeData {
-        public IndirectRendererRuntimeData(IndirectRendererConfig config) {
-            this.Config = config;
-        }
-
         public IndirectRendererConfig Config;
                     
         public IHierarchyZBuffer hiZBuffer;
@@ -76,7 +72,40 @@ namespace GamesTan.Rendering {
         public GameObject m_uiObj;
 
         public Transform transform;
+        public IndirectRendererRuntimeData(IndirectRendererConfig config) {
+            Debug.Assert(config != null," IndirectRendererConfig should not be null");
+            this.Config = config;
+        }
 
+        public void DoInit(InstanceRenderData data) {
+            if (this._rendererData != null) {
+                this._rendererData.OnLayoutChangedEvent -= OnRenderDataLayoutChanged;
+            }
+            _rendererData = data;  
+            this._rendererData.OnLayoutChangedEvent += OnRenderDataLayoutChanged;
+        }
+        public void DoDestroy()
+        {
+            ReleaseBuffers();
+            if (this._rendererData != null) {
+                this._rendererData.OnLayoutChangedEvent -= OnRenderDataLayoutChanged;
+            }
+            if (debugDrawLOD)
+            {
+                for (int i = 0; i < indirectMeshes.Length; i++)
+                {
+                    indirectMeshes[i].material.DisableKeyword(DEBUG_SHADER_LOD_KEYWORD);
+                }
+            }
+        }
+        public void DoUpdate()
+        {
+            if (m_isEnabled)
+            {
+                UpdateDebug();
+            }
+        }
+        
         public void Initialize(List<IndirectInstanceData> Infos,int maxCount,Transform transform, IHierarchyZBuffer hierarchyZBuffer) {
             this.hiZBuffer = hierarchyZBuffer;
             this.transform = transform;
@@ -215,15 +244,18 @@ namespace GamesTan.Rendering {
             occlusionCS.SetFloat(_DetailCullingScreenPercentage, detailCullingPercentage);
             occlusionCS.SetFloat(_Lod0Distance, lod0Distance);
             occlusionCS.SetFloat(_Lod1Distance, lod1Distance);
-            occlusionCS.SetVector(_HiZTextureSize, hiZBuffer.TextureSize);
             occlusionCS.SetBuffer(m_occlusionKernelID, _InstanceDataBuffer, m_instanceDataBuffer);
             occlusionCS.SetBuffer(m_occlusionKernelID, _ArgsBuffer, m_instancesArgsBuffer);
             occlusionCS.SetBuffer(m_occlusionKernelID, _ShadowArgsBuffer, m_shadowArgsBuffer);
             occlusionCS.SetBuffer(m_occlusionKernelID, _IsVisibleBuffer, m_instancesIsVisibleBuffer);
             occlusionCS.SetBuffer(m_occlusionKernelID, _ShadowIsVisibleBuffer, m_shadowsIsVisibleBuffer);
-            occlusionCS.SetTexture(m_occlusionKernelID, _HiZMap, hiZBuffer.Texture);
             occlusionCS.SetBuffer(m_occlusionKernelID, _SortingData, m_instancesSortingData);
             occlusionCS.SetBuffer(m_occlusionKernelID, _ShadowSortingData, m_instancesShadowSortingData);
+            if(hiZBuffer != null){
+                occlusionCS.SetVector(_HiZTextureSize, hiZBuffer.TextureSize);
+                occlusionCS.SetTexture(m_occlusionKernelID, _HiZMap, hiZBuffer.Texture);
+            }
+            occlusionCS.SetInt(_UseHiZ,  hiZBuffer!= null  ? 1 : 0);
             
             copyInstanceDataCS.SetInt(_NumOfDrawcalls, m_numberOfInstanceTypes * NUMBER_OF_DRAW_CALLS);
             copyInstanceDataCS.SetBuffer(m_copyInstanceDataKernelID, _InstanceDataBuffer, m_instanceDataBuffer);
@@ -236,8 +268,10 @@ namespace GamesTan.Rendering {
 
         private void InitPrefabBuffers(List<IndirectInstanceData> _instances) {
             m_numberOfInstanceTypes = _instances.Count;
-            hiZBuffer.Enabled = true;
-            hiZBuffer.InitializeTexture();
+            if(hiZBuffer != null){
+                hiZBuffer.Enabled = true;
+                hiZBuffer.InitializeTexture();
+            } 
             indirectMeshes = new IndirectRenderingMesh[m_numberOfInstanceTypes];
             m_args = new uint[m_numberOfInstanceTypes * NUMBER_OF_ARGS_PER_INSTANCE_TYPE];
             for (int i = 0; i < m_numberOfInstanceTypes; i++) {

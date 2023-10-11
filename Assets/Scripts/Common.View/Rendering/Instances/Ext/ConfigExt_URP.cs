@@ -109,6 +109,7 @@ namespace GamesTan.Rendering {
         int _ShouldLOD => IndirectRendererConfig._ShouldLOD;
         int _ShouldDetailCull => IndirectRendererConfig._ShouldDetailCull;
         int _ShouldOnlyUseLOD02Shadows => IndirectRendererConfig._ShouldOnlyUseLOD02Shadows;
+        int _UseHiZ => IndirectRendererConfig._UseHiZ;
         int _UNITY_MATRIX_MVP => IndirectRendererConfig._UNITY_MATRIX_MVP;
         int _CamPosition => IndirectRendererConfig._CamPosition;
         int _HiZTextureSize => IndirectRendererConfig._HiZTextureSize;

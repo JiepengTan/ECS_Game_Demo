@@ -28,37 +28,17 @@ namespace GamesTan.Rendering {
 
         #region MonoBehaviour
 
-
         public void SetRenderData(InstanceRenderData data) {
-            Debug.Assert(Config != null," IndirectRendererConfig should not be null");
             RuntimeData = new IndirectRendererRuntimeData(Config);
-            if (this._rendererData != null) {
-                this._rendererData.OnLayoutChangedEvent -= OnRenderDataLayoutChanged;
-            }
-            RuntimeData._rendererData = data;  
-            this._rendererData.OnLayoutChangedEvent += OnRenderDataLayoutChanged;
+            RuntimeData.DoInit(data);
         }
-
         private void OnDestroy()
         {
-            RuntimeData. ReleaseBuffers();
-            if (this._rendererData != null) {
-                this._rendererData.OnLayoutChangedEvent -= OnRenderDataLayoutChanged;
-            }
-            if (debugDrawLOD)
-            {
-                for (int i = 0; i < indirectMeshes.Length; i++)
-                {
-                    indirectMeshes[i].material.DisableKeyword(DEBUG_SHADER_LOD_KEYWORD);
-                }
-            }
+            RuntimeData. DoDestroy();
         }
         public void DoUpdate()
         {
-            if (m_isEnabled)
-            {
-                RuntimeData.UpdateDebug();
-            }
+            RuntimeData.DoUpdate();
         }
 
         private int curFrameNum = 0;
@@ -130,14 +110,10 @@ namespace GamesTan.Rendering {
         
         #region Public Functions
         
-        public void Initialize(List<IndirectInstanceData> Infos,int maxCount) {
-            RuntimeData.Initialize(Infos, maxCount,transform,hiZBuffer);
+        public void Initialize(List<IndirectInstanceData> infos,int maxCount) {
+            RuntimeData.Initialize(infos, maxCount,transform,hiZBuffer);
         }
 
-
-        public void OnRenderDataLayoutChanged() {
-            RuntimeData.OnRenderDataLayoutChanged();
-        }
 
         public void StartDrawing()
         {
