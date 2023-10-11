@@ -50,7 +50,9 @@ namespace GamesTan.Rendering {
 
         // Kernel ID's
         public int m_createDrawDataBufferKernelID;
-        public int m_sortingCSKernelID;
+        public int m_sorting_64_CSKernelID;
+        public int m_sorting_256_CSKernelID;
+        public int m_sorting_512_CSKernelID;
         public int m_sortingTransposeKernelID;
         public int m_occlusionKernelID;
         public int m_scanInstancesKernelID;
@@ -448,8 +450,8 @@ namespace GamesTan.Rendering {
 
         public bool TryGetKernels() {
             return TryGetKernel("CSMain", createDrawDataBufferCS, ref m_createDrawDataBufferKernelID)
-                   && TryGetKernel("BitonicSort", sortingCS, ref m_sortingCSKernelID)
-                   && TryGetKernel("MatrixTranspose", sortingCS, ref m_sortingTransposeKernelID)
+                   && TryGetKernel("BitonicSort_256", sortingCS, ref m_sorting_256_CSKernelID)
+                   && TryGetKernel("MatrixTranspose_64", sortingCS, ref m_sortingTransposeKernelID)
                    && TryGetKernel("CSMain", occlusionCS, ref m_occlusionKernelID)
                    && TryGetKernel("CSMain", copyInstanceDataCS, ref m_copyInstanceDataKernelID)
                 ;

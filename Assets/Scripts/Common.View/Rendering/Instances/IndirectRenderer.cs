@@ -251,57 +251,58 @@ namespace GamesTan.Rendering {
         }
         
         
-        private void SortRenderDatas(ComputeBuffer sortingDataBuffer )
-        {
-            uint BITONIC_BLOCK_SIZE = 256;
-            uint TRANSPOSE_BLOCK_SIZE = 8;
+        private void SortRenderDatas(ComputeBuffer sortingDataBuffer ) {
+            uint sortBlockSize = 256;
+            uint transposeBlockSize = 8;
+            var sortKernelID = m_sorting_256_CSKernelID;
+            var transposekernelID = m_sortingTransposeKernelID;
             
             // Determine parameters.
-            uint NUM_ELEMENTS = (uint)m_numberOfInstances;
-            uint MATRIX_WIDTH = BITONIC_BLOCK_SIZE;
-            uint MATRIX_HEIGHT = (uint)NUM_ELEMENTS / BITONIC_BLOCK_SIZE;
-            
+            uint instanceCount = (uint)m_numberOfInstances;
+            uint maxWidth = sortBlockSize;
+            uint maxHeight = (uint)instanceCount / sortBlockSize;
+            int groupXCount = (int)(instanceCount / sortBlockSize);
             // Sort the data
             // First sort the rows for the levels <= to the block size
-            for (uint level = 2; level <= BITONIC_BLOCK_SIZE; level <<= 1)
+            for (uint level = 2; level <= sortBlockSize; level <<= 1)
             {
-                SetGPUSortConstants( sortingCS, ref level, ref level, ref MATRIX_HEIGHT, ref MATRIX_WIDTH);
+                SetGPUSortConstants( sortingCS,  level,  level,  maxHeight,  maxWidth);
 
                 // Sort the row data
-                sortingCS.SetBuffer( m_sortingCSKernelID, _Data, sortingDataBuffer);
-                sortingCS.Dispatch(m_sortingCSKernelID, (int)(NUM_ELEMENTS / BITONIC_BLOCK_SIZE), 1, 1);
+                sortingCS.SetBuffer( sortKernelID, _Data, sortingDataBuffer);
+                sortingCS.Dispatch(sortKernelID, groupXCount, 1, 1);
             }
 
             // Then sort the rows and columns for the levels > than the block size
             // Transpose. Sort the Columns. Transpose. Sort the Rows.
-            for (uint level = (BITONIC_BLOCK_SIZE << 1); level <= NUM_ELEMENTS; level <<= 1)
+            for (uint level = (sortBlockSize << 1); level <= instanceCount; level <<= 1)
             {
                 // Transpose the data from buffer 1 into buffer 2
-                uint l = (level / BITONIC_BLOCK_SIZE);
-                var inff = (level & ~NUM_ELEMENTS);
-                uint lm = inff / BITONIC_BLOCK_SIZE;
-                SetGPUSortConstants(sortingCS, ref l, ref lm, ref MATRIX_WIDTH, ref MATRIX_HEIGHT);
-                sortingCS.SetBuffer(m_sortingTransposeKernelID, _Input, sortingDataBuffer);
-                sortingCS.SetBuffer( m_sortingTransposeKernelID, _Data, m_instancesSortingDataTemp);
-                sortingCS.Dispatch( m_sortingTransposeKernelID, (int)(MATRIX_WIDTH / TRANSPOSE_BLOCK_SIZE), (int)(MATRIX_HEIGHT / TRANSPOSE_BLOCK_SIZE), 1);
+                uint l = (level / sortBlockSize);
+                var inff = (level & ~instanceCount);
+                uint lm = inff / sortBlockSize;
+                SetGPUSortConstants(sortingCS,  l,  lm,  maxWidth,  maxHeight);
+                sortingCS.SetBuffer(transposekernelID, _Input, sortingDataBuffer);
+                sortingCS.SetBuffer( transposekernelID, _Data, m_instancesSortingDataTemp);
+                sortingCS.Dispatch( transposekernelID, (int)(maxWidth / transposeBlockSize), (int)(maxHeight / transposeBlockSize), 1);
 
                 // Sort the transposed column data
-                sortingCS.SetBuffer( m_sortingCSKernelID, _Data, m_instancesSortingDataTemp);
-                sortingCS.Dispatch(m_sortingCSKernelID, (int)(NUM_ELEMENTS / BITONIC_BLOCK_SIZE), 1, 1);
+                sortingCS.SetBuffer( sortKernelID, _Data, m_instancesSortingDataTemp);
+                sortingCS.Dispatch(sortKernelID, groupXCount, 1, 1);
 
                 // Transpose the data from buffer 2 back into buffer 1
-                SetGPUSortConstants(sortingCS, ref BITONIC_BLOCK_SIZE, ref level, ref MATRIX_HEIGHT, ref MATRIX_WIDTH);
-                sortingCS.SetBuffer( m_sortingTransposeKernelID, _Input, m_instancesSortingDataTemp);
-                sortingCS.SetBuffer( m_sortingTransposeKernelID, _Data, sortingDataBuffer);
-                sortingCS.Dispatch(m_sortingTransposeKernelID, (int)(MATRIX_HEIGHT / TRANSPOSE_BLOCK_SIZE), (int)(MATRIX_WIDTH / TRANSPOSE_BLOCK_SIZE), 1);
+                SetGPUSortConstants(sortingCS,  sortBlockSize,  level,  maxHeight,  maxWidth);
+                sortingCS.SetBuffer( transposekernelID, _Input, m_instancesSortingDataTemp);
+                sortingCS.SetBuffer( transposekernelID, _Data, sortingDataBuffer);
+                sortingCS.Dispatch(transposekernelID, (int)(maxHeight / transposeBlockSize), (int)(maxWidth / transposeBlockSize), 1);
 
                 // Sort the row data
-                sortingCS.SetBuffer( m_sortingCSKernelID, _Data, sortingDataBuffer);
-                sortingCS.Dispatch(m_sortingCSKernelID, (int)(NUM_ELEMENTS / BITONIC_BLOCK_SIZE), 1, 1);
+                sortingCS.SetBuffer( sortKernelID, _Data, sortingDataBuffer);
+                sortingCS.Dispatch(sortKernelID, groupXCount, 1, 1);
             }
         }
         
-        private void SetGPUSortConstants( ComputeShader cs, ref uint level, ref uint levelMask, ref uint width, ref uint height)
+        private void SetGPUSortConstants( ComputeShader cs, uint level, uint levelMask, uint width, uint height)
         {
             cs.SetInt( _Level, (int)level);
             cs.SetInt( _LevelMask, (int)levelMask);

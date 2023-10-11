@@ -35,11 +35,12 @@ namespace GamesTan.Rendering {
 
 
         int m_createDrawDataBufferKernelID => RuntimeData.m_createDrawDataBufferKernelID;
-        int m_sortingCSKernelID => RuntimeData.m_sortingCSKernelID;
+        int m_sorting_64_CSKernelID => RuntimeData.m_sorting_64_CSKernelID;
+        int m_sorting_256_CSKernelID => RuntimeData.m_sorting_256_CSKernelID;
+        int m_sorting_512_CSKernelID => RuntimeData.m_sorting_512_CSKernelID;
+        
         int m_sortingTransposeKernelID => RuntimeData.m_sortingTransposeKernelID;
         int m_occlusionKernelID => RuntimeData.m_occlusionKernelID;
-        int m_scanInstancesKernelID => RuntimeData.m_scanInstancesKernelID;
-        int m_scanGroupSumsKernelID => RuntimeData.m_scanGroupSumsKernelID;
         int m_copyInstanceDataKernelID => RuntimeData.m_copyInstanceDataKernelID;
         bool m_isInitialized => RuntimeData.m_isInitialized;
 
