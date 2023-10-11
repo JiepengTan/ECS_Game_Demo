@@ -2,15 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.Profiling;
 using UnityEngine.Rendering;
-using System.Text;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using GamesTan.ECS;
-using UnityEngine.UI;
-using Unity.Collections;
-using Unity.Mathematics;
-using UnityEngine.Serialization;
 
 namespace GamesTan.Rendering {
     public partial class IndirectRenderer : MonoBehaviour {
@@ -22,14 +14,17 @@ namespace GamesTan.Rendering {
         public Camera debugCamera;
         
         private int _curFrameNum = 0;
+        public bool IsSrp =>  GraphicsSettings.renderPipelineAsset != null;
         
         public void DoAwake(InstanceRenderData data,List<IndirectInstanceData> prefabInfos) {
             RuntimeData = new IndirectRendererRuntimeData(Config);
             RuntimeData.DoAwake(data, prefabInfos,hiZBuffer, transform);
+            IndirectRendererRuntimeData.SetInstance(RuntimeData);
         }
         public void DoDestroy()
         {
             RuntimeData.DoDestroy();
+            IndirectRendererRuntimeData.SetInstance(null);
         }
         public void DoUpdate()
         {
@@ -38,6 +33,7 @@ namespace GamesTan.Rendering {
 
         public void OnCameraPreCull()
         {
+            if(IsSrp) return;
             if (!m_isEnabled
                 || indirectMeshes == null
                 || indirectMeshes.Length == 0
@@ -100,8 +96,6 @@ namespace GamesTan.Rendering {
         
         private void DrawInstances()
         {
-
-
             for (int i = 0; i < indirectMeshes.Length; i++)
             {
                 int argsIndex = i * ARGS_BYTE_SIZE_PER_INSTANCE_TYPE;
@@ -138,21 +132,8 @@ namespace GamesTan.Rendering {
             }
         }
 
-        private void CalculateVisibleInstances()
-        {
-            // Global data
-            RuntimeData.m_camPosition =  mainCamera.transform.position;
-            RuntimeData.m_bounds.center = m_camPosition;
-            RuntimeData.m_bounds.extents = Vector3.one * 10000;
-            
-            //Matrix4x4 m = mainCamera.transform.localToWorldMatrix;
-            Matrix4x4 v = mainCamera.worldToCameraMatrix;
-            Matrix4x4 p = mainCamera.projectionMatrix;
-            RuntimeData.m_MVP = p * v;//*m;
-            if (logDebugAll) {
-                Debug.Log("logDebugAll =================== " + Time.frameCount);
-            }
-
+        private void CalculateVisibleInstances() {
+            RuntimeData.RenderPrepare(mainCamera);
             
             //////////////////////////////////////////////////////
             // Reset the arguments buffer
@@ -206,8 +187,8 @@ namespace GamesTan.Rendering {
             //////////////////////////////////////////////////////
             Profiler.BeginSample("02 LOD Sorting");
             {
-                SortRenderDatas(m_instancesSortingData);
-                SortRenderDatas(m_instancesShadowSortingData);
+                SortRenderData(m_instancesSortingData);
+                SortRenderData(m_instancesShadowSortingData);
             }
             Profiler.EndSample();
      
@@ -250,33 +231,14 @@ namespace GamesTan.Rendering {
             }
         }
 
-        private void SortRenderDatas(ComputeBuffer sortingDataBuffer ) {
+        private void SortRenderData(ComputeBuffer sortingDataBuffer ) {
             uint instanceCount = (uint)m_numberOfInstances;
             uint transposeBlockSize = 8;
             var transposekernelID = MSortingTranspose_64_KernelID;
             
             uint sortBlockSize = 256;
             var sortKernelID = m_sorting_256_CSKernelID;
-            if (instanceCount <= 128) {
-                sortBlockSize = 128;
-                sortKernelID = m_sorting_128_CSKernelID;
-            }else if (instanceCount <= 256) {
-                sortBlockSize = 256;
-                sortKernelID = m_sorting_256_CSKernelID;
-            }else if (instanceCount <= 512) {
-                sortBlockSize = 512;
-                sortKernelID = m_sorting_512_CSKernelID;
-            }else if (instanceCount <= 1024) {
-                sortBlockSize = 128;
-                sortKernelID = m_sorting_128_CSKernelID;
-            }else if (instanceCount <= 2048) {
-                sortBlockSize = 256;
-                sortKernelID = m_sorting_256_CSKernelID;
-            }else {
-                sortBlockSize = 512;
-                sortKernelID = m_sorting_512_CSKernelID;
-            }
-
+            RuntimeData.  GetSortKernelInfo(instanceCount, out sortBlockSize, out sortKernelID);
 
             // Determine parameters.
             uint maxWidth = sortBlockSize;
@@ -321,7 +283,9 @@ namespace GamesTan.Rendering {
                 sortingCS.Dispatch(sortKernelID, groupXCount, 1, 1);
             }
         }
-        
+
+ 
+
         private void SetGPUSortConstants( ComputeShader cs, uint level, uint levelMask, uint width, uint height)
         {
             cs.SetInt( _Level, (int)level);

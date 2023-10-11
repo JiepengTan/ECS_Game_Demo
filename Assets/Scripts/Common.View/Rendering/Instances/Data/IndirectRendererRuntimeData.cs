@@ -79,35 +79,48 @@ namespace GamesTan.Rendering {
 
         public Transform transform;
 
+        private static IndirectRendererRuntimeData _instance;
+        public static IndirectRendererRuntimeData Instance {
+            get => _instance;
+        }
+        public static void SetInstance(IndirectRendererRuntimeData instance) {
+            _instance = instance;
+        }
+
         public IndirectRendererRuntimeData(IndirectRendererConfig config) {
             Debug.Assert(config != null, " IndirectRendererConfig should not be null");
             this.Config = config;
         }
 
-        public void DoAwake(InstanceRenderData data,List<IndirectInstanceData> prefabInfos, IHierarchyZBuffer hierarchyZBuffer,Transform trans = null) {
+        public void DoAwake(InstanceRenderData data, List<IndirectInstanceData> prefabInfos,
+            IHierarchyZBuffer hierarchyZBuffer, Transform trans = null) {
+            if (m_isInitialized) {
+                Debug.LogError($"{GetType().Name } Already Init ");
+                return;
+            }
+
             if (this._rendererData != null) {
                 this._rendererData.OnLayoutChangedEvent -= OnRenderDataLayoutChanged;
             }
-            m_isEnabled = true;
 
+            m_isEnabled = true;
             _rendererData = data;
             this._rendererData.OnLayoutChangedEvent += OnRenderDataLayoutChanged;
-            
+
             this.hiZBuffer = hierarchyZBuffer;
             this.transform = trans;
-            if (!m_isInitialized) {
-                if (!TryGetKernels()) {
-                    Debug.LogError("Load compute shader core failed!");
-                }
-
-                m_numberOfInstances = data.Capacity;
-                InitPrefabBuffers(prefabInfos);
-                InitInstanceBuffers();
-                m_isInitialized = true;
+            if (!TryGetKernels()) {
+                Debug.LogError("Load compute shader core failed!");
             }
+
+            m_numberOfInstances = data.Capacity;
+            InitPrefabBuffers(prefabInfos);
+            InitInstanceBuffers();
+            m_isInitialized = true;
         }
 
         public void DoDestroy() {
+            if(!m_isInitialized) return;
             ReleaseBuffers();
             if (this._rendererData != null) {
                 this._rendererData.OnLayoutChangedEvent -= OnRenderDataLayoutChanged;
@@ -136,6 +149,45 @@ namespace GamesTan.Rendering {
                 InitInstanceBuffers();
             }
         }
+        public void GetSortKernelInfo(uint instanceCount,out uint sortBlockSize, out int sortKernelID) {
+            if (instanceCount <= 128) {
+                sortBlockSize = 128;
+                sortKernelID = m_sorting_128_CSKernelID;
+            }
+            else if (instanceCount <= 256) {
+                sortBlockSize = 256;
+                sortKernelID = m_sorting_256_CSKernelID;
+            }
+            else if (instanceCount <= 512) {
+                sortBlockSize = 512;
+                sortKernelID = m_sorting_512_CSKernelID;
+            }
+            else if (instanceCount <= 1024) {
+                sortBlockSize = 128;
+                sortKernelID = m_sorting_128_CSKernelID;
+            }
+            else if (instanceCount <= 2048) {
+                sortBlockSize = 256;
+                sortKernelID = m_sorting_256_CSKernelID;
+            }
+            else {
+                sortBlockSize = 512;
+                sortKernelID = m_sorting_512_CSKernelID;
+            }
+        }
+        
+        public void RenderPrepare(Camera mainCamera) {
+            m_camPosition = mainCamera.transform.position;
+            m_bounds.center = m_camPosition;
+            m_bounds.extents = Vector3.one * 10000;
+
+            //Matrix4x4 m = mainCamera.transform.localToWorldMatrix;
+            Matrix4x4 v = mainCamera.worldToCameraMatrix;
+            Matrix4x4 p = mainCamera.projectionMatrix;
+            m_MVP = p * v; //*m;
+        }
+
+
 
         private void InitInstanceBuffers() {
             Debug.LogWarning("InitInstanceBuffers " + m_numberOfInstances);

@@ -4,34 +4,30 @@ using UnityEngine.Rendering.Universal;
 
 namespace GamesTan.Rendering {
     partial class IndirectDrawRenderPass : ScriptableRenderPass {
-        public IndirectRendererConfig Config;
-        public IndirectRendererRuntimeData RuntimeData;
-       
-        private Vector2Int size;
-        public IndirectDrawRenderPass(RenderPassEvent evt, IndirectRendererConfig config,IndirectRendererRuntimeData runtimeData) {
-            Config = config;
-            RuntimeData =runtimeData;
-            this.renderPassEvent = evt;
+        protected IndirectRendererConfig Config;
+        protected IndirectRendererRuntimeData RuntimeData;
+
+        public void Clear() {
+            RuntimeData = null;
         }
-        public override void Configure(CommandBuffer cmd, RenderTextureDescriptor cameraTextureDescripor) {
-            size = new Vector2Int(cameraTextureDescripor.width, cameraTextureDescripor.height);
+        public IndirectDrawRenderPass SetData( IndirectRendererConfig config,
+            IndirectRendererRuntimeData runtimeData) {
+            Config = config;
+            RuntimeData = runtimeData;
+            return this;
+        }
+        public IndirectDrawRenderPass Init(RenderPassEvent evt) {
+            renderPassEvent = evt;
+            return this;
         }
 
         public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData) {
-            var colorHandle = renderingData.cameraData.renderer.cameraColorTargetHandle;
-            CommandBuffer cmd = CommandBufferPool.Get("IndirectDrawRenderFeaturePass");
+            if (RuntimeData== null || !RuntimeData.m_isInitialized || !RuntimeData.m_isEnabled)
+                return;
+            OnExecute(context, ref renderingData);
+        }
 
-            //cmd.SetRandomWriteTarget(1, cbPoints);
-            //cmd.GetTemporaryRT(m_ColorRTid, size.x, size.y, 24);
-            //cmd.Blit(colorHandle, m_ColorRTid, mat, 0);
-            //cmd.ClearRandomWriteTargets();
-            //cmd.ReleaseTemporaryRT(m_ColorRTid);
-            //cmd.SetRenderTarget(colorHandle);
-            //cmd.CopyCounterValue(cbPoints, cbDrawArgs, 4);
-            //cmd.DrawMeshInstancedIndirect(mesh, 0, mat, 1, cbDrawArgs, 0);
-
-            context.ExecuteCommandBuffer(cmd);
-            CommandBufferPool.Release(cmd);
+        protected virtual void OnExecute(ScriptableRenderContext context, ref RenderingData renderingData) {
         }
     }
 }

@@ -3,7 +3,8 @@ using UnityEngine;
 using UnityEngine.UI;
 
 namespace GamesTan.Rendering {
-    public partial class IndirectRenderer {
+    public partial class IndirectDrawRenderPass {
+
         public IndirectRenderingMesh[] indirectMeshes=> RuntimeData.indirectMeshes;
         public InstanceRenderData _rendererData => RuntimeData._rendererData;
         protected ComputeBuffer m_instancesArgsBuffer => RuntimeData.m_instancesArgsBuffer;
