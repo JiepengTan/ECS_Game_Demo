@@ -32,9 +32,7 @@ namespace GamesTan.Rendering {
             var counts = configs.Select(a => dict[a.prefabId]).ToList();
             int totalCount = counts.Sum();
             _rendererData.ResetLayout(configs.Select(a=>a.prefabId).ToList(),counts,true);
-            _indirectRenderer.SetRenderData(_rendererData);
-            _indirectRenderer.Initialize(configs,_rendererData.Capacity);
-            _indirectRenderer.StartDrawing();
+            _indirectRenderer.DoAwake(_rendererData,configs);
             for (int i = 0; i < configs.Count; i++) {
                 _prefabId2InstancePrefabIdx[configs[i].prefabId] = i;
             }
@@ -52,7 +50,7 @@ namespace GamesTan.Rendering {
         }
 
         private void OnDestroy() { 
-            _indirectRenderer.StopDrawing(true);
+            _indirectRenderer.DoDestroy();
             _instance = null;
         }
 

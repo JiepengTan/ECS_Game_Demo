@@ -9505,8 +9505,8 @@ MonoBehaviour:
     DeleteOrNewCountPerFrame: 1127
     DebugOnlyOneEntity: 1
     DebugAreaCount: 1
-    DebugEntityCount: 600
-    DebugEntityBornPosRange: 50
+    DebugEntityCount: 3000
+    DebugEntityBornPosRange: 100
     DebugStopAnimation: 0
     DebugStopAI: 0
     IsOnlyOnePreafb: 0
@@ -37661,11 +37661,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Config: {fileID: 11400000, guid: d6fbc9ac1fb9711498c4c91ba738127f, type: 2}
-  indirectMeshes: []
   hiZBuffer: {fileID: 1867192519}
   mainCamera: {fileID: 374771441}
   debugCamera: {fileID: 658572712}
-  MaxRenderCount: 0
 --- !u!114 &1867192519
 MonoBehaviour:
   m_ObjectHideFlags: 0

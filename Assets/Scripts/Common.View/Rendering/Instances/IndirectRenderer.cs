@@ -16,32 +16,26 @@ namespace GamesTan.Rendering {
     public partial class IndirectRenderer : MonoBehaviour {
         public IndirectRendererConfig Config;
         public IndirectRendererRuntimeData RuntimeData;
-        #region Variables
-      
         
         public HiZBuffer hiZBuffer;
         public Camera mainCamera;
         public Camera debugCamera;
         
+        private int curFrameNum = 0;
         
-        #endregion
-
-        #region MonoBehaviour
-
-        public void SetRenderData(InstanceRenderData data) {
+        public void DoAwake(InstanceRenderData data,List<IndirectInstanceData> prefabInfos) {
             RuntimeData = new IndirectRendererRuntimeData(Config);
-            RuntimeData.DoInit(data);
+            RuntimeData.DoAwake(data, prefabInfos,hiZBuffer, transform);
         }
-        private void OnDestroy()
+        public void DoDestroy()
         {
-            RuntimeData. DoDestroy();
+            RuntimeData.DoDestroy();
         }
         public void DoUpdate()
         {
             RuntimeData.DoUpdate();
         }
 
-        private int curFrameNum = 0;
         public void OnCameraPreCull()
         {
             if (!m_isEnabled
@@ -103,44 +97,6 @@ namespace GamesTan.Rendering {
                 }
             }
         }
-        
-        #endregion
-
-        public int MaxRenderCount = 0;
-        
-        #region Public Functions
-        
-        public void Initialize(List<IndirectInstanceData> infos,int maxCount) {
-            RuntimeData.Initialize(infos, maxCount,transform,hiZBuffer);
-        }
-
-
-        public void StartDrawing()
-        {
-            if (!m_isInitialized)
-            {
-                Debug.LogError("IndirectRenderer: Unable to start drawing because it's not initialized");
-                return;
-            }
-            
-            RuntimeData.m_isEnabled = true;
-        }
-        
-        public void StopDrawing(bool shouldReleaseBuffers = false)
-        {
-            RuntimeData.m_isEnabled = false;
-            
-            if (shouldReleaseBuffers)
-            {
-                RuntimeData.ReleaseBuffers();
-                RuntimeData.m_isInitialized = false;
-                hiZBuffer.enabled = false;
-            }
-        }
-        
-        #endregion
-
-        #region Private Functions
         
         private void DrawInstances()
         {
@@ -353,9 +309,5 @@ namespace GamesTan.Rendering {
             cs.SetInt( _Height, (int)height);
         }
         
-
-        
-        #endregion
-
     }    
 }
