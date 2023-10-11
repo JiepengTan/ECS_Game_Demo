@@ -5,6 +5,7 @@ using UnityEngine.Rendering.Universal;
 namespace GamesTan.Rendering {
     partial class IndirectRenderPass_PrepareCulling : IndirectDrawRenderPass {
         protected override void OnExecute(ScriptableRenderContext context, ref RenderingData renderingData) {
+            RuntimeData.RenderPrepare(renderingData.cameraData.camera);
             DoPrepare(context);
             DoCulling(context);
         }

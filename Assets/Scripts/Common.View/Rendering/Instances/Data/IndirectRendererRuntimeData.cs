@@ -339,6 +339,7 @@ namespace GamesTan.Rendering {
         }
 
         private void InitPrefabBuffers(List<IndirectInstanceData> _instances) {
+            bool isSrp = GraphicsSettings.renderPipelineAsset != null;
             m_numberOfInstanceTypes = _instances.Count;
             if (hiZBuffer != null) {
                 hiZBuffer.Enabled = true;
@@ -398,7 +399,7 @@ namespace GamesTan.Rendering {
                 m_args[argsIndex + 14] = 0; // 4 - start instance location
 
                 // Materials
-                irm.material = iid.indirectMaterial; //new Material(iid.indirectMaterial);
+                irm.material = isSrp?iid.indirectMaterialSRP:iid.indirectMaterial; //new Material(iid.indirectMaterial);
                 irm.originalBounds = CalculateBounds(iid.prefab);
                 // Add the data to the renderer list
                 indirectMeshes[i] = irm;
@@ -866,6 +867,11 @@ namespace GamesTan.Rendering {
 
         private string _lastStr;
 
+        public void CheckLogBuffers() {
+            if (logAllArgBuffer) {
+                LogAllBuffers(logAllArgBufferCount);
+            }
+        }
         public void LogAllBuffers(int count = 5) {
             count = Mathf.Min(m_numberOfInstances, count);
             StringBuilder sb = new StringBuilder();

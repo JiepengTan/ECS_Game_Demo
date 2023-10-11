@@ -15,20 +15,15 @@ MonoBehaviour:
   Infos:
   - prefabId: 10001
     prefab: {fileID: 1937056754075877283, guid: b6a6530fe999a824e932a2a37f2dd973, type: 3}
+    indirectMaterialSRP: {fileID: 2100000, guid: 7a6c963427b8a434db43862461a65cec, type: 2}
     indirectMaterial: {fileID: 2100000, guid: e788d4c7a55a88e428ed4f8456dc5900, type: 2}
     positionOffset: {x: 0, y: 0.5, z: 0}
     lod00Mesh: {fileID: 4300000, guid: 4315a4b9d93227148869ad91b67a3e55, type: 2}
     lod01Mesh: {fileID: 4300000, guid: 2e29e2a065ece1e4ebe3427446243eff, type: 2}
     lod02Mesh: {fileID: 4300000, guid: 5e12879c1ba86d846908da8f20d03916, type: 2}
-  - prefabId: 10002
-    prefab: {fileID: 5369157977643787679, guid: 17688d1906f8ae742879213963ca302c, type: 3}
-    indirectMaterial: {fileID: 2100000, guid: 4aacae513127019428a7df8944145faa, type: 2}
-    positionOffset: {x: 0, y: 0.5, z: 0}
-    lod00Mesh: {fileID: 4300000, guid: 47818a725f8f86a4f9bd36d260c860de, type: 2}
-    lod01Mesh: {fileID: 4300000, guid: 7e4487b714c10404f906cb7bbf722f6f, type: 2}
-    lod02Mesh: {fileID: 4300000, guid: 2217f0b5fe7d8fe478cc2281b0c2ff88, type: 2}
   - prefabId: 10003
     prefab: {fileID: 2483688463644217095, guid: 94814e7d6d48f774d8a7db069f9bf6ad, type: 3}
+    indirectMaterialSRP: {fileID: 2100000, guid: e92314ecd2d206e4c996c690ab0e6b3e, type: 2}
     indirectMaterial: {fileID: 2100000, guid: ef50fa25332f40949a30cf24d57aba23, type: 2}
     positionOffset: {x: 0, y: 0.5, z: 0}
     lod00Mesh: {fileID: 4300000, guid: 618244311ee1dff4f8208647cdca4adb, type: 2}

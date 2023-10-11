@@ -17,6 +17,8 @@ namespace GamesTan.Spatial {
         public static Region Instance { get; private set; }
         public static bool IsDebugMode = false;
 
+        private const int AllockChunkPageSizeKB = 128;// 每次申请的内存大小，太小会导致频繁申请
+        
         [SerializeField] private int _totalEntityCount;
         [SerializeField] private int _extraGridUsedCount = 0;
         [SerializeField] private int _totalChunkCount = 0;
@@ -42,20 +44,8 @@ namespace GamesTan.Spatial {
             DebugUtil.Assert(Chunk.MemSize == sizeof(Chunk),
                 "Grid size is diff with GridMemSize , but some code is dependent on it");
             {
-                int totalSize = initSizeKB * 1024;
-                int capacity = totalSize / UnsafeUtility.SizeOf<Chunk>();
-                var chunks = (Chunk*)UnsafeUtility.Malloc(totalSize);
                 _chunkCoord2Info.EnsureCapacity(initSizeKB);
-                UnsafeUtility.MemClear(chunks, totalSize);
-                for (int i = 0; i < capacity; i++) {
-                    var chunkPtr = &chunks[i];
-                    var chunk = new ChunkInfo();
-                    chunk.Ptr = chunkPtr;
-                    chunk.Region = this;
-                    chunk.IsNeedFree = i == 0; // only the first chunk need to free
-                    _freeChunkList.Push(chunk);
-                    _totalChunkCount ++;
-                }
+                AllocChunks(initSizeKB);
             }
             {
                 int totalSize = initSizeKB * 128; //   1/8 size of AllChunkSize
@@ -67,6 +57,22 @@ namespace GamesTan.Spatial {
 
                 // 第一个空间弃用，NextGridPtr ==0 标记为无效指针，方便debug
                 _freeExtraGrids.Pop();
+            }
+        }
+
+        private void AllocChunks(int sizeKb) {
+            int totalSize = sizeKb * 1024;
+            int capacity = totalSize / UnsafeUtility.SizeOf<Chunk>();
+            var chunks = (Chunk*)UnsafeUtility.Malloc(totalSize);
+            UnsafeUtility.MemClear(chunks, totalSize);
+            for (int i = 0; i < capacity; i++) {
+                var chunkPtr = &chunks[i];
+                var chunk = new ChunkInfo();
+                chunk.Ptr = chunkPtr;
+                chunk.Region = this;
+                chunk.IsNeedFree = i == 0; // only the first chunk need to free
+                _freeChunkList.Push(chunk);
+                _totalChunkCount++;
             }
         }
 
@@ -188,19 +194,10 @@ namespace GamesTan.Spatial {
 
         private ChunkInfo AllocChunk() {
             ChunkInfo info = null;
-            if (_freeChunkList.Count > 0) {
-                info = _freeChunkList.Pop();
+            if (_freeChunkList.Count == 0) {
+                AllocChunks(AllockChunkPageSizeKB);
             }
-            else {
-                var ptr = UnsafeUtility.Malloc(Chunk.MemSize);
-                UnsafeUtility.MemClear(ptr, Chunk.MemSize);
-                info = new ChunkInfo();
-                info.Ptr = (Chunk*)ptr;
-                info.Region = this;
-                info.IsNeedFree = true;
-                _totalChunkCount++;
-            }
-
+            info = _freeChunkList.Pop();
             info.EntityCount = 0;
             info.Coord = new int2();
             return info;

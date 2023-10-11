@@ -9505,8 +9505,8 @@ MonoBehaviour:
     DeleteOrNewCountPerFrame: 1127
     DebugOnlyOneEntity: 1
     DebugAreaCount: 1
-    DebugEntityCount: 600
-    DebugEntityBornPosRange: 50
+    DebugEntityCount: 1000
+    DebugEntityBornPosRange: 100
     DebugStopAnimation: 0
     DebugStopAI: 0
     IsOnlyOnePreafb: 0
@@ -13552,6 +13552,7 @@ GameObject:
   - component: {fileID: 582961132}
   - component: {fileID: 582961135}
   - component: {fileID: 582961134}
+  - component: {fileID: 582961136}
   m_Layer: 0
   m_Name: FollowCamera
   m_TagString: Untagged
@@ -13633,6 +13634,50 @@ Camera:
   m_OcclusionCulling: 0
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
+--- !u!114 &582961136
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 582961131}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_RenderShadows: 1
+  m_RequiresDepthTextureOption: 2
+  m_RequiresOpaqueTextureOption: 2
+  m_CameraType: 0
+  m_Cameras: []
+  m_RendererIndex: -1
+  m_VolumeLayerMask:
+    serializedVersion: 2
+    m_Bits: 1
+  m_VolumeTrigger: {fileID: 0}
+  m_VolumeFrameworkUpdateModeOption: 2
+  m_RenderPostProcessing: 0
+  m_Antialiasing: 0
+  m_AntialiasingQuality: 2
+  m_StopNaN: 0
+  m_Dithering: 0
+  m_ClearDepth: 1
+  m_AllowXRRendering: 1
+  m_AllowHDROutput: 1
+  m_UseScreenCoordOverride: 0
+  m_ScreenSizeOverride: {x: 0, y: 0, z: 0, w: 0}
+  m_ScreenCoordScaleBias: {x: 0, y: 0, z: 0, w: 0}
+  m_RequiresDepthTexture: 0
+  m_RequiresColorTexture: 0
+  m_Version: 2
+  m_TaaSettings:
+    quality: 3
+    frameInfluence: 0.1
+    jitterScale: 1
+    mipBias: 0
+    varianceClampScale: 0.9
+    contrastAdaptiveSharpening: 0
 --- !u!1001 &585050203
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -17239,10 +17284,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b05ab68efbb4f134aaf8234c3409028a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  InstanceConfig: {fileID: 11400000, guid: a0d17860acdcc6f4cb0ffa438506fefc, type: 2}
-  InitInstanceCount:
-  - {x: 10001, y: 128}
-  - {x: 10003, y: 128}
 --- !u!4 &758178599 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3637134996410565414, guid: 9c6178fe943216540b276b975dafae16, type: 3}
@@ -37599,49 +37640,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3fc89c31ac3df4c3c902af2f9e5f5638, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  runCompute: 1
-  drawInstances: 1
-  drawInstanceShadows: 1
-  enableFrustumCulling: 1
-  enableOcclusionCulling: 1
-  enableDetailCulling: 1
-  enableLOD: 1
-  enableOnlyLOD02Shadows: 0
-  detailCullingPercentage: 0.122
-  shadowDistance: 100
-  lod0Distance: 20
-  lod1Distance: 40
-  debugShowUI: 0
-  debugDrawLOD: 0
-  debugDrawBoundsInSceneView: 0
-  debugDrawHiZ: 0
-  debugHiZLOD: 0
-  debugUIPrefab: {fileID: 1573785215841776141, guid: 0a2641a9a8d324edf94453167d849fa8, type: 3}
-  indirectMeshes: []
-  logInstanceAnimation: 0
-  logInstanceDrawMatrices: 0
-  logInstanceDrawCulledMatrices: 0
-  logArgumentsAfterReset: 0
-  logSortingData: 0
-  logArgumentsAfterOcclusion: 0
-  logInstancesIsVisibleBuffer: 0
-  logScannedPredicates: 0
-  logGroupSumArrayBuffer: 0
-  logScannedGroupSumsBuffer: 0
-  logArgsBufferAfterCopy: 0
-  logCulledInstancesDrawMatrices: 0
-  logCulledInstancesAnimData: 0
-  logDebugAll: 0
-  LogAllArgBuffer: 0
-  LogAllArgBufferCount: 10
-  createDrawDataBufferCS: {fileID: 7200000, guid: ec8dc736dcd73488db5f21571d3708f7, type: 3}
-  sortingCS: {fileID: 7200000, guid: 345cad655c4d3473eb2f23a4da170421, type: 3}
-  occlusionCS: {fileID: 7200000, guid: 4aeff498554ed42f289ac4c6051b7dba, type: 3}
-  copyInstanceDataCS: {fileID: 7200000, guid: fdb14c3f77a774768b35472d4d5444de, type: 3}
+  Config: {fileID: 11400000, guid: d6fbc9ac1fb9711498c4c91ba738127f, type: 2}
   hiZBuffer: {fileID: 1867192519}
   mainCamera: {fileID: 374771441}
   debugCamera: {fileID: 658572712}
-  MaxRenderCount: 0
 --- !u!114 &1867192519
 MonoBehaviour:
   m_ObjectHideFlags: 0

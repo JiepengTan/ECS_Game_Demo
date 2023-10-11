@@ -30,7 +30,7 @@ MonoBehaviour:
   shadowDistance: 100
   lod0Distance: 20
   lod1Distance: 60
-  debugShowUI: 0
+  debugShowUI: 1
   debugDrawLOD: 0
   debugDrawBoundsInSceneView: 0
   debugDrawHiZ: 0
@@ -47,4 +47,4 @@ MonoBehaviour:
   logCulledInstancesAnimData: 0
   logDebugAll: 0
   logAllArgBuffer: 0
-  logAllArgBufferCount: 5
+  logAllArgBufferCount: 10

@@ -5,7 +5,7 @@ namespace GamesTan.Rendering {
     partial class IndirectRenderPass_DrawOpacity : IndirectDrawRenderPass {
         const int  ShadowPassIdx = 0;
         protected override void OnExecute(ScriptableRenderContext context, ref RenderingData renderingData) {
-            CommandBuffer cmd = CommandBufferPool.Get("IndirectDraw-DoPrepare");
+            CommandBuffer cmd = CommandBufferPool.Get("IndirectDraw-DrawOpacity");
             for (int i = 0; i < indirectMeshes.Length; i++)
             {
                 int argsIndex = i * ARGS_BYTE_SIZE_PER_INSTANCE_TYPE;
@@ -20,6 +20,7 @@ namespace GamesTan.Rendering {
             
             context.ExecuteCommandBuffer(cmd);
             CommandBufferPool.Release(cmd);
+            RuntimeData.CheckLogBuffers();
         }
     }
 }

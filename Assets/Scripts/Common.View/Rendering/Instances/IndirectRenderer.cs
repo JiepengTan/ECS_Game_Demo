@@ -22,6 +22,7 @@ namespace GamesTan.Rendering {
         
         
         public void DoAwake() {
+            Debug.Assert(Config!= null,"IndirectRendererConfig Should not be Null!");
             var dict = new HashSet<int>();
             foreach (var info in Config.InitInstanceCount) {
                 dict.Add(info);
@@ -73,6 +74,8 @@ namespace GamesTan.Rendering {
                 CalculateVisibleInstances();
                 Profiler.EndSample();
             }
+            
+            RuntimeData.CheckLogBuffers();
             
             if (drawInstances)
             {
@@ -247,9 +250,6 @@ namespace GamesTan.Rendering {
             Profiler.EndSample();
             if (logDebugAll) {
                 logDebugAll = false;
-            }
-            if (logAllArgBuffer) {
-                RuntimeData.LogAllBuffers(logAllArgBufferCount);
             }
         }
 

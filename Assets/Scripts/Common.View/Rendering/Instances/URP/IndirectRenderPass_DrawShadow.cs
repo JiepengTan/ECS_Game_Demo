@@ -6,7 +6,7 @@ namespace GamesTan.Rendering {
     partial class IndirectRenderPass_DrawShadow : IndirectDrawRenderPass {
         const int ShadowPassIdx = 1;
         protected override void OnExecute(ScriptableRenderContext context, ref RenderingData renderingData) {
-            CommandBuffer cmd = CommandBufferPool.Get("IndirectDraw-DoPrepare");
+            CommandBuffer cmd = CommandBufferPool.Get("IndirectDraw-DrawShadow");
             for (int i = 0; i < indirectMeshes.Length; i++)
             {
                 int argsIndex = i * ARGS_BYTE_SIZE_PER_INSTANCE_TYPE;
