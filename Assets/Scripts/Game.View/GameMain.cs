@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using GamesTan.ECS.Game;
-using Gamestan.Spatial;
+using GamesTan.Spatial;
 using Lockstep.InternalUnsafeECS;
 using Lockstep.UnsafeECS;
 using NUnit.Framework;

@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.Serialization;
 using Debug = UnityEngine.Debug;
 
-namespace Gamestan.Spatial {
+namespace GamesTan.Spatial {
     [System.Serializable]
     public unsafe class ChunkInfo {
         public int EntityCount;

@@ -6,7 +6,7 @@ using Lockstep.InternalUnsafeECS;
 using Lockstep.UnsafeECS;
 using UnityEngine;
 
-namespace Gamestan.Spatial {
+namespace GamesTan.Spatial {
     public struct DataPtr {
         public static DataPtr DefaultObject = new DataPtr();
         public const int SlotBitCount = 20;

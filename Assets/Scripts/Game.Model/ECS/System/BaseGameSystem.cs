@@ -1,5 +1,5 @@
 using System;
-using Gamestan.Spatial;
+using GamesTan.Spatial;
 
 namespace GamesTan.ECS.Game {
 

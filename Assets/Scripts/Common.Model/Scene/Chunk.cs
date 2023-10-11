@@ -5,7 +5,7 @@ using GamesTan.ECS;
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace Gamestan.Spatial {
+namespace GamesTan.Spatial {
     [System.Serializable]
     [StructLayout(LayoutKind.Explicit)]
     public unsafe struct Chunk {

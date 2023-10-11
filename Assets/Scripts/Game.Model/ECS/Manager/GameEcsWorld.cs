@@ -1,7 +1,7 @@
 
 using System.Collections.Generic;
 using GamesTan.Rendering;
-using Gamestan.Spatial;
+using GamesTan.Spatial;
 using UnityEngine;
 using UnityEngine.Profiling;
 

@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using GamesTan.ECS;
 
-namespace Gamestan.Spatial {
+namespace GamesTan.Spatial {
     [System.Serializable]
     [StructLayout(LayoutKind.Explicit)]
     public unsafe struct Grid {

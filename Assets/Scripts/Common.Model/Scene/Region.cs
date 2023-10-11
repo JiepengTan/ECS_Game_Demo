@@ -11,7 +11,7 @@ using UnityEngine.Serialization;
 using Debug = UnityEngine.Debug;
 
 
-namespace Gamestan.Spatial {
+namespace GamesTan.Spatial {
     [System.Serializable]
     public unsafe class Region {
         public static Region Instance { get; private set; }
