@@ -9505,7 +9505,7 @@ MonoBehaviour:
     DeleteOrNewCountPerFrame: 1127
     DebugOnlyOneEntity: 1
     DebugAreaCount: 1
-    DebugEntityCount: 3000
+    DebugEntityCount: 64
     DebugEntityBornPosRange: 100
     DebugStopAnimation: 0
     DebugStopAI: 0
@@ -17196,8 +17196,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   InstanceConfig: {fileID: 11400000, guid: a0d17860acdcc6f4cb0ffa438506fefc, type: 2}
   InitInstanceCount:
-  - {x: 10001, y: 128}
-  - {x: 10003, y: 128}
+  - {x: 10001, y: 32}
+  - {x: 10003, y: 32}
 --- !u!4 &758178599 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3637134996410565414, guid: 9c6178fe943216540b276b975dafae16, type: 3}
@@ -37664,6 +37664,7 @@ MonoBehaviour:
   hiZBuffer: {fileID: 1867192519}
   mainCamera: {fileID: 374771441}
   debugCamera: {fileID: 658572712}
+  DebugSortBlockSize: 0
 --- !u!114 &1867192519
 MonoBehaviour:
   m_ObjectHideFlags: 0

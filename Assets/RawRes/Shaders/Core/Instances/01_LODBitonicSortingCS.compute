@@ -4,7 +4,7 @@
 
 #include "ShaderInclude_IndirectStructs.cginc"
 
-#pragma kernel BitonicSort_64
+#pragma kernel BitonicSort_128
 #pragma kernel BitonicSort_256
 #pragma kernel BitonicSort_512
 #pragma kernel MatrixTranspose_64
@@ -22,40 +22,40 @@ cbuffer CB
 StructuredBuffer<SortingData> _Input;
 RWStructuredBuffer<SortingData> _Data;
 
-#define BITONIC_BLOCK_SIZE_64 64
-groupshared SortingData _SharedData_64[BITONIC_BLOCK_SIZE_64];
-[numthreads(BITONIC_BLOCK_SIZE_64, 1, 1)]
-void BitonicSort_64(
+#define BITONIC_BLOCK_SIZE_128 128
+groupshared SortingData _SharedData_128[BITONIC_BLOCK_SIZE_128];
+[numthreads(BITONIC_BLOCK_SIZE_128, 1, 1)]
+void BitonicSort_128(
     uint3 Gid  : SV_GroupID, 
     uint3 DTid : SV_DispatchThreadID, 
     uint3 GTid : SV_GroupThreadID, 
     uint  GI   : SV_GroupIndex)
 {
     uint tID = DTid.x;
-    _SharedData_64[GI] = _Data[tID];
+    _SharedData_128[GI] = _Data[tID];
     GroupMemoryBarrierWithGroupSync();
 
     // Sort the shared data
     for (uint j = _Level >> 1; j > 0; j >>= 1)
     {
-        SortingData result = _SharedData_64[GI];
-        SortingData inst1 = _SharedData_64[GI & ~j];// 提取左边的元素
-        SortingData inst2 = _SharedData_64[GI | j]; // 提取右边的元素
+        SortingData result = _SharedData_128[GI];
+        SortingData inst1 = _SharedData_128[GI & ~j];// 提取左边的元素
+        SortingData inst2 = _SharedData_128[GI | j]; // 提取右边的元素
         // drawCallInstanceIndex = ((((uint)prefabIdx * NUMBER_OF_ARGS_PER_INSTANCE_TYPE) << 16)  + ((uint) instanceIdx)),
         uint dist1 = inst1.distanceToCam; 
         uint dist2 = inst2.distanceToCam;
         if ((dist1 <= dist2) == ((bool)(_LevelMask & tID))) // _LevelMask & tID 表示当前是不是降序 的part   ， _LevelMask == level = j*2
             {
-            result = _SharedData_64[GI ^ j];//左=>右  右=>左  // swap
+            result = _SharedData_128[GI ^ j];//左=>右  右=>左  // swap
             }
         GroupMemoryBarrierWithGroupSync();
 
-        _SharedData_64[GI] = result;
+        _SharedData_128[GI] = result;
         GroupMemoryBarrierWithGroupSync();
     }
 
     // Store shared data
-    _Data[tID] = _SharedData_64[GI];
+    _Data[tID] = _SharedData_128[GI];
 }
 
 

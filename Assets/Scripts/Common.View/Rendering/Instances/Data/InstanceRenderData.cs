@@ -78,7 +78,7 @@ namespace GamesTan.Rendering {
         }
     }
     public unsafe class InstanceRenderData {
-        public const int MIN_CAPACITY = 4096; // 最小大小为4096
+        public const int MIN_CAPACITY = 128; // min size is 128
         public int Capacity;
 
         public List<float3> prefabSize = new List<float3>();

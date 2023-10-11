@@ -21,7 +21,7 @@ namespace GamesTan.Rendering {
         public Camera mainCamera;
         public Camera debugCamera;
         
-        private int curFrameNum = 0;
+        private int _curFrameNum = 0;
         
         public void DoAwake(InstanceRenderData data,List<IndirectInstanceData> prefabInfos) {
             RuntimeData = new IndirectRendererRuntimeData(Config);
@@ -47,8 +47,8 @@ namespace GamesTan.Rendering {
                 return;
             }
 
-            bool isNeedUpdate = curFrameNum != Time.frameCount;
-            curFrameNum = Time.frameCount;
+            bool isNeedUpdate = _curFrameNum != Time.frameCount;
+            _curFrameNum = Time.frameCount;
             if (runCompute && isNeedUpdate)
             {
                 Profiler.BeginSample("CalculateVisibleInstances()");
@@ -249,16 +249,36 @@ namespace GamesTan.Rendering {
                 RuntimeData.LogAllBuffers(logAllArgBufferCount);
             }
         }
-        
-        
+
         private void SortRenderDatas(ComputeBuffer sortingDataBuffer ) {
-            uint sortBlockSize = 256;
-            uint transposeBlockSize = 8;
-            var sortKernelID = m_sorting_256_CSKernelID;
-            var transposekernelID = m_sortingTransposeKernelID;
-            
-            // Determine parameters.
             uint instanceCount = (uint)m_numberOfInstances;
+            uint transposeBlockSize = 8;
+            var transposekernelID = MSortingTranspose_64_KernelID;
+            
+            uint sortBlockSize = 256;
+            var sortKernelID = m_sorting_256_CSKernelID;
+            if (instanceCount <= 128) {
+                sortBlockSize = 128;
+                sortKernelID = m_sorting_128_CSKernelID;
+            }else if (instanceCount <= 256) {
+                sortBlockSize = 256;
+                sortKernelID = m_sorting_256_CSKernelID;
+            }else if (instanceCount <= 512) {
+                sortBlockSize = 512;
+                sortKernelID = m_sorting_512_CSKernelID;
+            }else if (instanceCount <= 1024) {
+                sortBlockSize = 128;
+                sortKernelID = m_sorting_128_CSKernelID;
+            }else if (instanceCount <= 2048) {
+                sortBlockSize = 256;
+                sortKernelID = m_sorting_256_CSKernelID;
+            }else {
+                sortBlockSize = 512;
+                sortKernelID = m_sorting_512_CSKernelID;
+            }
+
+
+            // Determine parameters.
             uint maxWidth = sortBlockSize;
             uint maxHeight = (uint)instanceCount / sortBlockSize;
             int groupXCount = (int)(instanceCount / sortBlockSize);
