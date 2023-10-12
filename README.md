@@ -6,6 +6,12 @@
 
 This repository is a 《Vampire Survivors》 3D tech demo 
 
+## Quick Start
+1. Clone this repository
+2. Open it use Unity2023.1.7 or higher version
+3. Open **Demo_URP** scene, run it, try to changed the value like below
+
+<p align="center"><img src="https://github.com/JiepengTan/JiepengTan.github.io/blob/master/assets/img/blog/ECSGame/quick_start.jpg?raw=true" width="768"></p> 
 
 ## Technical detail
 1. Animation : GPUSkin  
@@ -25,4 +31,4 @@ This repository is a 《Vampire Survivors》 3D tech demo
 
 ## Blog (Chinese 中文)
 
-
+https://zhuanlan.zhihu.com/p/660927213
