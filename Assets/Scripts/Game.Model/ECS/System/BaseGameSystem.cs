@@ -1,37 +1,35 @@
 using System;
 using GamesTan.Spatial;
+using Lockstep.Game;
 
 namespace GamesTan.ECS.Game {
-
-    public interface IGameSystem {
-        void DoAwake(GameEcsWorld world);
-    }
-
-    public partial class BaseGameSystemGroup : SystemGroup,IGameSystem {
-        public void DoAwake(GameEcsWorld world) {
-            
-            foreach (var sys in _systems) {
-                var gameSys = sys as IGameSystem;
-                gameSys?.DoAwake(world);
-            }
+    
+    public partial class BaseGameExecuteSystem : BaseExecuteSystem{
+        public GameEcsWorld World;
+        public Context EntityManager;
+        public Region WorldRegion;
+        public float deltaTime = 0.03f;
+        public GameGlobalStateService Services;
+        protected override void OnAwake(BaseContext context, IServiceContainer services) {
+            Name = GetType().Name;
+            World = services.GetService<IGlobalStateService>().World as GameEcsWorld;
+            Services = services.GetService<IGlobalStateService>() as GameGlobalStateService;
+            EntityManager = context as Context;
+            WorldRegion = World.WorldRegion;
         }
     }
-
-    public partial class BaseGameSystem : BaseSystem ,IGameSystem{
+    public partial class BaseGameSystem : BaseSystem{
         public GameEcsWorld World;
-        public GameEntityManager EntityManager;
-        public GameServices Services;
-        public NativePoolEnemy EnemyPool;
-        public EntityList EnemyList;
+        public Context EntityManager;
         public Region WorldRegion;
-        public void DoAwake(GameEcsWorld world) {
+        public float deltaTime = 0.03f;
+        public GameGlobalStateService Services;
+        protected override void OnAwake(BaseContext context, IServiceContainer services) {
             Name = GetType().Name;
-            World = world;
-            Services = World.Services;
+            World = services.GetService<IGlobalStateService>().World as GameEcsWorld;
+            Services = services.GetService<IGlobalStateService>() as GameGlobalStateService;
+            EntityManager = context as Context;
             WorldRegion = World.WorldRegion;
-            EntityManager = World.EntityManager;
-            EnemyPool = EntityManager.EnemyPool;
-            EnemyList = EntityManager.EnemyList;
         }
     }
 }

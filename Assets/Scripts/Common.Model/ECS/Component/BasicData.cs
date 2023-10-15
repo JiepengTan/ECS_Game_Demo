@@ -1,5 +1,5 @@
 ﻿using System.Runtime.InteropServices;
-using Lockstep.UnsafeECS;
+using GamesTan.ECS;
 
 namespace GamesTan.ECS {
     public class Define {

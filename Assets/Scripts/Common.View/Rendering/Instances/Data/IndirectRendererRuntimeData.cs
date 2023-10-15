@@ -292,7 +292,7 @@ namespace GamesTan.Rendering {
 
 
             // Create the buffer containing draw data for all instances
-            m_transformDataBuffer = new ComputeBuffer(m_numberOfInstances, Marshal.SizeOf(typeof(TransformData)),
+            m_transformDataBuffer = new ComputeBuffer(m_numberOfInstances, Marshal.SizeOf(typeof(Transform3D)),
                 ComputeBufferType.Default);
 
             createDrawDataBufferCS.SetBuffer(m_createDrawDataBufferKernelID, _TransformData, m_transformDataBuffer);
@@ -886,7 +886,7 @@ namespace GamesTan.Rendering {
                     }
                 }
             }
-            sb.AppendLine("======== positions ===========");
+            sb.AppendLine("======== positions =========== total: " + m_numberOfInstances);
             {
                 var datas = _rendererData.transformData;
                 for (int i = 0; i < count; i++) {
@@ -896,7 +896,17 @@ namespace GamesTan.Rendering {
 
                 sb.AppendLine();
             }
+            sb.AppendLine("======== bounds =========== total: ");
+            {
+                var datas = _rendererData.bounds;
+                for (int i = 0; i < count; i++) {
+                    sb.Append(i + ": " + datas[i] + " instId: " + _rendererData.sortingData[i].drawCallInstanceIndex + "\n");
+                }
 
+                sb.AppendLine();
+            }
+          
+            
             sb.AppendLine("======== VisibleBuffer ===========");
             {
                 uint[] indexRemap = new uint[m_numberOfInstances];

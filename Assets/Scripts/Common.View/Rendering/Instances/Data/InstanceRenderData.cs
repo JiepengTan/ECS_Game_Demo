@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using GamesTan.ECS;
 using GamesTan.ECS.Game;
-using Lockstep.InternalUnsafeECS;
+using GamesTan.ECSInternal;
 using Unity.Burst;
 using Unity.Mathematics;
 using UnityEngine;
@@ -66,11 +66,11 @@ namespace GamesTan.Rendering {
     public struct RendererData {
         public int prefabIdx;
 
-        public TransformData trans;
+        public Transform3D trans;
         public AnimRenderData anim;
         public InstanceBound bound; // TODO 
 
-        public RendererData(int prefabIdx, TransformData trans, AnimRenderData anim) {
+        public RendererData(int prefabIdx, Transform3D trans, AnimRenderData anim) {
             this.prefabIdx = prefabIdx;
             this.anim = anim;
             this.trans = trans;
@@ -89,7 +89,7 @@ namespace GamesTan.Rendering {
 
         public bool isDirty;
 
-        public TransformData[] transformData;
+        public Transform3D[] transformData;
 
         public InstanceBound[] bounds;
 
@@ -196,7 +196,7 @@ namespace GamesTan.Rendering {
         private void ResetCapacity(int capacity) {
             Debug.LogWarning("OnRenderResetCapacity" + capacity);
             Capacity = capacity;
-            transformData = new TransformData[capacity];
+            transformData = new Transform3D[capacity];
 
             bounds = new InstanceBound[capacity];
             sortingData = new SortingData[capacity];

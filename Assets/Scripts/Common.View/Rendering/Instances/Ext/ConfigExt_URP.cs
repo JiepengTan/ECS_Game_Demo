@@ -125,7 +125,7 @@ namespace GamesTan.Rendering {
         protected int _HiZMap => IndirectRendererConfig._HiZMap;
         protected int _NumOfDrawcalls => IndirectRendererConfig._NumOfDrawcalls;
         protected int _ArgsOffset => IndirectRendererConfig._ArgsOffset;
-        protected int _TransformData => IndirectRendererConfig._TransformData;
+        protected int _Transform3D => IndirectRendererConfig._TransformData;
         protected int _ArgsBuffer => IndirectRendererConfig._ArgsBuffer;
         protected int _ShadowArgsBuffer => IndirectRendererConfig._ShadowArgsBuffer;
         protected int _IsVisibleBuffer => IndirectRendererConfig._IsVisibleBuffer;
