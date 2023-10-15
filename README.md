@@ -16,7 +16,6 @@ This repository is a 《Vampire Survivors》 3D tech demo
 ## Technical detail
 1. Animation : GPUSkin  
     - https://github.com/chengkehan/GPUSkinning
-    - https://github.com/chenjd/Render-Crowd-Of-Animated-Characters
     - https://assetstore.unity.com/packages/tools/animation/gpu-ecs-animation-baker-250425  (recommend)
 
 2. Indirect Renderer 
