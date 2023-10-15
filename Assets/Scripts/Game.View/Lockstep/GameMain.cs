@@ -14,10 +14,6 @@ namespace GamesTan.Game.View {
 
         private float _updateTimer;
 
-        [UnityEngine.Range(0, 40)] public int DebugAreaCount = 8;
-        [UnityEngine.Range(1, 30000)] public int DebugEntityCount = 1;
-        [UnityEngine.Range(1, 1000)] public int DebugEntityBornPosRange = 100;
-
         private int _lastDebugAreaCount = 0;
         private int _lastDebugEntityCount = 0;
 
