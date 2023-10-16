@@ -23,7 +23,6 @@ using Lockstep.Math;
 using Unity.Burst;                                                                               
 using Unity.Mathematics;                                                                                                                                                                            
 namespace GamesTan.ECS.Game {
-    using Unity.Entities;
     using Unity.Mathematics;
     using UnityEngine;
     using Lockstep.Game;

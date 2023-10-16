@@ -25,10 +25,6 @@ using Unity.Mathematics;
 using Lockstep.Math;
 using Unity.Burst;
 using Unity.Collections;
-using Unity.Entities;
-using Unity.Jobs;
-using Unity.Mathematics;
-using Unity.Transforms;
 #if false
 namespace GamesTan.ECS.Game {
         
