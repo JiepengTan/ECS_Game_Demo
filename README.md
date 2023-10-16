@@ -12,3 +12,16 @@
 
 <p align="center"><img src="https://github.com/JiepengTan/JiepengTan.github.io/blob/master/assets/img/blog/ECSGame/quick_start.jpg?raw=true" width="768"></p> 
 
+
+## Technical detail
+1. Animation : GPUSkin  
+    - https://github.com/chengkehan/GPUSkinning
+
+2. Culling & Lod & Indirect Renderer : Compute Shader 
+    - https://github.com/ellioman/Indirect-Rendering-With-Compute-Shaders
+
+3. ECS Framework: LockstepECS
+    - https://github.com/JiepengTan/LockstepECS
+
+4. Spatial Partition : Grid base 
+    - Region Chunk Grid
