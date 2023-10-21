@@ -19,8 +19,8 @@ using System.Collections.Generic;
 using System.Collections;                                                                        
 using System.Runtime.CompilerServices;                                                           
 using Lockstep.Game;                                                                             
-using Unity.Burst;                                                                               
 using Lockstep.Math;                                                                             
+using Unity.Burst;                                                                               
 using Unity.Mathematics;                                                                                                                                                                            
 namespace GamesTan.ECS.Game {  
     public unsafe partial struct _DefaultDefine {
@@ -32,6 +32,9 @@ namespace GamesTan.ECS.Game {
         //IRef 
   
         //IEntity 
+        public static PClassA PClassA;
+        public static SubClassA SubClassA;
+        public static SubClassB SubClassB;
         public static Enemy Enemy;
         public static Bullet Bullet;
         public static BulletEmitter BulletEmitter;  

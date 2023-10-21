@@ -65,6 +65,12 @@ namespace GamesTan.ECS.Game {
                 _id2EntityView.Remove(pEntity->LocalId);
             }
         }
+        public virtual void OnPClassACreated(Context context, PClassA* entity){}
+        public virtual void OnPClassADestroy(Context context, PClassA* entity){}
+        public virtual void OnSubClassACreated(Context context, SubClassA* entity){}
+        public virtual void OnSubClassADestroy(Context context, SubClassA* entity){}
+        public virtual void OnSubClassBCreated(Context context, SubClassB* entity){}
+        public virtual void OnSubClassBDestroy(Context context, SubClassB* entity){}
         public virtual void OnEnemyCreated(Context context, Enemy* entity){}
         public virtual void OnEnemyDestroy(Context context, Enemy* entity){}
         public virtual void OnBulletCreated(Context context, Bullet* entity){}

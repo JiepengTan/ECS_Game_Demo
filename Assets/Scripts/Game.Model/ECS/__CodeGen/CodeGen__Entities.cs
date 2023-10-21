@@ -19,8 +19,8 @@ using System.Collections.Generic;
 using System.Collections;                                                                        
 using System.Runtime.CompilerServices;                                                           
 using Lockstep.Game;                                                                             
-using Unity.Burst;                                                                               
 using Lockstep.Math;                                                                             
+using Unity.Burst;                                                                               
 using Unity.Mathematics;                                                                                                                                                                            
 namespace GamesTan.ECS.Game {  
     using GamesTan.ECSInternal;
@@ -28,6 +28,90 @@ namespace GamesTan.ECS.Game {
     public unsafe partial class _EntityManager :InternalBaseEntityManager{
 
 #region Size Offset of Entity Field
+        private NativeArray<T> _GetAllPClassA_AssetData<T>(int compFieldOffset,FuncEntityFilter<Entity> filterFunc,out int length) where T: unmanaged{return _GetAllEntityField<T,PClassA>(_PClassAAry,_GetOffsetOfPClassA_AssetData() + compFieldOffset,filterFunc,out length);}
+        private NativeArray<T> _GetAllPClassA_AssetData<T>(int compFieldOffset) where T: unmanaged{return _GetAllEntityField<T,PClassA>(_PClassAAry,_GetOffsetOfPClassA_AssetData()+ compFieldOffset);}
+        private NativeArray<AssetData> _GetAllPClassA_AssetData(){return _GetAllEntityField<AssetData,PClassA>(_PClassAAry,_GetOffsetOfPClassA_AssetData());} 
+        private int _GetOffsetOfPClassA_AssetData(){ var tempObj =  new PClassA(); PClassA* ptr = &tempObj;var filedPtr = &(ptr->AssetData);  return (int)((long) filedPtr - (long) ptr);        }
+        private NativeArray<T> _GetAllPClassA_Transform3D<T>(int compFieldOffset,FuncEntityFilter<Entity> filterFunc,out int length) where T: unmanaged{return _GetAllEntityField<T,PClassA>(_PClassAAry,_GetOffsetOfPClassA_TransformData() + compFieldOffset,filterFunc,out length);}
+        private NativeArray<T> _GetAllPClassA_Transform3D<T>(int compFieldOffset) where T: unmanaged{return _GetAllEntityField<T,PClassA>(_PClassAAry,_GetOffsetOfPClassA_TransformData()+ compFieldOffset);}
+        private NativeArray<Transform3D> _GetAllPClassA_TransformData(){return _GetAllEntityField<Transform3D,PClassA>(_PClassAAry,_GetOffsetOfPClassA_TransformData());} 
+        private int _GetOffsetOfPClassA_TransformData(){ var tempObj =  new PClassA(); PClassA* ptr = &tempObj;var filedPtr = &(ptr->TransformData);  return (int)((long) filedPtr - (long) ptr);        }
+        private NativeArray<T> _GetAllPClassA_BasicData<T>(int compFieldOffset,FuncEntityFilter<Entity> filterFunc,out int length) where T: unmanaged{return _GetAllEntityField<T,PClassA>(_PClassAAry,_GetOffsetOfPClassA_BasicData() + compFieldOffset,filterFunc,out length);}
+        private NativeArray<T> _GetAllPClassA_BasicData<T>(int compFieldOffset) where T: unmanaged{return _GetAllEntityField<T,PClassA>(_PClassAAry,_GetOffsetOfPClassA_BasicData()+ compFieldOffset);}
+        private NativeArray<BasicData> _GetAllPClassA_BasicData(){return _GetAllEntityField<BasicData,PClassA>(_PClassAAry,_GetOffsetOfPClassA_BasicData());} 
+        private int _GetOffsetOfPClassA_BasicData(){ var tempObj =  new PClassA(); PClassA* ptr = &tempObj;var filedPtr = &(ptr->BasicData);  return (int)((long) filedPtr - (long) ptr);        }
+        private NativeArray<T> _GetAllPClassA_PhysicData<T>(int compFieldOffset,FuncEntityFilter<Entity> filterFunc,out int length) where T: unmanaged{return _GetAllEntityField<T,PClassA>(_PClassAAry,_GetOffsetOfPClassA_PhysicData() + compFieldOffset,filterFunc,out length);}
+        private NativeArray<T> _GetAllPClassA_PhysicData<T>(int compFieldOffset) where T: unmanaged{return _GetAllEntityField<T,PClassA>(_PClassAAry,_GetOffsetOfPClassA_PhysicData()+ compFieldOffset);}
+        private NativeArray<PhysicData> _GetAllPClassA_PhysicData(){return _GetAllEntityField<PhysicData,PClassA>(_PClassAAry,_GetOffsetOfPClassA_PhysicData());} 
+        private int _GetOffsetOfPClassA_PhysicData(){ var tempObj =  new PClassA(); PClassA* ptr = &tempObj;var filedPtr = &(ptr->PhysicData);  return (int)((long) filedPtr - (long) ptr);        }
+        private NativeArray<T> _GetAllPClassA_int<T>(int compFieldOffset,FuncEntityFilter<Entity> filterFunc,out int length) where T: unmanaged{return _GetAllEntityField<T,PClassA>(_PClassAAry,_GetOffsetOfPClassA_Val1() + compFieldOffset,filterFunc,out length);}
+        private NativeArray<T> _GetAllPClassA_int<T>(int compFieldOffset) where T: unmanaged{return _GetAllEntityField<T,PClassA>(_PClassAAry,_GetOffsetOfPClassA_Val1()+ compFieldOffset);}
+        private NativeArray<int> _GetAllPClassA_Val1(){return _GetAllEntityField<int,PClassA>(_PClassAAry,_GetOffsetOfPClassA_Val1());} 
+        private int _GetOffsetOfPClassA_Val1(){ var tempObj =  new PClassA(); PClassA* ptr = &tempObj;var filedPtr = &(ptr->Val1);  return (int)((long) filedPtr - (long) ptr);        } 
+        private NativeArray<T> _GetAllSubClassA_AssetData<T>(int compFieldOffset,FuncEntityFilter<Entity> filterFunc,out int length) where T: unmanaged{return _GetAllEntityField<T,SubClassA>(_SubClassAAry,_GetOffsetOfSubClassA_AssetData() + compFieldOffset,filterFunc,out length);}
+        private NativeArray<T> _GetAllSubClassA_AssetData<T>(int compFieldOffset) where T: unmanaged{return _GetAllEntityField<T,SubClassA>(_SubClassAAry,_GetOffsetOfSubClassA_AssetData()+ compFieldOffset);}
+        private NativeArray<AssetData> _GetAllSubClassA_AssetData(){return _GetAllEntityField<AssetData,SubClassA>(_SubClassAAry,_GetOffsetOfSubClassA_AssetData());} 
+        private int _GetOffsetOfSubClassA_AssetData(){ var tempObj =  new SubClassA(); SubClassA* ptr = &tempObj;var filedPtr = &(ptr->AssetData);  return (int)((long) filedPtr - (long) ptr);        }
+        private NativeArray<T> _GetAllSubClassA_Transform3D<T>(int compFieldOffset,FuncEntityFilter<Entity> filterFunc,out int length) where T: unmanaged{return _GetAllEntityField<T,SubClassA>(_SubClassAAry,_GetOffsetOfSubClassA_TransformData() + compFieldOffset,filterFunc,out length);}
+        private NativeArray<T> _GetAllSubClassA_Transform3D<T>(int compFieldOffset) where T: unmanaged{return _GetAllEntityField<T,SubClassA>(_SubClassAAry,_GetOffsetOfSubClassA_TransformData()+ compFieldOffset);}
+        private NativeArray<Transform3D> _GetAllSubClassA_TransformData(){return _GetAllEntityField<Transform3D,SubClassA>(_SubClassAAry,_GetOffsetOfSubClassA_TransformData());} 
+        private int _GetOffsetOfSubClassA_TransformData(){ var tempObj =  new SubClassA(); SubClassA* ptr = &tempObj;var filedPtr = &(ptr->TransformData);  return (int)((long) filedPtr - (long) ptr);        }
+        private NativeArray<T> _GetAllSubClassA_BasicData<T>(int compFieldOffset,FuncEntityFilter<Entity> filterFunc,out int length) where T: unmanaged{return _GetAllEntityField<T,SubClassA>(_SubClassAAry,_GetOffsetOfSubClassA_BasicData() + compFieldOffset,filterFunc,out length);}
+        private NativeArray<T> _GetAllSubClassA_BasicData<T>(int compFieldOffset) where T: unmanaged{return _GetAllEntityField<T,SubClassA>(_SubClassAAry,_GetOffsetOfSubClassA_BasicData()+ compFieldOffset);}
+        private NativeArray<BasicData> _GetAllSubClassA_BasicData(){return _GetAllEntityField<BasicData,SubClassA>(_SubClassAAry,_GetOffsetOfSubClassA_BasicData());} 
+        private int _GetOffsetOfSubClassA_BasicData(){ var tempObj =  new SubClassA(); SubClassA* ptr = &tempObj;var filedPtr = &(ptr->BasicData);  return (int)((long) filedPtr - (long) ptr);        }
+        private NativeArray<T> _GetAllSubClassA_PhysicData<T>(int compFieldOffset,FuncEntityFilter<Entity> filterFunc,out int length) where T: unmanaged{return _GetAllEntityField<T,SubClassA>(_SubClassAAry,_GetOffsetOfSubClassA_PhysicData() + compFieldOffset,filterFunc,out length);}
+        private NativeArray<T> _GetAllSubClassA_PhysicData<T>(int compFieldOffset) where T: unmanaged{return _GetAllEntityField<T,SubClassA>(_SubClassAAry,_GetOffsetOfSubClassA_PhysicData()+ compFieldOffset);}
+        private NativeArray<PhysicData> _GetAllSubClassA_PhysicData(){return _GetAllEntityField<PhysicData,SubClassA>(_SubClassAAry,_GetOffsetOfSubClassA_PhysicData());} 
+        private int _GetOffsetOfSubClassA_PhysicData(){ var tempObj =  new SubClassA(); SubClassA* ptr = &tempObj;var filedPtr = &(ptr->PhysicData);  return (int)((long) filedPtr - (long) ptr);        }
+        private NativeArray<T> _GetAllSubClassA_int<T>(int compFieldOffset,FuncEntityFilter<Entity> filterFunc,out int length) where T: unmanaged{return _GetAllEntityField<T,SubClassA>(_SubClassAAry,_GetOffsetOfSubClassA_Val1() + compFieldOffset,filterFunc,out length);}
+        private NativeArray<T> _GetAllSubClassA_int<T>(int compFieldOffset) where T: unmanaged{return _GetAllEntityField<T,SubClassA>(_SubClassAAry,_GetOffsetOfSubClassA_Val1()+ compFieldOffset);}
+        private NativeArray<int> _GetAllSubClassA_Val1(){return _GetAllEntityField<int,SubClassA>(_SubClassAAry,_GetOffsetOfSubClassA_Val1());} 
+        private int _GetOffsetOfSubClassA_Val1(){ var tempObj =  new SubClassA(); SubClassA* ptr = &tempObj;var filedPtr = &(ptr->Val1);  return (int)((long) filedPtr - (long) ptr);        }
+        private NativeArray<T> _GetAllSubClassA_float<T>(int compFieldOffset,FuncEntityFilter<Entity> filterFunc,out int length) where T: unmanaged{return _GetAllEntityField<T,SubClassA>(_SubClassAAry,_GetOffsetOfSubClassA_Val2() + compFieldOffset,filterFunc,out length);}
+        private NativeArray<T> _GetAllSubClassA_float<T>(int compFieldOffset) where T: unmanaged{return _GetAllEntityField<T,SubClassA>(_SubClassAAry,_GetOffsetOfSubClassA_Val2()+ compFieldOffset);}
+        private NativeArray<float> _GetAllSubClassA_Val2(){return _GetAllEntityField<float,SubClassA>(_SubClassAAry,_GetOffsetOfSubClassA_Val2());} 
+        private int _GetOffsetOfSubClassA_Val2(){ var tempObj =  new SubClassA(); SubClassA* ptr = &tempObj;var filedPtr = &(ptr->Val2);  return (int)((long) filedPtr - (long) ptr);        } 
+        private NativeArray<T> _GetAllSubClassB_AssetData<T>(int compFieldOffset,FuncEntityFilter<Entity> filterFunc,out int length) where T: unmanaged{return _GetAllEntityField<T,SubClassB>(_SubClassBAry,_GetOffsetOfSubClassB_AssetData() + compFieldOffset,filterFunc,out length);}
+        private NativeArray<T> _GetAllSubClassB_AssetData<T>(int compFieldOffset) where T: unmanaged{return _GetAllEntityField<T,SubClassB>(_SubClassBAry,_GetOffsetOfSubClassB_AssetData()+ compFieldOffset);}
+        private NativeArray<AssetData> _GetAllSubClassB_AssetData(){return _GetAllEntityField<AssetData,SubClassB>(_SubClassBAry,_GetOffsetOfSubClassB_AssetData());} 
+        private int _GetOffsetOfSubClassB_AssetData(){ var tempObj =  new SubClassB(); SubClassB* ptr = &tempObj;var filedPtr = &(ptr->AssetData);  return (int)((long) filedPtr - (long) ptr);        }
+        private NativeArray<T> _GetAllSubClassB_Transform3D<T>(int compFieldOffset,FuncEntityFilter<Entity> filterFunc,out int length) where T: unmanaged{return _GetAllEntityField<T,SubClassB>(_SubClassBAry,_GetOffsetOfSubClassB_TransformData() + compFieldOffset,filterFunc,out length);}
+        private NativeArray<T> _GetAllSubClassB_Transform3D<T>(int compFieldOffset) where T: unmanaged{return _GetAllEntityField<T,SubClassB>(_SubClassBAry,_GetOffsetOfSubClassB_TransformData()+ compFieldOffset);}
+        private NativeArray<Transform3D> _GetAllSubClassB_TransformData(){return _GetAllEntityField<Transform3D,SubClassB>(_SubClassBAry,_GetOffsetOfSubClassB_TransformData());} 
+        private int _GetOffsetOfSubClassB_TransformData(){ var tempObj =  new SubClassB(); SubClassB* ptr = &tempObj;var filedPtr = &(ptr->TransformData);  return (int)((long) filedPtr - (long) ptr);        }
+        private NativeArray<T> _GetAllSubClassB_BasicData<T>(int compFieldOffset,FuncEntityFilter<Entity> filterFunc,out int length) where T: unmanaged{return _GetAllEntityField<T,SubClassB>(_SubClassBAry,_GetOffsetOfSubClassB_BasicData() + compFieldOffset,filterFunc,out length);}
+        private NativeArray<T> _GetAllSubClassB_BasicData<T>(int compFieldOffset) where T: unmanaged{return _GetAllEntityField<T,SubClassB>(_SubClassBAry,_GetOffsetOfSubClassB_BasicData()+ compFieldOffset);}
+        private NativeArray<BasicData> _GetAllSubClassB_BasicData(){return _GetAllEntityField<BasicData,SubClassB>(_SubClassBAry,_GetOffsetOfSubClassB_BasicData());} 
+        private int _GetOffsetOfSubClassB_BasicData(){ var tempObj =  new SubClassB(); SubClassB* ptr = &tempObj;var filedPtr = &(ptr->BasicData);  return (int)((long) filedPtr - (long) ptr);        }
+        private NativeArray<T> _GetAllSubClassB_PhysicData<T>(int compFieldOffset,FuncEntityFilter<Entity> filterFunc,out int length) where T: unmanaged{return _GetAllEntityField<T,SubClassB>(_SubClassBAry,_GetOffsetOfSubClassB_PhysicData() + compFieldOffset,filterFunc,out length);}
+        private NativeArray<T> _GetAllSubClassB_PhysicData<T>(int compFieldOffset) where T: unmanaged{return _GetAllEntityField<T,SubClassB>(_SubClassBAry,_GetOffsetOfSubClassB_PhysicData()+ compFieldOffset);}
+        private NativeArray<PhysicData> _GetAllSubClassB_PhysicData(){return _GetAllEntityField<PhysicData,SubClassB>(_SubClassBAry,_GetOffsetOfSubClassB_PhysicData());} 
+        private int _GetOffsetOfSubClassB_PhysicData(){ var tempObj =  new SubClassB(); SubClassB* ptr = &tempObj;var filedPtr = &(ptr->PhysicData);  return (int)((long) filedPtr - (long) ptr);        }
+        private NativeArray<T> _GetAllSubClassB_int<T>(int compFieldOffset,FuncEntityFilter<Entity> filterFunc,out int length) where T: unmanaged{return _GetAllEntityField<T,SubClassB>(_SubClassBAry,_GetOffsetOfSubClassB_Val1() + compFieldOffset,filterFunc,out length);}
+        private NativeArray<T> _GetAllSubClassB_int<T>(int compFieldOffset) where T: unmanaged{return _GetAllEntityField<T,SubClassB>(_SubClassBAry,_GetOffsetOfSubClassB_Val1()+ compFieldOffset);}
+        private NativeArray<int> _GetAllSubClassB_Val1(){return _GetAllEntityField<int,SubClassB>(_SubClassBAry,_GetOffsetOfSubClassB_Val1());} 
+        private int _GetOffsetOfSubClassB_Val1(){ var tempObj =  new SubClassB(); SubClassB* ptr = &tempObj;var filedPtr = &(ptr->Val1);  return (int)((long) filedPtr - (long) ptr);        }
+        private NativeArray<T> _GetAllSubClassB_long<T>(int compFieldOffset,FuncEntityFilter<Entity> filterFunc,out int length) where T: unmanaged{return _GetAllEntityField<T,SubClassB>(_SubClassBAry,_GetOffsetOfSubClassB_Val3() + compFieldOffset,filterFunc,out length);}
+        private NativeArray<T> _GetAllSubClassB_long<T>(int compFieldOffset) where T: unmanaged{return _GetAllEntityField<T,SubClassB>(_SubClassBAry,_GetOffsetOfSubClassB_Val3()+ compFieldOffset);}
+        private NativeArray<long> _GetAllSubClassB_Val3(){return _GetAllEntityField<long,SubClassB>(_SubClassBAry,_GetOffsetOfSubClassB_Val3());} 
+        private int _GetOffsetOfSubClassB_Val3(){ var tempObj =  new SubClassB(); SubClassB* ptr = &tempObj;var filedPtr = &(ptr->Val3);  return (int)((long) filedPtr - (long) ptr);        } 
+        private NativeArray<T> _GetAllEnemy_AssetData<T>(int compFieldOffset,FuncEntityFilter<Entity> filterFunc,out int length) where T: unmanaged{return _GetAllEntityField<T,Enemy>(_EnemyAry,_GetOffsetOfEnemy_AssetData() + compFieldOffset,filterFunc,out length);}
+        private NativeArray<T> _GetAllEnemy_AssetData<T>(int compFieldOffset) where T: unmanaged{return _GetAllEntityField<T,Enemy>(_EnemyAry,_GetOffsetOfEnemy_AssetData()+ compFieldOffset);}
+        private NativeArray<AssetData> _GetAllEnemy_AssetData(){return _GetAllEntityField<AssetData,Enemy>(_EnemyAry,_GetOffsetOfEnemy_AssetData());} 
+        private int _GetOffsetOfEnemy_AssetData(){ var tempObj =  new Enemy(); Enemy* ptr = &tempObj;var filedPtr = &(ptr->AssetData);  return (int)((long) filedPtr - (long) ptr);        }
+        private NativeArray<T> _GetAllEnemy_Transform3D<T>(int compFieldOffset,FuncEntityFilter<Entity> filterFunc,out int length) where T: unmanaged{return _GetAllEntityField<T,Enemy>(_EnemyAry,_GetOffsetOfEnemy_TransformData() + compFieldOffset,filterFunc,out length);}
+        private NativeArray<T> _GetAllEnemy_Transform3D<T>(int compFieldOffset) where T: unmanaged{return _GetAllEntityField<T,Enemy>(_EnemyAry,_GetOffsetOfEnemy_TransformData()+ compFieldOffset);}
+        private NativeArray<Transform3D> _GetAllEnemy_TransformData(){return _GetAllEntityField<Transform3D,Enemy>(_EnemyAry,_GetOffsetOfEnemy_TransformData());} 
+        private int _GetOffsetOfEnemy_TransformData(){ var tempObj =  new Enemy(); Enemy* ptr = &tempObj;var filedPtr = &(ptr->TransformData);  return (int)((long) filedPtr - (long) ptr);        }
+        private NativeArray<T> _GetAllEnemy_BasicData<T>(int compFieldOffset,FuncEntityFilter<Entity> filterFunc,out int length) where T: unmanaged{return _GetAllEntityField<T,Enemy>(_EnemyAry,_GetOffsetOfEnemy_BasicData() + compFieldOffset,filterFunc,out length);}
+        private NativeArray<T> _GetAllEnemy_BasicData<T>(int compFieldOffset) where T: unmanaged{return _GetAllEntityField<T,Enemy>(_EnemyAry,_GetOffsetOfEnemy_BasicData()+ compFieldOffset);}
+        private NativeArray<BasicData> _GetAllEnemy_BasicData(){return _GetAllEntityField<BasicData,Enemy>(_EnemyAry,_GetOffsetOfEnemy_BasicData());} 
+        private int _GetOffsetOfEnemy_BasicData(){ var tempObj =  new Enemy(); Enemy* ptr = &tempObj;var filedPtr = &(ptr->BasicData);  return (int)((long) filedPtr - (long) ptr);        }
+        private NativeArray<T> _GetAllEnemy_PhysicData<T>(int compFieldOffset,FuncEntityFilter<Entity> filterFunc,out int length) where T: unmanaged{return _GetAllEntityField<T,Enemy>(_EnemyAry,_GetOffsetOfEnemy_PhysicData() + compFieldOffset,filterFunc,out length);}
+        private NativeArray<T> _GetAllEnemy_PhysicData<T>(int compFieldOffset) where T: unmanaged{return _GetAllEntityField<T,Enemy>(_EnemyAry,_GetOffsetOfEnemy_PhysicData()+ compFieldOffset);}
+        private NativeArray<PhysicData> _GetAllEnemy_PhysicData(){return _GetAllEntityField<PhysicData,Enemy>(_EnemyAry,_GetOffsetOfEnemy_PhysicData());} 
+        private int _GetOffsetOfEnemy_PhysicData(){ var tempObj =  new Enemy(); Enemy* ptr = &tempObj;var filedPtr = &(ptr->PhysicData);  return (int)((long) filedPtr - (long) ptr);        }
         private NativeArray<T> _GetAllEnemy_EnemyTag<T>(int compFieldOffset,FuncEntityFilter<Entity> filterFunc,out int length) where T: unmanaged{return _GetAllEntityField<T,Enemy>(_EnemyAry,_GetOffsetOfEnemy_EnemyTag() + compFieldOffset,filterFunc,out length);}
         private NativeArray<T> _GetAllEnemy_EnemyTag<T>(int compFieldOffset) where T: unmanaged{return _GetAllEntityField<T,Enemy>(_EnemyAry,_GetOffsetOfEnemy_EnemyTag()+ compFieldOffset);}
         private NativeArray<EnemyTag> _GetAllEnemy_EnemyTag(){return _GetAllEntityField<EnemyTag,Enemy>(_EnemyAry,_GetOffsetOfEnemy_EnemyTag());} 
@@ -47,35 +131,7 @@ namespace GamesTan.ECS.Game {
         private NativeArray<T> _GetAllEnemy_AnimData<T>(int compFieldOffset,FuncEntityFilter<Entity> filterFunc,out int length) where T: unmanaged{return _GetAllEntityField<T,Enemy>(_EnemyAry,_GetOffsetOfEnemy_AnimData() + compFieldOffset,filterFunc,out length);}
         private NativeArray<T> _GetAllEnemy_AnimData<T>(int compFieldOffset) where T: unmanaged{return _GetAllEntityField<T,Enemy>(_EnemyAry,_GetOffsetOfEnemy_AnimData()+ compFieldOffset);}
         private NativeArray<AnimData> _GetAllEnemy_AnimData(){return _GetAllEntityField<AnimData,Enemy>(_EnemyAry,_GetOffsetOfEnemy_AnimData());} 
-        private int _GetOffsetOfEnemy_AnimData(){ var tempObj =  new Enemy(); Enemy* ptr = &tempObj;var filedPtr = &(ptr->AnimData);  return (int)((long) filedPtr - (long) ptr);        }
-        private NativeArray<T> _GetAllEnemy_AssetData<T>(int compFieldOffset,FuncEntityFilter<Entity> filterFunc,out int length) where T: unmanaged{return _GetAllEntityField<T,Enemy>(_EnemyAry,_GetOffsetOfEnemy_AssetData() + compFieldOffset,filterFunc,out length);}
-        private NativeArray<T> _GetAllEnemy_AssetData<T>(int compFieldOffset) where T: unmanaged{return _GetAllEntityField<T,Enemy>(_EnemyAry,_GetOffsetOfEnemy_AssetData()+ compFieldOffset);}
-        private NativeArray<AssetData> _GetAllEnemy_AssetData(){return _GetAllEntityField<AssetData,Enemy>(_EnemyAry,_GetOffsetOfEnemy_AssetData());} 
-        private int _GetOffsetOfEnemy_AssetData(){ var tempObj =  new Enemy(); Enemy* ptr = &tempObj;var filedPtr = &(ptr->AssetData);  return (int)((long) filedPtr - (long) ptr);        }
-        private NativeArray<T> _GetAllEnemy_Transform3D<T>(int compFieldOffset,FuncEntityFilter<Entity> filterFunc,out int length) where T: unmanaged{return _GetAllEntityField<T,Enemy>(_EnemyAry,_GetOffsetOfEnemy_TransformData() + compFieldOffset,filterFunc,out length);}
-        private NativeArray<T> _GetAllEnemy_Transform3D<T>(int compFieldOffset) where T: unmanaged{return _GetAllEntityField<T,Enemy>(_EnemyAry,_GetOffsetOfEnemy_TransformData()+ compFieldOffset);}
-        private NativeArray<Transform3D> _GetAllEnemy_TransformData(){return _GetAllEntityField<Transform3D,Enemy>(_EnemyAry,_GetOffsetOfEnemy_TransformData());} 
-        private int _GetOffsetOfEnemy_TransformData(){ var tempObj =  new Enemy(); Enemy* ptr = &tempObj;var filedPtr = &(ptr->TransformData);  return (int)((long) filedPtr - (long) ptr);        }
-        private NativeArray<T> _GetAllEnemy_BasicData<T>(int compFieldOffset,FuncEntityFilter<Entity> filterFunc,out int length) where T: unmanaged{return _GetAllEntityField<T,Enemy>(_EnemyAry,_GetOffsetOfEnemy_BasicData() + compFieldOffset,filterFunc,out length);}
-        private NativeArray<T> _GetAllEnemy_BasicData<T>(int compFieldOffset) where T: unmanaged{return _GetAllEntityField<T,Enemy>(_EnemyAry,_GetOffsetOfEnemy_BasicData()+ compFieldOffset);}
-        private NativeArray<BasicData> _GetAllEnemy_BasicData(){return _GetAllEntityField<BasicData,Enemy>(_EnemyAry,_GetOffsetOfEnemy_BasicData());} 
-        private int _GetOffsetOfEnemy_BasicData(){ var tempObj =  new Enemy(); Enemy* ptr = &tempObj;var filedPtr = &(ptr->BasicData);  return (int)((long) filedPtr - (long) ptr);        }
-        private NativeArray<T> _GetAllEnemy_PhysicData<T>(int compFieldOffset,FuncEntityFilter<Entity> filterFunc,out int length) where T: unmanaged{return _GetAllEntityField<T,Enemy>(_EnemyAry,_GetOffsetOfEnemy_PhysicData() + compFieldOffset,filterFunc,out length);}
-        private NativeArray<T> _GetAllEnemy_PhysicData<T>(int compFieldOffset) where T: unmanaged{return _GetAllEntityField<T,Enemy>(_EnemyAry,_GetOffsetOfEnemy_PhysicData()+ compFieldOffset);}
-        private NativeArray<PhysicData> _GetAllEnemy_PhysicData(){return _GetAllEntityField<PhysicData,Enemy>(_EnemyAry,_GetOffsetOfEnemy_PhysicData());} 
-        private int _GetOffsetOfEnemy_PhysicData(){ var tempObj =  new Enemy(); Enemy* ptr = &tempObj;var filedPtr = &(ptr->PhysicData);  return (int)((long) filedPtr - (long) ptr);        } 
-        private NativeArray<T> _GetAllBullet_BulletTag<T>(int compFieldOffset,FuncEntityFilter<Entity> filterFunc,out int length) where T: unmanaged{return _GetAllEntityField<T,Bullet>(_BulletAry,_GetOffsetOfBullet_BulletTag() + compFieldOffset,filterFunc,out length);}
-        private NativeArray<T> _GetAllBullet_BulletTag<T>(int compFieldOffset) where T: unmanaged{return _GetAllEntityField<T,Bullet>(_BulletAry,_GetOffsetOfBullet_BulletTag()+ compFieldOffset);}
-        private NativeArray<BulletTag> _GetAllBullet_BulletTag(){return _GetAllEntityField<BulletTag,Bullet>(_BulletAry,_GetOffsetOfBullet_BulletTag());} 
-        private int _GetOffsetOfBullet_BulletTag(){ var tempObj =  new Bullet(); Bullet* ptr = &tempObj;var filedPtr = &(ptr->BulletTag);  return (int)((long) filedPtr - (long) ptr);        }
-        private NativeArray<T> _GetAllBullet_MeshRenderData<T>(int compFieldOffset,FuncEntityFilter<Entity> filterFunc,out int length) where T: unmanaged{return _GetAllEntityField<T,Bullet>(_BulletAry,_GetOffsetOfBullet_MeshRenderData() + compFieldOffset,filterFunc,out length);}
-        private NativeArray<T> _GetAllBullet_MeshRenderData<T>(int compFieldOffset) where T: unmanaged{return _GetAllEntityField<T,Bullet>(_BulletAry,_GetOffsetOfBullet_MeshRenderData()+ compFieldOffset);}
-        private NativeArray<MeshRenderData> _GetAllBullet_MeshRenderData(){return _GetAllEntityField<MeshRenderData,Bullet>(_BulletAry,_GetOffsetOfBullet_MeshRenderData());} 
-        private int _GetOffsetOfBullet_MeshRenderData(){ var tempObj =  new Bullet(); Bullet* ptr = &tempObj;var filedPtr = &(ptr->MeshRenderData);  return (int)((long) filedPtr - (long) ptr);        }
-        private NativeArray<T> _GetAllBullet_UnitData<T>(int compFieldOffset,FuncEntityFilter<Entity> filterFunc,out int length) where T: unmanaged{return _GetAllEntityField<T,Bullet>(_BulletAry,_GetOffsetOfBullet_UnitData() + compFieldOffset,filterFunc,out length);}
-        private NativeArray<T> _GetAllBullet_UnitData<T>(int compFieldOffset) where T: unmanaged{return _GetAllEntityField<T,Bullet>(_BulletAry,_GetOffsetOfBullet_UnitData()+ compFieldOffset);}
-        private NativeArray<UnitData> _GetAllBullet_UnitData(){return _GetAllEntityField<UnitData,Bullet>(_BulletAry,_GetOffsetOfBullet_UnitData());} 
-        private int _GetOffsetOfBullet_UnitData(){ var tempObj =  new Bullet(); Bullet* ptr = &tempObj;var filedPtr = &(ptr->UnitData);  return (int)((long) filedPtr - (long) ptr);        }
+        private int _GetOffsetOfEnemy_AnimData(){ var tempObj =  new Enemy(); Enemy* ptr = &tempObj;var filedPtr = &(ptr->AnimData);  return (int)((long) filedPtr - (long) ptr);        } 
         private NativeArray<T> _GetAllBullet_AssetData<T>(int compFieldOffset,FuncEntityFilter<Entity> filterFunc,out int length) where T: unmanaged{return _GetAllEntityField<T,Bullet>(_BulletAry,_GetOffsetOfBullet_AssetData() + compFieldOffset,filterFunc,out length);}
         private NativeArray<T> _GetAllBullet_AssetData<T>(int compFieldOffset) where T: unmanaged{return _GetAllEntityField<T,Bullet>(_BulletAry,_GetOffsetOfBullet_AssetData()+ compFieldOffset);}
         private NativeArray<AssetData> _GetAllBullet_AssetData(){return _GetAllEntityField<AssetData,Bullet>(_BulletAry,_GetOffsetOfBullet_AssetData());} 
@@ -91,19 +147,19 @@ namespace GamesTan.ECS.Game {
         private NativeArray<T> _GetAllBullet_PhysicData<T>(int compFieldOffset,FuncEntityFilter<Entity> filterFunc,out int length) where T: unmanaged{return _GetAllEntityField<T,Bullet>(_BulletAry,_GetOffsetOfBullet_PhysicData() + compFieldOffset,filterFunc,out length);}
         private NativeArray<T> _GetAllBullet_PhysicData<T>(int compFieldOffset) where T: unmanaged{return _GetAllEntityField<T,Bullet>(_BulletAry,_GetOffsetOfBullet_PhysicData()+ compFieldOffset);}
         private NativeArray<PhysicData> _GetAllBullet_PhysicData(){return _GetAllEntityField<PhysicData,Bullet>(_BulletAry,_GetOffsetOfBullet_PhysicData());} 
-        private int _GetOffsetOfBullet_PhysicData(){ var tempObj =  new Bullet(); Bullet* ptr = &tempObj;var filedPtr = &(ptr->PhysicData);  return (int)((long) filedPtr - (long) ptr);        } 
-        private NativeArray<T> _GetAllBulletEmitter_SpawnerTag<T>(int compFieldOffset,FuncEntityFilter<Entity> filterFunc,out int length) where T: unmanaged{return _GetAllEntityField<T,BulletEmitter>(_BulletEmitterAry,_GetOffsetOfBulletEmitter_SpawnerTag() + compFieldOffset,filterFunc,out length);}
-        private NativeArray<T> _GetAllBulletEmitter_SpawnerTag<T>(int compFieldOffset) where T: unmanaged{return _GetAllEntityField<T,BulletEmitter>(_BulletEmitterAry,_GetOffsetOfBulletEmitter_SpawnerTag()+ compFieldOffset);}
-        private NativeArray<SpawnerTag> _GetAllBulletEmitter_SpawnerTag(){return _GetAllEntityField<SpawnerTag,BulletEmitter>(_BulletEmitterAry,_GetOffsetOfBulletEmitter_SpawnerTag());} 
-        private int _GetOffsetOfBulletEmitter_SpawnerTag(){ var tempObj =  new BulletEmitter(); BulletEmitter* ptr = &tempObj;var filedPtr = &(ptr->SpawnerTag);  return (int)((long) filedPtr - (long) ptr);        }
-        private NativeArray<T> _GetAllBulletEmitter_MeshRenderData<T>(int compFieldOffset,FuncEntityFilter<Entity> filterFunc,out int length) where T: unmanaged{return _GetAllEntityField<T,BulletEmitter>(_BulletEmitterAry,_GetOffsetOfBulletEmitter_MeshRenderData() + compFieldOffset,filterFunc,out length);}
-        private NativeArray<T> _GetAllBulletEmitter_MeshRenderData<T>(int compFieldOffset) where T: unmanaged{return _GetAllEntityField<T,BulletEmitter>(_BulletEmitterAry,_GetOffsetOfBulletEmitter_MeshRenderData()+ compFieldOffset);}
-        private NativeArray<MeshRenderData> _GetAllBulletEmitter_MeshRenderData(){return _GetAllEntityField<MeshRenderData,BulletEmitter>(_BulletEmitterAry,_GetOffsetOfBulletEmitter_MeshRenderData());} 
-        private int _GetOffsetOfBulletEmitter_MeshRenderData(){ var tempObj =  new BulletEmitter(); BulletEmitter* ptr = &tempObj;var filedPtr = &(ptr->MeshRenderData);  return (int)((long) filedPtr - (long) ptr);        }
-        private NativeArray<T> _GetAllBulletEmitter_EmitterData<T>(int compFieldOffset,FuncEntityFilter<Entity> filterFunc,out int length) where T: unmanaged{return _GetAllEntityField<T,BulletEmitter>(_BulletEmitterAry,_GetOffsetOfBulletEmitter_EmitterData() + compFieldOffset,filterFunc,out length);}
-        private NativeArray<T> _GetAllBulletEmitter_EmitterData<T>(int compFieldOffset) where T: unmanaged{return _GetAllEntityField<T,BulletEmitter>(_BulletEmitterAry,_GetOffsetOfBulletEmitter_EmitterData()+ compFieldOffset);}
-        private NativeArray<EmitterData> _GetAllBulletEmitter_EmitterData(){return _GetAllEntityField<EmitterData,BulletEmitter>(_BulletEmitterAry,_GetOffsetOfBulletEmitter_EmitterData());} 
-        private int _GetOffsetOfBulletEmitter_EmitterData(){ var tempObj =  new BulletEmitter(); BulletEmitter* ptr = &tempObj;var filedPtr = &(ptr->EmitterData);  return (int)((long) filedPtr - (long) ptr);        }
+        private int _GetOffsetOfBullet_PhysicData(){ var tempObj =  new Bullet(); Bullet* ptr = &tempObj;var filedPtr = &(ptr->PhysicData);  return (int)((long) filedPtr - (long) ptr);        }
+        private NativeArray<T> _GetAllBullet_BulletTag<T>(int compFieldOffset,FuncEntityFilter<Entity> filterFunc,out int length) where T: unmanaged{return _GetAllEntityField<T,Bullet>(_BulletAry,_GetOffsetOfBullet_BulletTag() + compFieldOffset,filterFunc,out length);}
+        private NativeArray<T> _GetAllBullet_BulletTag<T>(int compFieldOffset) where T: unmanaged{return _GetAllEntityField<T,Bullet>(_BulletAry,_GetOffsetOfBullet_BulletTag()+ compFieldOffset);}
+        private NativeArray<BulletTag> _GetAllBullet_BulletTag(){return _GetAllEntityField<BulletTag,Bullet>(_BulletAry,_GetOffsetOfBullet_BulletTag());} 
+        private int _GetOffsetOfBullet_BulletTag(){ var tempObj =  new Bullet(); Bullet* ptr = &tempObj;var filedPtr = &(ptr->BulletTag);  return (int)((long) filedPtr - (long) ptr);        }
+        private NativeArray<T> _GetAllBullet_MeshRenderData<T>(int compFieldOffset,FuncEntityFilter<Entity> filterFunc,out int length) where T: unmanaged{return _GetAllEntityField<T,Bullet>(_BulletAry,_GetOffsetOfBullet_MeshRenderData() + compFieldOffset,filterFunc,out length);}
+        private NativeArray<T> _GetAllBullet_MeshRenderData<T>(int compFieldOffset) where T: unmanaged{return _GetAllEntityField<T,Bullet>(_BulletAry,_GetOffsetOfBullet_MeshRenderData()+ compFieldOffset);}
+        private NativeArray<MeshRenderData> _GetAllBullet_MeshRenderData(){return _GetAllEntityField<MeshRenderData,Bullet>(_BulletAry,_GetOffsetOfBullet_MeshRenderData());} 
+        private int _GetOffsetOfBullet_MeshRenderData(){ var tempObj =  new Bullet(); Bullet* ptr = &tempObj;var filedPtr = &(ptr->MeshRenderData);  return (int)((long) filedPtr - (long) ptr);        }
+        private NativeArray<T> _GetAllBullet_UnitData<T>(int compFieldOffset,FuncEntityFilter<Entity> filterFunc,out int length) where T: unmanaged{return _GetAllEntityField<T,Bullet>(_BulletAry,_GetOffsetOfBullet_UnitData() + compFieldOffset,filterFunc,out length);}
+        private NativeArray<T> _GetAllBullet_UnitData<T>(int compFieldOffset) where T: unmanaged{return _GetAllEntityField<T,Bullet>(_BulletAry,_GetOffsetOfBullet_UnitData()+ compFieldOffset);}
+        private NativeArray<UnitData> _GetAllBullet_UnitData(){return _GetAllEntityField<UnitData,Bullet>(_BulletAry,_GetOffsetOfBullet_UnitData());} 
+        private int _GetOffsetOfBullet_UnitData(){ var tempObj =  new Bullet(); Bullet* ptr = &tempObj;var filedPtr = &(ptr->UnitData);  return (int)((long) filedPtr - (long) ptr);        } 
         private NativeArray<T> _GetAllBulletEmitter_AssetData<T>(int compFieldOffset,FuncEntityFilter<Entity> filterFunc,out int length) where T: unmanaged{return _GetAllEntityField<T,BulletEmitter>(_BulletEmitterAry,_GetOffsetOfBulletEmitter_AssetData() + compFieldOffset,filterFunc,out length);}
         private NativeArray<T> _GetAllBulletEmitter_AssetData<T>(int compFieldOffset) where T: unmanaged{return _GetAllEntityField<T,BulletEmitter>(_BulletEmitterAry,_GetOffsetOfBulletEmitter_AssetData()+ compFieldOffset);}
         private NativeArray<AssetData> _GetAllBulletEmitter_AssetData(){return _GetAllEntityField<AssetData,BulletEmitter>(_BulletEmitterAry,_GetOffsetOfBulletEmitter_AssetData());} 
@@ -119,7 +175,19 @@ namespace GamesTan.ECS.Game {
         private NativeArray<T> _GetAllBulletEmitter_PhysicData<T>(int compFieldOffset,FuncEntityFilter<Entity> filterFunc,out int length) where T: unmanaged{return _GetAllEntityField<T,BulletEmitter>(_BulletEmitterAry,_GetOffsetOfBulletEmitter_PhysicData() + compFieldOffset,filterFunc,out length);}
         private NativeArray<T> _GetAllBulletEmitter_PhysicData<T>(int compFieldOffset) where T: unmanaged{return _GetAllEntityField<T,BulletEmitter>(_BulletEmitterAry,_GetOffsetOfBulletEmitter_PhysicData()+ compFieldOffset);}
         private NativeArray<PhysicData> _GetAllBulletEmitter_PhysicData(){return _GetAllEntityField<PhysicData,BulletEmitter>(_BulletEmitterAry,_GetOffsetOfBulletEmitter_PhysicData());} 
-        private int _GetOffsetOfBulletEmitter_PhysicData(){ var tempObj =  new BulletEmitter(); BulletEmitter* ptr = &tempObj;var filedPtr = &(ptr->PhysicData);  return (int)((long) filedPtr - (long) ptr);        }        
+        private int _GetOffsetOfBulletEmitter_PhysicData(){ var tempObj =  new BulletEmitter(); BulletEmitter* ptr = &tempObj;var filedPtr = &(ptr->PhysicData);  return (int)((long) filedPtr - (long) ptr);        }
+        private NativeArray<T> _GetAllBulletEmitter_SpawnerTag<T>(int compFieldOffset,FuncEntityFilter<Entity> filterFunc,out int length) where T: unmanaged{return _GetAllEntityField<T,BulletEmitter>(_BulletEmitterAry,_GetOffsetOfBulletEmitter_SpawnerTag() + compFieldOffset,filterFunc,out length);}
+        private NativeArray<T> _GetAllBulletEmitter_SpawnerTag<T>(int compFieldOffset) where T: unmanaged{return _GetAllEntityField<T,BulletEmitter>(_BulletEmitterAry,_GetOffsetOfBulletEmitter_SpawnerTag()+ compFieldOffset);}
+        private NativeArray<SpawnerTag> _GetAllBulletEmitter_SpawnerTag(){return _GetAllEntityField<SpawnerTag,BulletEmitter>(_BulletEmitterAry,_GetOffsetOfBulletEmitter_SpawnerTag());} 
+        private int _GetOffsetOfBulletEmitter_SpawnerTag(){ var tempObj =  new BulletEmitter(); BulletEmitter* ptr = &tempObj;var filedPtr = &(ptr->SpawnerTag);  return (int)((long) filedPtr - (long) ptr);        }
+        private NativeArray<T> _GetAllBulletEmitter_MeshRenderData<T>(int compFieldOffset,FuncEntityFilter<Entity> filterFunc,out int length) where T: unmanaged{return _GetAllEntityField<T,BulletEmitter>(_BulletEmitterAry,_GetOffsetOfBulletEmitter_MeshRenderData() + compFieldOffset,filterFunc,out length);}
+        private NativeArray<T> _GetAllBulletEmitter_MeshRenderData<T>(int compFieldOffset) where T: unmanaged{return _GetAllEntityField<T,BulletEmitter>(_BulletEmitterAry,_GetOffsetOfBulletEmitter_MeshRenderData()+ compFieldOffset);}
+        private NativeArray<MeshRenderData> _GetAllBulletEmitter_MeshRenderData(){return _GetAllEntityField<MeshRenderData,BulletEmitter>(_BulletEmitterAry,_GetOffsetOfBulletEmitter_MeshRenderData());} 
+        private int _GetOffsetOfBulletEmitter_MeshRenderData(){ var tempObj =  new BulletEmitter(); BulletEmitter* ptr = &tempObj;var filedPtr = &(ptr->MeshRenderData);  return (int)((long) filedPtr - (long) ptr);        }
+        private NativeArray<T> _GetAllBulletEmitter_EmitterData<T>(int compFieldOffset,FuncEntityFilter<Entity> filterFunc,out int length) where T: unmanaged{return _GetAllEntityField<T,BulletEmitter>(_BulletEmitterAry,_GetOffsetOfBulletEmitter_EmitterData() + compFieldOffset,filterFunc,out length);}
+        private NativeArray<T> _GetAllBulletEmitter_EmitterData<T>(int compFieldOffset) where T: unmanaged{return _GetAllEntityField<T,BulletEmitter>(_BulletEmitterAry,_GetOffsetOfBulletEmitter_EmitterData()+ compFieldOffset);}
+        private NativeArray<EmitterData> _GetAllBulletEmitter_EmitterData(){return _GetAllEntityField<EmitterData,BulletEmitter>(_BulletEmitterAry,_GetOffsetOfBulletEmitter_EmitterData());} 
+        private int _GetOffsetOfBulletEmitter_EmitterData(){ var tempObj =  new BulletEmitter(); BulletEmitter* ptr = &tempObj;var filedPtr = &(ptr->EmitterData);  return (int)((long) filedPtr - (long) ptr);        }        
 
         private int _GetOffsetOfMeshRenderData_Padding(){var tempObj =  new MeshRenderData(); MeshRenderData* ptr = &tempObj; var filedPtr = &(ptr->Padding);return (int)((long) filedPtr - (long) ptr);        }
         private int _GetSizeOfMeshRenderData_Padding(){ return sizeof(int); } 
@@ -222,6 +290,9 @@ namespace GamesTan.ECS.Game {
 
         internal int CurTotalEntityCount =>
             0 
+            + CurPClassACount
+            + CurSubClassACount
+            + CurSubClassBCount
             + CurEnemyCount
             + CurBulletCount
             + CurBulletEmitterCount            

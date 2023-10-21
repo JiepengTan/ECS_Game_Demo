@@ -19,13 +19,16 @@ using System.Collections.Generic;
 using System.Collections;                                                                        
 using System.Runtime.CompilerServices;                                                           
 using Lockstep.Game;                                                                             
-using Unity.Burst;                                                                               
 using Lockstep.Math;                                                                             
+using Unity.Burst;                                                                               
 using Unity.Mathematics;                                                                                                                                                                            
 namespace GamesTan.ECS.Game { 
 
     public enum EEntityType : int {
         None,
+        PClassA,
+        SubClassA,
+        SubClassB,
         Enemy,
         Bullet,
         BulletEmitter, 
@@ -33,6 +36,9 @@ namespace GamesTan.ECS.Game {
     }
 
     public static class EntityIds {
+      	public const int PClassA = (int)(EEntityType.PClassA);
+      	public const int SubClassA = (int)(EEntityType.SubClassA);
+      	public const int SubClassB = (int)(EEntityType.SubClassB);
       	public const int Enemy = (int)(EEntityType.Enemy);
       	public const int Bullet = (int)(EEntityType.Bullet);
       	public const int BulletEmitter = (int)(EEntityType.BulletEmitter); 
@@ -112,11 +118,17 @@ namespace GamesTan.ECS.Game {
         Enemy,
     }
     public enum E_EntityOfPhysicData{
+        PClassA,
+        SubClassA,
+        SubClassB,
         Enemy,
         Bullet,
         BulletEmitter,
     }
     public enum E_EntityOfBasicData{
+        PClassA,
+        SubClassA,
+        SubClassB,
         Enemy,
         Bullet,
         BulletEmitter,
@@ -153,6 +165,9 @@ namespace GamesTan.ECS.Game {
 
     }
     public enum E_EntityOfAssetData{
+        PClassA,
+        SubClassA,
+        SubClassB,
         Enemy,
         Bullet,
         BulletEmitter,
@@ -161,6 +176,9 @@ namespace GamesTan.ECS.Game {
 
     }
     public enum E_EntityOfTransform3D{
+        PClassA,
+        SubClassA,
+        SubClassB,
         Enemy,
         Bullet,
         BulletEmitter,

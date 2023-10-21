@@ -17,23 +17,23 @@ namespace GamesTan.Rendering {
         }
 
         void OnWillRenderObject() {
-            RenderWorld.Instance.OnCameraWillRenderObject(Camera);
+            RenderWorld.Instance?.OnCameraWillRenderObject(Camera);
         }
         void OnPreCull() {
-            RenderWorld.Instance.OnCameraPreCull(Camera);
+            RenderWorld.Instance?.OnCameraPreCull(Camera);
         }
         void OnPreRender() {
-            RenderWorld.Instance.OnCameraPreRender(Camera);
+            RenderWorld.Instance?.OnCameraPreRender(Camera);
         }
         void OnRenderObject() {
-            RenderWorld.Instance.OnCameraRenderObject(Camera);
+            RenderWorld.Instance?.OnCameraRenderObject(Camera);
         }
         void OnPostRender() {
-            RenderWorld.Instance.OnCameraPostRender(Camera);
+            RenderWorld.Instance?.OnCameraPostRender(Camera);
         }
 
         void OnRenderImage(RenderTexture source, RenderTexture destination) {
-            RenderWorld.Instance.OnCameraRenderImage(Camera,source,destination);
+            RenderWorld.Instance?.OnCameraRenderImage(Camera,source,destination);
             
         }
     }

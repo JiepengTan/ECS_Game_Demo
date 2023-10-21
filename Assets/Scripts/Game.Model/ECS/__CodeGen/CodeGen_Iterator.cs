@@ -19,12 +19,39 @@ using System.Collections.Generic;
 using System.Collections;                                                                        
 using System.Runtime.CompilerServices;                                                           
 using Lockstep.Game;                                                                             
-using Unity.Burst;                                                                               
 using Lockstep.Math;                                                                             
+using Unity.Burst;                                                                               
 using Unity.Mathematics;                                                                                                                                                                            
 namespace GamesTan.ECS.Game {  
 #if true
    public static unsafe class PointerExt {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static PClassA* ToPClassAPtr(this long val){
+            #if DEBUG
+            if ((val == 0L || ((PClassA*) val)->EntityType != EEntityType.PClassA)) {
+                throw new Exception("ToPClassAPtr error: diff type " + val);
+            }
+            #endif
+            return (PClassA*) val;
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static SubClassA* ToSubClassAPtr(this long val){
+            #if DEBUG
+            if ((val == 0L || ((SubClassA*) val)->EntityType != EEntityType.SubClassA)) {
+                throw new Exception("ToSubClassAPtr error: diff type " + val);
+            }
+            #endif
+            return (SubClassA*) val;
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static SubClassB* ToSubClassBPtr(this long val){
+            #if DEBUG
+            if ((val == 0L || ((SubClassB*) val)->EntityType != EEntityType.SubClassB)) {
+                throw new Exception("ToSubClassBPtr error: diff type " + val);
+            }
+            #endif
+            return (SubClassB*) val;
+        }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Enemy* ToEnemyPtr(this long val){
             #if DEBUG
@@ -54,6 +81,129 @@ namespace GamesTan.ECS.Game {
         } 
     }
 
+    [StructLayoutAttribute(LayoutKind.Sequential, Pack = Define.PackSize)]
+    public unsafe partial struct PClassAIterator : IEnumerator<long>, IEnumerable<long> {
+        private Int32 _index;
+        private PClassA* _ptr;
+        private long _current;
+        private int _count;
+        public long Current => _current;
+        object IEnumerator.Current {
+            get { return (object) Current; }
+        }
+        IEnumerator IEnumerable.GetEnumerator(){
+            return this;
+        }
+        public IEnumerator<long> GetEnumerator(){
+            return this;
+        }
+
+        public PClassAIterator(PClassA* ptr,int count){
+            _ptr = ptr;
+            _index = -1;
+            _current = 0;
+            _count = count;
+        }
+
+        public Boolean MoveNext(){
+            while (++_index < _count) {
+                if (_ptr[_index]._entity._active) {
+                    _current = (long) (&_ptr[_index]);
+                    return true;
+                }
+            }
+            _current = 0;
+            return false;
+        }
+
+        public void Reset(){
+            _index = -1;
+            _current = 0;
+        }
+        public void Dispose(){ }
+    }
+    [StructLayoutAttribute(LayoutKind.Sequential, Pack = Define.PackSize)]
+    public unsafe partial struct SubClassAIterator : IEnumerator<long>, IEnumerable<long> {
+        private Int32 _index;
+        private SubClassA* _ptr;
+        private long _current;
+        private int _count;
+        public long Current => _current;
+        object IEnumerator.Current {
+            get { return (object) Current; }
+        }
+        IEnumerator IEnumerable.GetEnumerator(){
+            return this;
+        }
+        public IEnumerator<long> GetEnumerator(){
+            return this;
+        }
+
+        public SubClassAIterator(SubClassA* ptr,int count){
+            _ptr = ptr;
+            _index = -1;
+            _current = 0;
+            _count = count;
+        }
+
+        public Boolean MoveNext(){
+            while (++_index < _count) {
+                if (_ptr[_index]._entity._active) {
+                    _current = (long) (&_ptr[_index]);
+                    return true;
+                }
+            }
+            _current = 0;
+            return false;
+        }
+
+        public void Reset(){
+            _index = -1;
+            _current = 0;
+        }
+        public void Dispose(){ }
+    }
+    [StructLayoutAttribute(LayoutKind.Sequential, Pack = Define.PackSize)]
+    public unsafe partial struct SubClassBIterator : IEnumerator<long>, IEnumerable<long> {
+        private Int32 _index;
+        private SubClassB* _ptr;
+        private long _current;
+        private int _count;
+        public long Current => _current;
+        object IEnumerator.Current {
+            get { return (object) Current; }
+        }
+        IEnumerator IEnumerable.GetEnumerator(){
+            return this;
+        }
+        public IEnumerator<long> GetEnumerator(){
+            return this;
+        }
+
+        public SubClassBIterator(SubClassB* ptr,int count){
+            _ptr = ptr;
+            _index = -1;
+            _current = 0;
+            _count = count;
+        }
+
+        public Boolean MoveNext(){
+            while (++_index < _count) {
+                if (_ptr[_index]._entity._active) {
+                    _current = (long) (&_ptr[_index]);
+                    return true;
+                }
+            }
+            _current = 0;
+            return false;
+        }
+
+        public void Reset(){
+            _index = -1;
+            _current = 0;
+        }
+        public void Dispose(){ }
+    }
     [StructLayoutAttribute(LayoutKind.Sequential, Pack = Define.PackSize)]
     public unsafe partial struct EnemyIterator : IEnumerator<long>, IEnumerable<long> {
         private Int32 _index;

@@ -19,11 +19,253 @@ using System.Collections.Generic;
 using System.Collections;                                                                        
 using System.Runtime.CompilerServices;                                                           
 using Lockstep.Game;                                                                             
-using Unity.Burst;                                                                               
 using Lockstep.Math;                                                                             
+using Unity.Burst;                                                                               
 using Unity.Mathematics;                                                                                                                                                                            
 
 namespace GamesTan.ECS.Game {  
+    [System.Serializable]
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe partial struct PClassA :IEntity {
+
+        public const Int32 INIT_COUNT = 1;
+        public Entity _entity;
+        public  void _SetEntityRef(EntityRef value) {
+            _entity._ref = value;
+        }
+        public bool IsValid => _entity._active;
+        // BuildIn properties
+        public EntityRef EntityRef =>_entity._ref;
+        public int EntityIndex =>_entity.EntityIndex;
+        public EEntityType EntityType => (EEntityType)(_entity.TypeId);
+        public bool IsActive =>_entity._active;
+        public int EntityId => _entity._localId;
+
+        // Fields
+        public AssetData AssetData;
+        public Transform3D TransformData;
+        public BasicData BasicData;
+        public PhysicData PhysicData;
+        public int Val1; 
+
+        /// <summary> GameObject Id   /// </summary>
+        public int GObjectId {
+            get => BasicData.GObjectId;
+            set => BasicData.GObjectId = value;
+        }
+        
+        /// <summary> 是否已经释放   /// </summary>
+        public bool IsAlreadyStart {
+            get => BasicData.StatusData.Is(0);
+            set => BasicData.StatusData.Set(0, value);
+        }
+
+        /// <summary> 旋转   /// </summary>
+        public float DegY {
+            get => TransformData.Rotation.y;
+            set => TransformData.Rotation.y = value;
+        }
+
+        public float3 Forward {
+            get {
+                float deg = math.radians(-DegY + 90);
+                return new float3(math.cos(deg), 0, math.sin(deg));
+            }
+        }
+
+        public float2 Forward2 {
+            get {
+                float deg = math.radians(-DegY + 90);
+                return new float2(math.cos(deg), math.sin(deg));
+            }
+        }
+        public float Radius {
+            get => PhysicData.Radius;
+            set => PhysicData.Radius = value;
+        }
+        public float3 Pos3 {
+            get => TransformData.Position;
+            set => TransformData.Position = value;
+        }
+        public float3 Rot3 {
+            get => TransformData.Rotation;
+            set => TransformData.Rotation = value;
+        }
+        public float3 Scale3 {
+            get => TransformData.Scale;
+            set => TransformData.Scale = value;
+        }
+        public float Scale {
+            get => TransformData.Scale.x;
+            set {
+                TransformData.Scale = new float3(2, 2, 2) * value;
+                PhysicData.Radius = value;
+            }
+        }
+
+    }
+    [System.Serializable]
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe partial struct SubClassA :IEntity {
+
+        public const Int32 INIT_COUNT = 1;
+        public Entity _entity;
+        public  void _SetEntityRef(EntityRef value) {
+            _entity._ref = value;
+        }
+        public bool IsValid => _entity._active;
+        // BuildIn properties
+        public EntityRef EntityRef =>_entity._ref;
+        public int EntityIndex =>_entity.EntityIndex;
+        public EEntityType EntityType => (EEntityType)(_entity.TypeId);
+        public bool IsActive =>_entity._active;
+        public int EntityId => _entity._localId;
+
+        // Fields
+        public AssetData AssetData;
+        public Transform3D TransformData;
+        public BasicData BasicData;
+        public PhysicData PhysicData;
+        public int Val1;
+        public float Val2; 
+
+        /// <summary> GameObject Id   /// </summary>
+        public int GObjectId {
+            get => BasicData.GObjectId;
+            set => BasicData.GObjectId = value;
+        }
+        
+        /// <summary> 是否已经释放   /// </summary>
+        public bool IsAlreadyStart {
+            get => BasicData.StatusData.Is(0);
+            set => BasicData.StatusData.Set(0, value);
+        }
+
+        /// <summary> 旋转   /// </summary>
+        public float DegY {
+            get => TransformData.Rotation.y;
+            set => TransformData.Rotation.y = value;
+        }
+
+        public float3 Forward {
+            get {
+                float deg = math.radians(-DegY + 90);
+                return new float3(math.cos(deg), 0, math.sin(deg));
+            }
+        }
+
+        public float2 Forward2 {
+            get {
+                float deg = math.radians(-DegY + 90);
+                return new float2(math.cos(deg), math.sin(deg));
+            }
+        }
+        public float Radius {
+            get => PhysicData.Radius;
+            set => PhysicData.Radius = value;
+        }
+        public float3 Pos3 {
+            get => TransformData.Position;
+            set => TransformData.Position = value;
+        }
+        public float3 Rot3 {
+            get => TransformData.Rotation;
+            set => TransformData.Rotation = value;
+        }
+        public float3 Scale3 {
+            get => TransformData.Scale;
+            set => TransformData.Scale = value;
+        }
+        public float Scale {
+            get => TransformData.Scale.x;
+            set {
+                TransformData.Scale = new float3(2, 2, 2) * value;
+                PhysicData.Radius = value;
+            }
+        }
+
+    }
+    [System.Serializable]
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe partial struct SubClassB :IEntity {
+
+        public const Int32 INIT_COUNT = 1;
+        public Entity _entity;
+        public  void _SetEntityRef(EntityRef value) {
+            _entity._ref = value;
+        }
+        public bool IsValid => _entity._active;
+        // BuildIn properties
+        public EntityRef EntityRef =>_entity._ref;
+        public int EntityIndex =>_entity.EntityIndex;
+        public EEntityType EntityType => (EEntityType)(_entity.TypeId);
+        public bool IsActive =>_entity._active;
+        public int EntityId => _entity._localId;
+
+        // Fields
+        public AssetData AssetData;
+        public Transform3D TransformData;
+        public BasicData BasicData;
+        public PhysicData PhysicData;
+        public int Val1;
+        public long Val3; 
+
+        /// <summary> GameObject Id   /// </summary>
+        public int GObjectId {
+            get => BasicData.GObjectId;
+            set => BasicData.GObjectId = value;
+        }
+        
+        /// <summary> 是否已经释放   /// </summary>
+        public bool IsAlreadyStart {
+            get => BasicData.StatusData.Is(0);
+            set => BasicData.StatusData.Set(0, value);
+        }
+
+        /// <summary> 旋转   /// </summary>
+        public float DegY {
+            get => TransformData.Rotation.y;
+            set => TransformData.Rotation.y = value;
+        }
+
+        public float3 Forward {
+            get {
+                float deg = math.radians(-DegY + 90);
+                return new float3(math.cos(deg), 0, math.sin(deg));
+            }
+        }
+
+        public float2 Forward2 {
+            get {
+                float deg = math.radians(-DegY + 90);
+                return new float2(math.cos(deg), math.sin(deg));
+            }
+        }
+        public float Radius {
+            get => PhysicData.Radius;
+            set => PhysicData.Radius = value;
+        }
+        public float3 Pos3 {
+            get => TransformData.Position;
+            set => TransformData.Position = value;
+        }
+        public float3 Rot3 {
+            get => TransformData.Rotation;
+            set => TransformData.Rotation = value;
+        }
+        public float3 Scale3 {
+            get => TransformData.Scale;
+            set => TransformData.Scale = value;
+        }
+        public float Scale {
+            get => TransformData.Scale.x;
+            set {
+                TransformData.Scale = new float3(2, 2, 2) * value;
+                PhysicData.Radius = value;
+            }
+        }
+
+    }
     [System.Serializable]
     [StructLayout(LayoutKind.Sequential)]
     public unsafe partial struct Enemy :IEntity {
@@ -42,15 +284,15 @@ namespace GamesTan.ECS.Game {
         public int EntityId => _entity._localId;
 
         // Fields
+        public AssetData AssetData;
+        public Transform3D TransformData;
+        public BasicData BasicData;
+        public PhysicData PhysicData;
         public EnemyTag EnemyTag;
         public UnitData UnitData;
         public AIData AIData;
         public AnimRenderData AnimRenderData;
-        public AnimData AnimData;
-        public AssetData AssetData;
-        public Transform3D TransformData;
-        public BasicData BasicData;
-        public PhysicData PhysicData; 
+        public AnimData AnimData; 
 
         /// <summary> GameObject Id   /// </summary>
         public int GObjectId {
@@ -126,13 +368,13 @@ namespace GamesTan.ECS.Game {
         public int EntityId => _entity._localId;
 
         // Fields
-        public BulletTag BulletTag;
-        public MeshRenderData MeshRenderData;
-        public UnitData UnitData;
         public AssetData AssetData;
         public Transform3D TransformData;
         public BasicData BasicData;
-        public PhysicData PhysicData; 
+        public PhysicData PhysicData;
+        public BulletTag BulletTag;
+        public MeshRenderData MeshRenderData;
+        public UnitData UnitData; 
 
         /// <summary> GameObject Id   /// </summary>
         public int GObjectId {
@@ -208,13 +450,13 @@ namespace GamesTan.ECS.Game {
         public int EntityId => _entity._localId;
 
         // Fields
-        public SpawnerTag SpawnerTag;
-        public MeshRenderData MeshRenderData;
-        public EmitterData EmitterData;
         public AssetData AssetData;
         public Transform3D TransformData;
         public BasicData BasicData;
-        public PhysicData PhysicData; 
+        public PhysicData PhysicData;
+        public SpawnerTag SpawnerTag;
+        public MeshRenderData MeshRenderData;
+        public EmitterData EmitterData; 
 
         /// <summary> GameObject Id   /// </summary>
         public int GObjectId {

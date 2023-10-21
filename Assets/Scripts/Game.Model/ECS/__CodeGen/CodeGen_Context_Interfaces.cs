@@ -19,13 +19,43 @@ using System.Collections.Generic;
 using System.Collections;                                                                        
 using System.Runtime.CompilerServices;                                                           
 using Lockstep.Game;                                                                             
-using Unity.Burst;                                                                               
 using Lockstep.Math;                                                                             
+using Unity.Burst;                                                                               
 using Unity.Mathematics;                                                                                                                                                                            
 namespace GamesTan.ECS.Game {  
     using Lockstep.Game;
     public unsafe partial class Context : BaseContext {
         public int CurTotalEntityCount => _entities.CurTotalEntityCount;
+        public int CurPClassACount => _entities.CurPClassACount;
+        public int MaxPClassAIndex => _entities.MaxPClassAIndex;
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] public unsafe PClassA* GetPClassA(int entityId) { 
+            var ptr = GetEntity(entityId);
+            if (ptr == null) return null;
+            if (ptr->TypeId != EntityIds.PClassA) return null;
+            return (PClassA*)ptr;
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] public unsafe PClassA* GetPClassAInternalByIdx(int index) { return _entities.GetPClassA(index); }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] public unsafe PClassA* GetPClassA(EntityRef entityRef) {  return _entities.GetPClassA(entityRef); }
+        public int CurSubClassACount => _entities.CurSubClassACount;
+        public int MaxSubClassAIndex => _entities.MaxSubClassAIndex;
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] public unsafe SubClassA* GetSubClassA(int entityId) { 
+            var ptr = GetEntity(entityId);
+            if (ptr == null) return null;
+            if (ptr->TypeId != EntityIds.SubClassA) return null;
+            return (SubClassA*)ptr;
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] public unsafe SubClassA* GetSubClassAInternalByIdx(int index) { return _entities.GetSubClassA(index); }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] public unsafe SubClassA* GetSubClassA(EntityRef entityRef) {  return _entities.GetSubClassA(entityRef); }
+        public int CurSubClassBCount => _entities.CurSubClassBCount;
+        public int MaxSubClassBIndex => _entities.MaxSubClassBIndex;
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] public unsafe SubClassB* GetSubClassB(int entityId) { 
+            var ptr = GetEntity(entityId);
+            if (ptr == null) return null;
+            if (ptr->TypeId != EntityIds.SubClassB) return null;
+            return (SubClassB*)ptr;
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] public unsafe SubClassB* GetSubClassBInternalByIdx(int index) { return _entities.GetSubClassB(index); }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] public unsafe SubClassB* GetSubClassB(EntityRef entityRef) {  return _entities.GetSubClassB(entityRef); }
         public int CurEnemyCount => _entities.CurEnemyCount;
         public int MaxEnemyIndex => _entities.MaxEnemyIndex;
         [MethodImpl(MethodImplOptions.AggressiveInlining)] public unsafe Enemy* GetEnemy(int entityId) { 
@@ -58,6 +88,111 @@ namespace GamesTan.ECS.Game {
         [MethodImpl(MethodImplOptions.AggressiveInlining)] public unsafe BulletEmitter* GetBulletEmitter(EntityRef entityRef) {  return _entities.GetBulletEmitter(entityRef); } 
 
     #region GetComponetFilter
+        public void GetAllPClassA_AssetData(EAllocatorType allocatorType, out NativeArray<EntityRef> entityAry,
+            out NativeArray<AssetData> compArray, FuncEntityFilter<PClassA> filterFunc){
+            _FilterEntity(allocatorType,_entities._PClassAAry._EntityAry,out entityAry,out compArray,filterFunc,
+             (elst,clst,p)=>{ if (p->IsActive && filterFunc(p)) { elst.Add(p->EntityRef);clst.Add(p->AssetData); } });
+        }
+        public void GetAllPClassA_TransformData(EAllocatorType allocatorType, out NativeArray<EntityRef> entityAry,
+            out NativeArray<Transform3D> compArray, FuncEntityFilter<PClassA> filterFunc){
+            _FilterEntity(allocatorType,_entities._PClassAAry._EntityAry,out entityAry,out compArray,filterFunc,
+             (elst,clst,p)=>{ if (p->IsActive && filterFunc(p)) { elst.Add(p->EntityRef);clst.Add(p->TransformData); } });
+        }
+        public void GetAllPClassA_BasicData(EAllocatorType allocatorType, out NativeArray<EntityRef> entityAry,
+            out NativeArray<BasicData> compArray, FuncEntityFilter<PClassA> filterFunc){
+            _FilterEntity(allocatorType,_entities._PClassAAry._EntityAry,out entityAry,out compArray,filterFunc,
+             (elst,clst,p)=>{ if (p->IsActive && filterFunc(p)) { elst.Add(p->EntityRef);clst.Add(p->BasicData); } });
+        }
+        public void GetAllPClassA_PhysicData(EAllocatorType allocatorType, out NativeArray<EntityRef> entityAry,
+            out NativeArray<PhysicData> compArray, FuncEntityFilter<PClassA> filterFunc){
+            _FilterEntity(allocatorType,_entities._PClassAAry._EntityAry,out entityAry,out compArray,filterFunc,
+             (elst,clst,p)=>{ if (p->IsActive && filterFunc(p)) { elst.Add(p->EntityRef);clst.Add(p->PhysicData); } });
+        }
+        public void GetAllPClassA_Val1(EAllocatorType allocatorType, out NativeArray<EntityRef> entityAry,
+            out NativeArray<int> compArray, FuncEntityFilter<PClassA> filterFunc){
+            _FilterEntity(allocatorType,_entities._PClassAAry._EntityAry,out entityAry,out compArray,filterFunc,
+             (elst,clst,p)=>{ if (p->IsActive && filterFunc(p)) { elst.Add(p->EntityRef);clst.Add(p->Val1); } });
+        } 
+        public void GetAllSubClassA_AssetData(EAllocatorType allocatorType, out NativeArray<EntityRef> entityAry,
+            out NativeArray<AssetData> compArray, FuncEntityFilter<SubClassA> filterFunc){
+            _FilterEntity(allocatorType,_entities._SubClassAAry._EntityAry,out entityAry,out compArray,filterFunc,
+             (elst,clst,p)=>{ if (p->IsActive && filterFunc(p)) { elst.Add(p->EntityRef);clst.Add(p->AssetData); } });
+        }
+        public void GetAllSubClassA_TransformData(EAllocatorType allocatorType, out NativeArray<EntityRef> entityAry,
+            out NativeArray<Transform3D> compArray, FuncEntityFilter<SubClassA> filterFunc){
+            _FilterEntity(allocatorType,_entities._SubClassAAry._EntityAry,out entityAry,out compArray,filterFunc,
+             (elst,clst,p)=>{ if (p->IsActive && filterFunc(p)) { elst.Add(p->EntityRef);clst.Add(p->TransformData); } });
+        }
+        public void GetAllSubClassA_BasicData(EAllocatorType allocatorType, out NativeArray<EntityRef> entityAry,
+            out NativeArray<BasicData> compArray, FuncEntityFilter<SubClassA> filterFunc){
+            _FilterEntity(allocatorType,_entities._SubClassAAry._EntityAry,out entityAry,out compArray,filterFunc,
+             (elst,clst,p)=>{ if (p->IsActive && filterFunc(p)) { elst.Add(p->EntityRef);clst.Add(p->BasicData); } });
+        }
+        public void GetAllSubClassA_PhysicData(EAllocatorType allocatorType, out NativeArray<EntityRef> entityAry,
+            out NativeArray<PhysicData> compArray, FuncEntityFilter<SubClassA> filterFunc){
+            _FilterEntity(allocatorType,_entities._SubClassAAry._EntityAry,out entityAry,out compArray,filterFunc,
+             (elst,clst,p)=>{ if (p->IsActive && filterFunc(p)) { elst.Add(p->EntityRef);clst.Add(p->PhysicData); } });
+        }
+        public void GetAllSubClassA_Val1(EAllocatorType allocatorType, out NativeArray<EntityRef> entityAry,
+            out NativeArray<int> compArray, FuncEntityFilter<SubClassA> filterFunc){
+            _FilterEntity(allocatorType,_entities._SubClassAAry._EntityAry,out entityAry,out compArray,filterFunc,
+             (elst,clst,p)=>{ if (p->IsActive && filterFunc(p)) { elst.Add(p->EntityRef);clst.Add(p->Val1); } });
+        }
+        public void GetAllSubClassA_Val2(EAllocatorType allocatorType, out NativeArray<EntityRef> entityAry,
+            out NativeArray<float> compArray, FuncEntityFilter<SubClassA> filterFunc){
+            _FilterEntity(allocatorType,_entities._SubClassAAry._EntityAry,out entityAry,out compArray,filterFunc,
+             (elst,clst,p)=>{ if (p->IsActive && filterFunc(p)) { elst.Add(p->EntityRef);clst.Add(p->Val2); } });
+        } 
+        public void GetAllSubClassB_AssetData(EAllocatorType allocatorType, out NativeArray<EntityRef> entityAry,
+            out NativeArray<AssetData> compArray, FuncEntityFilter<SubClassB> filterFunc){
+            _FilterEntity(allocatorType,_entities._SubClassBAry._EntityAry,out entityAry,out compArray,filterFunc,
+             (elst,clst,p)=>{ if (p->IsActive && filterFunc(p)) { elst.Add(p->EntityRef);clst.Add(p->AssetData); } });
+        }
+        public void GetAllSubClassB_TransformData(EAllocatorType allocatorType, out NativeArray<EntityRef> entityAry,
+            out NativeArray<Transform3D> compArray, FuncEntityFilter<SubClassB> filterFunc){
+            _FilterEntity(allocatorType,_entities._SubClassBAry._EntityAry,out entityAry,out compArray,filterFunc,
+             (elst,clst,p)=>{ if (p->IsActive && filterFunc(p)) { elst.Add(p->EntityRef);clst.Add(p->TransformData); } });
+        }
+        public void GetAllSubClassB_BasicData(EAllocatorType allocatorType, out NativeArray<EntityRef> entityAry,
+            out NativeArray<BasicData> compArray, FuncEntityFilter<SubClassB> filterFunc){
+            _FilterEntity(allocatorType,_entities._SubClassBAry._EntityAry,out entityAry,out compArray,filterFunc,
+             (elst,clst,p)=>{ if (p->IsActive && filterFunc(p)) { elst.Add(p->EntityRef);clst.Add(p->BasicData); } });
+        }
+        public void GetAllSubClassB_PhysicData(EAllocatorType allocatorType, out NativeArray<EntityRef> entityAry,
+            out NativeArray<PhysicData> compArray, FuncEntityFilter<SubClassB> filterFunc){
+            _FilterEntity(allocatorType,_entities._SubClassBAry._EntityAry,out entityAry,out compArray,filterFunc,
+             (elst,clst,p)=>{ if (p->IsActive && filterFunc(p)) { elst.Add(p->EntityRef);clst.Add(p->PhysicData); } });
+        }
+        public void GetAllSubClassB_Val1(EAllocatorType allocatorType, out NativeArray<EntityRef> entityAry,
+            out NativeArray<int> compArray, FuncEntityFilter<SubClassB> filterFunc){
+            _FilterEntity(allocatorType,_entities._SubClassBAry._EntityAry,out entityAry,out compArray,filterFunc,
+             (elst,clst,p)=>{ if (p->IsActive && filterFunc(p)) { elst.Add(p->EntityRef);clst.Add(p->Val1); } });
+        }
+        public void GetAllSubClassB_Val3(EAllocatorType allocatorType, out NativeArray<EntityRef> entityAry,
+            out NativeArray<long> compArray, FuncEntityFilter<SubClassB> filterFunc){
+            _FilterEntity(allocatorType,_entities._SubClassBAry._EntityAry,out entityAry,out compArray,filterFunc,
+             (elst,clst,p)=>{ if (p->IsActive && filterFunc(p)) { elst.Add(p->EntityRef);clst.Add(p->Val3); } });
+        } 
+        public void GetAllEnemy_AssetData(EAllocatorType allocatorType, out NativeArray<EntityRef> entityAry,
+            out NativeArray<AssetData> compArray, FuncEntityFilter<Enemy> filterFunc){
+            _FilterEntity(allocatorType,_entities._EnemyAry._EntityAry,out entityAry,out compArray,filterFunc,
+             (elst,clst,p)=>{ if (p->IsActive && filterFunc(p)) { elst.Add(p->EntityRef);clst.Add(p->AssetData); } });
+        }
+        public void GetAllEnemy_TransformData(EAllocatorType allocatorType, out NativeArray<EntityRef> entityAry,
+            out NativeArray<Transform3D> compArray, FuncEntityFilter<Enemy> filterFunc){
+            _FilterEntity(allocatorType,_entities._EnemyAry._EntityAry,out entityAry,out compArray,filterFunc,
+             (elst,clst,p)=>{ if (p->IsActive && filterFunc(p)) { elst.Add(p->EntityRef);clst.Add(p->TransformData); } });
+        }
+        public void GetAllEnemy_BasicData(EAllocatorType allocatorType, out NativeArray<EntityRef> entityAry,
+            out NativeArray<BasicData> compArray, FuncEntityFilter<Enemy> filterFunc){
+            _FilterEntity(allocatorType,_entities._EnemyAry._EntityAry,out entityAry,out compArray,filterFunc,
+             (elst,clst,p)=>{ if (p->IsActive && filterFunc(p)) { elst.Add(p->EntityRef);clst.Add(p->BasicData); } });
+        }
+        public void GetAllEnemy_PhysicData(EAllocatorType allocatorType, out NativeArray<EntityRef> entityAry,
+            out NativeArray<PhysicData> compArray, FuncEntityFilter<Enemy> filterFunc){
+            _FilterEntity(allocatorType,_entities._EnemyAry._EntityAry,out entityAry,out compArray,filterFunc,
+             (elst,clst,p)=>{ if (p->IsActive && filterFunc(p)) { elst.Add(p->EntityRef);clst.Add(p->PhysicData); } });
+        }
         public void GetAllEnemy_EnemyTag(EAllocatorType allocatorType, out NativeArray<EntityRef> entityAry,
             out NativeArray<EnemyTag> compArray, FuncEntityFilter<Enemy> filterFunc){
             _FilterEntity(allocatorType,_entities._EnemyAry._EntityAry,out entityAry,out compArray,filterFunc,
@@ -82,42 +217,7 @@ namespace GamesTan.ECS.Game {
             out NativeArray<AnimData> compArray, FuncEntityFilter<Enemy> filterFunc){
             _FilterEntity(allocatorType,_entities._EnemyAry._EntityAry,out entityAry,out compArray,filterFunc,
              (elst,clst,p)=>{ if (p->IsActive && filterFunc(p)) { elst.Add(p->EntityRef);clst.Add(p->AnimData); } });
-        }
-        public void GetAllEnemy_AssetData(EAllocatorType allocatorType, out NativeArray<EntityRef> entityAry,
-            out NativeArray<AssetData> compArray, FuncEntityFilter<Enemy> filterFunc){
-            _FilterEntity(allocatorType,_entities._EnemyAry._EntityAry,out entityAry,out compArray,filterFunc,
-             (elst,clst,p)=>{ if (p->IsActive && filterFunc(p)) { elst.Add(p->EntityRef);clst.Add(p->AssetData); } });
-        }
-        public void GetAllEnemy_TransformData(EAllocatorType allocatorType, out NativeArray<EntityRef> entityAry,
-            out NativeArray<Transform3D> compArray, FuncEntityFilter<Enemy> filterFunc){
-            _FilterEntity(allocatorType,_entities._EnemyAry._EntityAry,out entityAry,out compArray,filterFunc,
-             (elst,clst,p)=>{ if (p->IsActive && filterFunc(p)) { elst.Add(p->EntityRef);clst.Add(p->TransformData); } });
-        }
-        public void GetAllEnemy_BasicData(EAllocatorType allocatorType, out NativeArray<EntityRef> entityAry,
-            out NativeArray<BasicData> compArray, FuncEntityFilter<Enemy> filterFunc){
-            _FilterEntity(allocatorType,_entities._EnemyAry._EntityAry,out entityAry,out compArray,filterFunc,
-             (elst,clst,p)=>{ if (p->IsActive && filterFunc(p)) { elst.Add(p->EntityRef);clst.Add(p->BasicData); } });
-        }
-        public void GetAllEnemy_PhysicData(EAllocatorType allocatorType, out NativeArray<EntityRef> entityAry,
-            out NativeArray<PhysicData> compArray, FuncEntityFilter<Enemy> filterFunc){
-            _FilterEntity(allocatorType,_entities._EnemyAry._EntityAry,out entityAry,out compArray,filterFunc,
-             (elst,clst,p)=>{ if (p->IsActive && filterFunc(p)) { elst.Add(p->EntityRef);clst.Add(p->PhysicData); } });
         } 
-        public void GetAllBullet_BulletTag(EAllocatorType allocatorType, out NativeArray<EntityRef> entityAry,
-            out NativeArray<BulletTag> compArray, FuncEntityFilter<Bullet> filterFunc){
-            _FilterEntity(allocatorType,_entities._BulletAry._EntityAry,out entityAry,out compArray,filterFunc,
-             (elst,clst,p)=>{ if (p->IsActive && filterFunc(p)) { elst.Add(p->EntityRef);clst.Add(p->BulletTag); } });
-        }
-        public void GetAllBullet_MeshRenderData(EAllocatorType allocatorType, out NativeArray<EntityRef> entityAry,
-            out NativeArray<MeshRenderData> compArray, FuncEntityFilter<Bullet> filterFunc){
-            _FilterEntity(allocatorType,_entities._BulletAry._EntityAry,out entityAry,out compArray,filterFunc,
-             (elst,clst,p)=>{ if (p->IsActive && filterFunc(p)) { elst.Add(p->EntityRef);clst.Add(p->MeshRenderData); } });
-        }
-        public void GetAllBullet_UnitData(EAllocatorType allocatorType, out NativeArray<EntityRef> entityAry,
-            out NativeArray<UnitData> compArray, FuncEntityFilter<Bullet> filterFunc){
-            _FilterEntity(allocatorType,_entities._BulletAry._EntityAry,out entityAry,out compArray,filterFunc,
-             (elst,clst,p)=>{ if (p->IsActive && filterFunc(p)) { elst.Add(p->EntityRef);clst.Add(p->UnitData); } });
-        }
         public void GetAllBullet_AssetData(EAllocatorType allocatorType, out NativeArray<EntityRef> entityAry,
             out NativeArray<AssetData> compArray, FuncEntityFilter<Bullet> filterFunc){
             _FilterEntity(allocatorType,_entities._BulletAry._EntityAry,out entityAry,out compArray,filterFunc,
@@ -137,22 +237,22 @@ namespace GamesTan.ECS.Game {
             out NativeArray<PhysicData> compArray, FuncEntityFilter<Bullet> filterFunc){
             _FilterEntity(allocatorType,_entities._BulletAry._EntityAry,out entityAry,out compArray,filterFunc,
              (elst,clst,p)=>{ if (p->IsActive && filterFunc(p)) { elst.Add(p->EntityRef);clst.Add(p->PhysicData); } });
-        } 
-        public void GetAllBulletEmitter_SpawnerTag(EAllocatorType allocatorType, out NativeArray<EntityRef> entityAry,
-            out NativeArray<SpawnerTag> compArray, FuncEntityFilter<BulletEmitter> filterFunc){
-            _FilterEntity(allocatorType,_entities._BulletEmitterAry._EntityAry,out entityAry,out compArray,filterFunc,
-             (elst,clst,p)=>{ if (p->IsActive && filterFunc(p)) { elst.Add(p->EntityRef);clst.Add(p->SpawnerTag); } });
         }
-        public void GetAllBulletEmitter_MeshRenderData(EAllocatorType allocatorType, out NativeArray<EntityRef> entityAry,
-            out NativeArray<MeshRenderData> compArray, FuncEntityFilter<BulletEmitter> filterFunc){
-            _FilterEntity(allocatorType,_entities._BulletEmitterAry._EntityAry,out entityAry,out compArray,filterFunc,
+        public void GetAllBullet_BulletTag(EAllocatorType allocatorType, out NativeArray<EntityRef> entityAry,
+            out NativeArray<BulletTag> compArray, FuncEntityFilter<Bullet> filterFunc){
+            _FilterEntity(allocatorType,_entities._BulletAry._EntityAry,out entityAry,out compArray,filterFunc,
+             (elst,clst,p)=>{ if (p->IsActive && filterFunc(p)) { elst.Add(p->EntityRef);clst.Add(p->BulletTag); } });
+        }
+        public void GetAllBullet_MeshRenderData(EAllocatorType allocatorType, out NativeArray<EntityRef> entityAry,
+            out NativeArray<MeshRenderData> compArray, FuncEntityFilter<Bullet> filterFunc){
+            _FilterEntity(allocatorType,_entities._BulletAry._EntityAry,out entityAry,out compArray,filterFunc,
              (elst,clst,p)=>{ if (p->IsActive && filterFunc(p)) { elst.Add(p->EntityRef);clst.Add(p->MeshRenderData); } });
         }
-        public void GetAllBulletEmitter_EmitterData(EAllocatorType allocatorType, out NativeArray<EntityRef> entityAry,
-            out NativeArray<EmitterData> compArray, FuncEntityFilter<BulletEmitter> filterFunc){
-            _FilterEntity(allocatorType,_entities._BulletEmitterAry._EntityAry,out entityAry,out compArray,filterFunc,
-             (elst,clst,p)=>{ if (p->IsActive && filterFunc(p)) { elst.Add(p->EntityRef);clst.Add(p->EmitterData); } });
-        }
+        public void GetAllBullet_UnitData(EAllocatorType allocatorType, out NativeArray<EntityRef> entityAry,
+            out NativeArray<UnitData> compArray, FuncEntityFilter<Bullet> filterFunc){
+            _FilterEntity(allocatorType,_entities._BulletAry._EntityAry,out entityAry,out compArray,filterFunc,
+             (elst,clst,p)=>{ if (p->IsActive && filterFunc(p)) { elst.Add(p->EntityRef);clst.Add(p->UnitData); } });
+        } 
         public void GetAllBulletEmitter_AssetData(EAllocatorType allocatorType, out NativeArray<EntityRef> entityAry,
             out NativeArray<AssetData> compArray, FuncEntityFilter<BulletEmitter> filterFunc){
             _FilterEntity(allocatorType,_entities._BulletEmitterAry._EntityAry,out entityAry,out compArray,filterFunc,
@@ -172,6 +272,21 @@ namespace GamesTan.ECS.Game {
             out NativeArray<PhysicData> compArray, FuncEntityFilter<BulletEmitter> filterFunc){
             _FilterEntity(allocatorType,_entities._BulletEmitterAry._EntityAry,out entityAry,out compArray,filterFunc,
              (elst,clst,p)=>{ if (p->IsActive && filterFunc(p)) { elst.Add(p->EntityRef);clst.Add(p->PhysicData); } });
+        }
+        public void GetAllBulletEmitter_SpawnerTag(EAllocatorType allocatorType, out NativeArray<EntityRef> entityAry,
+            out NativeArray<SpawnerTag> compArray, FuncEntityFilter<BulletEmitter> filterFunc){
+            _FilterEntity(allocatorType,_entities._BulletEmitterAry._EntityAry,out entityAry,out compArray,filterFunc,
+             (elst,clst,p)=>{ if (p->IsActive && filterFunc(p)) { elst.Add(p->EntityRef);clst.Add(p->SpawnerTag); } });
+        }
+        public void GetAllBulletEmitter_MeshRenderData(EAllocatorType allocatorType, out NativeArray<EntityRef> entityAry,
+            out NativeArray<MeshRenderData> compArray, FuncEntityFilter<BulletEmitter> filterFunc){
+            _FilterEntity(allocatorType,_entities._BulletEmitterAry._EntityAry,out entityAry,out compArray,filterFunc,
+             (elst,clst,p)=>{ if (p->IsActive && filterFunc(p)) { elst.Add(p->EntityRef);clst.Add(p->MeshRenderData); } });
+        }
+        public void GetAllBulletEmitter_EmitterData(EAllocatorType allocatorType, out NativeArray<EntityRef> entityAry,
+            out NativeArray<EmitterData> compArray, FuncEntityFilter<BulletEmitter> filterFunc){
+            _FilterEntity(allocatorType,_entities._BulletEmitterAry._EntityAry,out entityAry,out compArray,filterFunc,
+             (elst,clst,p)=>{ if (p->IsActive && filterFunc(p)) { elst.Add(p->EntityRef);clst.Add(p->EmitterData); } });
         }   
         public NativeArray<MeshRenderData> GetAllMeshRenderData(EAllocatorType allocatorType,E_EntityOfMeshRenderData entity){ var val = _entities.GetAllMeshRenderData(entity);_RegisterAry(allocatorType,ref val); return val;}
         public NativeArray<MeshRenderData> GetAllMeshRenderData(EAllocatorType allocatorType,E_EntityOfMeshRenderData entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllMeshRenderData(entity,filterFunc,out length); _RegisterAry(allocatorType,ref val);; return val;}

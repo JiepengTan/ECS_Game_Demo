@@ -43,6 +43,9 @@ namespace GamesTan.ECS.Game {
         public static FuncOnBindView[] _lutFuncOnBindView = new FuncOnBindView[] {
             null,
             null,
+            null,
+            null,
+            null,
             _OnBindEntityViewBullet,
             null,        
         };

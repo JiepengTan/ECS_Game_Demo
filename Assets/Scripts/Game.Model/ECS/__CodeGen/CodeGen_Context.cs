@@ -19,8 +19,8 @@ using System.Collections.Generic;
 using System.Collections;                                                                        
 using System.Runtime.CompilerServices;                                                           
 using Lockstep.Game;                                                                             
-using Unity.Burst;                                                                               
 using Lockstep.Math;                                                                             
+using Unity.Burst;                                                                               
 using Unity.Mathematics;                                                                                                                                                                            
 namespace GamesTan.ECS.Game {  
     using Lockstep.Game;    
@@ -70,6 +70,12 @@ namespace GamesTan.ECS.Game {
         }
     #endregion
     #region Lifecycle
+        private FuncOnEntityCreated<PClassA> funcOnCreateEntityPClassA;
+        private FuncOnEntityCreated<PClassA> funcResetEntityPClassA;
+        private FuncOnEntityCreated<SubClassA> funcOnCreateEntitySubClassA;
+        private FuncOnEntityCreated<SubClassA> funcResetEntitySubClassA;
+        private FuncOnEntityCreated<SubClassB> funcOnCreateEntitySubClassB;
+        private FuncOnEntityCreated<SubClassB> funcResetEntitySubClassB;
         private FuncOnEntityCreated<Enemy> funcOnCreateEntityEnemy;
         private FuncOnEntityCreated<Enemy> funcResetEntityEnemy;
         private FuncOnEntityCreated<Bullet> funcOnCreateEntityBullet;
@@ -85,6 +91,12 @@ namespace GamesTan.ECS.Game {
             _entities.Alloc();
             _services = services;
             // reduce gc
+            funcOnCreateEntityPClassA = OnEntityCreatedPClassA;
+            funcResetEntityPClassA = ResetEntityPClassA;
+            funcOnCreateEntitySubClassA = OnEntityCreatedSubClassA;
+            funcResetEntitySubClassA = ResetEntitySubClassA;
+            funcOnCreateEntitySubClassB = OnEntityCreatedSubClassB;
+            funcResetEntitySubClassB = ResetEntitySubClassB;
             funcOnCreateEntityEnemy = OnEntityCreatedEnemy;
             funcResetEntityEnemy = ResetEntityEnemy;
             funcOnCreateEntityBullet = OnEntityCreatedBullet;
@@ -117,6 +129,9 @@ namespace GamesTan.ECS.Game {
         }
         public Entity* GetEntity(EntityRef entityRef){
             switch (entityRef._type) {
+                case EntityIds.PClassA: return (Entity*) GetPClassA(entityRef);
+                case EntityIds.SubClassA: return (Entity*) GetSubClassA(entityRef);
+                case EntityIds.SubClassB: return (Entity*) GetSubClassB(entityRef);
                 case EntityIds.Enemy: return (Entity*) GetEnemy(entityRef);
                 case EntityIds.Bullet: return (Entity*) GetBullet(entityRef);
                 case EntityIds.BulletEmitter: return (Entity*) GetBulletEmitter(entityRef); 
@@ -134,6 +149,15 @@ namespace GamesTan.ECS.Game {
             }
 
             switch (entity->_ref._type) {
+                case EntityIds.PClassA:
+                    DestroyPClassAInternal((PClassA*) entity);
+                    break;
+                case EntityIds.SubClassA:
+                    DestroySubClassAInternal((SubClassA*) entity);
+                    break;
+                case EntityIds.SubClassB:
+                    DestroySubClassBInternal((SubClassB*) entity);
+                    break;
                 case EntityIds.Enemy:
                     DestroyEnemyInternal((Enemy*) entity);
                     break;
@@ -146,6 +170,15 @@ namespace GamesTan.ECS.Game {
             }
         }
   
+        private unsafe void PostUpdateCreatePClassA(){
+            _entities._PClassAAry.PostUpdateCreate(funcOnCreateEntityPClassA,funcResetEntityPClassA);
+        }
+        private unsafe void PostUpdateCreateSubClassA(){
+            _entities._SubClassAAry.PostUpdateCreate(funcOnCreateEntitySubClassA,funcResetEntitySubClassA);
+        }
+        private unsafe void PostUpdateCreateSubClassB(){
+            _entities._SubClassBAry.PostUpdateCreate(funcOnCreateEntitySubClassB,funcResetEntitySubClassB);
+        }
         private unsafe void PostUpdateCreateEnemy(){
             _entities._EnemyAry.PostUpdateCreate(funcOnCreateEntityEnemy,funcResetEntityEnemy);
         }
@@ -156,6 +189,138 @@ namespace GamesTan.ECS.Game {
             _entities._BulletEmitterAry.PostUpdateCreate(funcOnCreateEntityBulletEmitter,funcResetEntityBulletEmitter);
         } 
 
+    #endregion
+    #region Entity PClassA
+        private void OnEntityCreatedPClassA(PClassA* dstPtr){
+            _EntityCreated(&dstPtr->_entity);
+            _entityService.OnEntityCreated(this, (Entity*) dstPtr);
+            _entityService.OnPClassACreated(this, dstPtr);
+        }
+
+        private void ResetEntityPClassA(PClassA* dstPtr){
+            *dstPtr = _DefaultDefine.PClassA;
+        }
+        public Boolean PClassAExists(EntityRef entityRef){
+            return GetPClassA(entityRef) != null;
+        }
+
+        public PClassA* PostCmdCreatePClassA(){
+            return _entities.CreateTempPClassA(this);
+        }
+
+        private void DestroyPClassAInternal(PClassA* ptr){
+            _entities._PClassAAry.ReleaseEntity((Entity*)ptr);
+            _entityService.OnPClassADestroy(this, ptr);
+            _entityService.OnEntityDestroy(this, &ptr->_entity);
+            var copy = ptr->_entity;
+            *ptr = _DefaultDefine.PClassA;
+            ptr->_entity = copy;
+            _EntityDestroy(&ptr->_entity);
+        }
+
+        public void DestroyPClassA(PClassA* ptr){
+            if (ptr == null) {
+                return;
+            }
+
+            if (ptr->_entity._active == false) {
+                return;
+            }
+
+            _destroy.Enqueue(ptr->EntityRef);
+        }
+
+        public void DestroyPClassA(EntityRef entityRef){
+            _destroy.Enqueue(entityRef);
+        }
+    #endregion
+    #region Entity SubClassA
+        private void OnEntityCreatedSubClassA(SubClassA* dstPtr){
+            _EntityCreated(&dstPtr->_entity);
+            _entityService.OnEntityCreated(this, (Entity*) dstPtr);
+            _entityService.OnSubClassACreated(this, dstPtr);
+        }
+
+        private void ResetEntitySubClassA(SubClassA* dstPtr){
+            *dstPtr = _DefaultDefine.SubClassA;
+        }
+        public Boolean SubClassAExists(EntityRef entityRef){
+            return GetSubClassA(entityRef) != null;
+        }
+
+        public SubClassA* PostCmdCreateSubClassA(){
+            return _entities.CreateTempSubClassA(this);
+        }
+
+        private void DestroySubClassAInternal(SubClassA* ptr){
+            _entities._SubClassAAry.ReleaseEntity((Entity*)ptr);
+            _entityService.OnSubClassADestroy(this, ptr);
+            _entityService.OnEntityDestroy(this, &ptr->_entity);
+            var copy = ptr->_entity;
+            *ptr = _DefaultDefine.SubClassA;
+            ptr->_entity = copy;
+            _EntityDestroy(&ptr->_entity);
+        }
+
+        public void DestroySubClassA(SubClassA* ptr){
+            if (ptr == null) {
+                return;
+            }
+
+            if (ptr->_entity._active == false) {
+                return;
+            }
+
+            _destroy.Enqueue(ptr->EntityRef);
+        }
+
+        public void DestroySubClassA(EntityRef entityRef){
+            _destroy.Enqueue(entityRef);
+        }
+    #endregion
+    #region Entity SubClassB
+        private void OnEntityCreatedSubClassB(SubClassB* dstPtr){
+            _EntityCreated(&dstPtr->_entity);
+            _entityService.OnEntityCreated(this, (Entity*) dstPtr);
+            _entityService.OnSubClassBCreated(this, dstPtr);
+        }
+
+        private void ResetEntitySubClassB(SubClassB* dstPtr){
+            *dstPtr = _DefaultDefine.SubClassB;
+        }
+        public Boolean SubClassBExists(EntityRef entityRef){
+            return GetSubClassB(entityRef) != null;
+        }
+
+        public SubClassB* PostCmdCreateSubClassB(){
+            return _entities.CreateTempSubClassB(this);
+        }
+
+        private void DestroySubClassBInternal(SubClassB* ptr){
+            _entities._SubClassBAry.ReleaseEntity((Entity*)ptr);
+            _entityService.OnSubClassBDestroy(this, ptr);
+            _entityService.OnEntityDestroy(this, &ptr->_entity);
+            var copy = ptr->_entity;
+            *ptr = _DefaultDefine.SubClassB;
+            ptr->_entity = copy;
+            _EntityDestroy(&ptr->_entity);
+        }
+
+        public void DestroySubClassB(SubClassB* ptr){
+            if (ptr == null) {
+                return;
+            }
+
+            if (ptr->_entity._active == false) {
+                return;
+            }
+
+            _destroy.Enqueue(ptr->EntityRef);
+        }
+
+        public void DestroySubClassB(EntityRef entityRef){
+            _destroy.Enqueue(entityRef);
+        }
     #endregion
     #region Entity Enemy
         private void OnEntityCreatedEnemy(Enemy* dstPtr){
@@ -291,6 +456,15 @@ namespace GamesTan.ECS.Game {
     #endregion 
 
     #region GetEntity
+        private PClassAIterator GetAllPClassA(){
+            return new PClassAIterator(_entities.GetPClassA(0),_entities.MaxPClassAIndex + 1);
+        }
+        private SubClassAIterator GetAllSubClassA(){
+            return new SubClassAIterator(_entities.GetSubClassA(0),_entities.MaxSubClassAIndex + 1);
+        }
+        private SubClassBIterator GetAllSubClassB(){
+            return new SubClassBIterator(_entities.GetSubClassB(0),_entities.MaxSubClassBIndex + 1);
+        }
         private EnemyIterator GetAllEnemy(){
             return new EnemyIterator(_entities.GetEnemy(0),_entities.MaxEnemyIndex + 1);
         }
@@ -304,6 +478,27 @@ namespace GamesTan.ECS.Game {
         private EntityFilter[] GetAllEntities(){
             var all = new EntityFilter[_entities.CurTotalEntityCount];
             var count = 0;
+            {
+                var ptr = _entities.GetPClassA(0);
+                var len = _entities._PClassAAry.Length;
+                for (var i = 0; i < len; ++i, ++ptr) {
+                    all[count++].Entity = &ptr->_entity;
+                }
+            }
+            {
+                var ptr = _entities.GetSubClassA(0);
+                var len = _entities._SubClassAAry.Length;
+                for (var i = 0; i < len; ++i, ++ptr) {
+                    all[count++].Entity = &ptr->_entity;
+                }
+            }
+            {
+                var ptr = _entities.GetSubClassB(0);
+                var len = _entities._SubClassBAry.Length;
+                for (var i = 0; i < len; ++i, ++ptr) {
+                    all[count++].Entity = &ptr->_entity;
+                }
+            }
             {
                 var ptr = _entities.GetEnemy(0);
                 var len = _entities._EnemyAry.Length;
@@ -382,6 +577,45 @@ namespace GamesTan.ECS.Game {
         public unsafe Buffer<PhysicDataFilter> GetAllPhysicData()
         {
             Buffer<PhysicDataFilter> buffer = Buffer<PhysicDataFilter>.Alloc(_entities.CurTotalEntityCount);
+            PClassA* PClassAPtr = this._entities.GetPClassA(0);
+            var idxPClassA = 1;
+            while (idxPClassA >= 0)
+            {
+                if (PClassAPtr->_entity._active)
+                {
+                  buffer.Items[buffer.Count].Entity = &PClassAPtr->_entity;
+                  buffer.Items[buffer.Count].PhysicData = &PClassAPtr->PhysicData;
+                  ++buffer.Count;
+                }
+                --idxPClassA;
+                ++PClassAPtr;
+            }
+            SubClassA* SubClassAPtr = this._entities.GetSubClassA(0);
+            var idxSubClassA = 1;
+            while (idxSubClassA >= 0)
+            {
+                if (SubClassAPtr->_entity._active)
+                {
+                  buffer.Items[buffer.Count].Entity = &SubClassAPtr->_entity;
+                  buffer.Items[buffer.Count].PhysicData = &SubClassAPtr->PhysicData;
+                  ++buffer.Count;
+                }
+                --idxSubClassA;
+                ++SubClassAPtr;
+            }
+            SubClassB* SubClassBPtr = this._entities.GetSubClassB(0);
+            var idxSubClassB = 1;
+            while (idxSubClassB >= 0)
+            {
+                if (SubClassBPtr->_entity._active)
+                {
+                  buffer.Items[buffer.Count].Entity = &SubClassBPtr->_entity;
+                  buffer.Items[buffer.Count].PhysicData = &SubClassBPtr->PhysicData;
+                  ++buffer.Count;
+                }
+                --idxSubClassB;
+                ++SubClassBPtr;
+            }
             Enemy* EnemyPtr = this._entities.GetEnemy(0);
             var idxEnemy = 1;
             while (idxEnemy >= 0)
@@ -426,6 +660,45 @@ namespace GamesTan.ECS.Game {
         public unsafe Buffer<BasicDataFilter> GetAllBasicData()
         {
             Buffer<BasicDataFilter> buffer = Buffer<BasicDataFilter>.Alloc(_entities.CurTotalEntityCount);
+            PClassA* PClassAPtr = this._entities.GetPClassA(0);
+            var idxPClassA = 1;
+            while (idxPClassA >= 0)
+            {
+                if (PClassAPtr->_entity._active)
+                {
+                  buffer.Items[buffer.Count].Entity = &PClassAPtr->_entity;
+                  buffer.Items[buffer.Count].BasicData = &PClassAPtr->BasicData;
+                  ++buffer.Count;
+                }
+                --idxPClassA;
+                ++PClassAPtr;
+            }
+            SubClassA* SubClassAPtr = this._entities.GetSubClassA(0);
+            var idxSubClassA = 1;
+            while (idxSubClassA >= 0)
+            {
+                if (SubClassAPtr->_entity._active)
+                {
+                  buffer.Items[buffer.Count].Entity = &SubClassAPtr->_entity;
+                  buffer.Items[buffer.Count].BasicData = &SubClassAPtr->BasicData;
+                  ++buffer.Count;
+                }
+                --idxSubClassA;
+                ++SubClassAPtr;
+            }
+            SubClassB* SubClassBPtr = this._entities.GetSubClassB(0);
+            var idxSubClassB = 1;
+            while (idxSubClassB >= 0)
+            {
+                if (SubClassBPtr->_entity._active)
+                {
+                  buffer.Items[buffer.Count].Entity = &SubClassBPtr->_entity;
+                  buffer.Items[buffer.Count].BasicData = &SubClassBPtr->BasicData;
+                  ++buffer.Count;
+                }
+                --idxSubClassB;
+                ++SubClassBPtr;
+            }
             Enemy* EnemyPtr = this._entities.GetEnemy(0);
             var idxEnemy = 1;
             while (idxEnemy >= 0)
@@ -488,6 +761,45 @@ namespace GamesTan.ECS.Game {
         public unsafe Buffer<AssetDataFilter> GetAllAssetData()
         {
             Buffer<AssetDataFilter> buffer = Buffer<AssetDataFilter>.Alloc(_entities.CurTotalEntityCount);
+            PClassA* PClassAPtr = this._entities.GetPClassA(0);
+            var idxPClassA = 1;
+            while (idxPClassA >= 0)
+            {
+                if (PClassAPtr->_entity._active)
+                {
+                  buffer.Items[buffer.Count].Entity = &PClassAPtr->_entity;
+                  buffer.Items[buffer.Count].AssetData = &PClassAPtr->AssetData;
+                  ++buffer.Count;
+                }
+                --idxPClassA;
+                ++PClassAPtr;
+            }
+            SubClassA* SubClassAPtr = this._entities.GetSubClassA(0);
+            var idxSubClassA = 1;
+            while (idxSubClassA >= 0)
+            {
+                if (SubClassAPtr->_entity._active)
+                {
+                  buffer.Items[buffer.Count].Entity = &SubClassAPtr->_entity;
+                  buffer.Items[buffer.Count].AssetData = &SubClassAPtr->AssetData;
+                  ++buffer.Count;
+                }
+                --idxSubClassA;
+                ++SubClassAPtr;
+            }
+            SubClassB* SubClassBPtr = this._entities.GetSubClassB(0);
+            var idxSubClassB = 1;
+            while (idxSubClassB >= 0)
+            {
+                if (SubClassBPtr->_entity._active)
+                {
+                  buffer.Items[buffer.Count].Entity = &SubClassBPtr->_entity;
+                  buffer.Items[buffer.Count].AssetData = &SubClassBPtr->AssetData;
+                  ++buffer.Count;
+                }
+                --idxSubClassB;
+                ++SubClassBPtr;
+            }
             Enemy* EnemyPtr = this._entities.GetEnemy(0);
             var idxEnemy = 1;
             while (idxEnemy >= 0)

@@ -4,7 +4,21 @@ using System.Collections.Generic;
 using GamesTan.UnsafeECSDefine;
 
 namespace GamesTan.UnsafeECSDefine {
+    [InitEntityCount(1)]
+    public partial class PClassA : BaseGameEntity,IEntity,IVirtualClass {
+        public int Val1;
 
+    }
+    [InitEntityCount(1)]
+    public partial class SubClassA : PClassA {
+        public float Val2;
+
+    }
+    [InitEntityCount(1)]
+    public partial class SubClassB : PClassA {
+        public long Val3;
+    }
+    
     [InitEntityCount(1)]
     [Abstract]
     public partial class BaseGameEntity  {

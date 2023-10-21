@@ -19,8 +19,8 @@ using System.Collections.Generic;
 using System.Collections;                                                                        
 using System.Runtime.CompilerServices;                                                           
 using Lockstep.Game;                                                                             
-using Unity.Burst;                                                                               
 using Lockstep.Math;                                                                             
+using Unity.Burst;                                                                               
 using Unity.Mathematics;                                                                                                                                                                            
 namespace GamesTan.ECS.Game {  
     public unsafe partial class Context {    
@@ -39,6 +39,9 @@ namespace GamesTan.ECS.Game {
             _RegisterScheduleSystemFunc(typeof(GamesTan.ECS.Game.SysTestBulletUpdateCollision),ScheduleSysTestBulletUpdateCollision); 
         }
         public void _RegisterPostScheduleSystemFunc(){
+            _RegisterPostScheduleSystemFunc(EntityIds.PClassA,PostUpdateCreatePClassA);
+            _RegisterPostScheduleSystemFunc(EntityIds.SubClassA,PostUpdateCreateSubClassA);
+            _RegisterPostScheduleSystemFunc(EntityIds.SubClassB,PostUpdateCreateSubClassB);
             _RegisterPostScheduleSystemFunc(EntityIds.Enemy,PostUpdateCreateEnemy);
             _RegisterPostScheduleSystemFunc(EntityIds.Bullet,PostUpdateCreateBullet);
             _RegisterPostScheduleSystemFunc(EntityIds.BulletEmitter,PostUpdateCreateBulletEmitter); 

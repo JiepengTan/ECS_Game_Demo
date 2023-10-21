@@ -19,10 +19,16 @@ using System.Collections.Generic;
 using System.Collections;                                                                        
 using System.Runtime.CompilerServices;                                                           
 using Lockstep.Game;                                                                             
-using Unity.Burst;                                                                               
 using Lockstep.Math;                                                                             
+using Unity.Burst;                                                                               
 using Unity.Mathematics;                                                                                                                                                                            
 namespace GamesTan.ECS.Game {  
+    public unsafe class NativePoolPClassA :NativeEntityPool<PClassA>{
+    }
+    public unsafe class NativePoolSubClassA :NativeEntityPool<SubClassA>{
+    }
+    public unsafe class NativePoolSubClassB :NativeEntityPool<SubClassB>{
+    }
     public unsafe class NativePoolEnemy :NativeEntityPool<Enemy>{
     }
     public unsafe class NativePoolBullet :NativeEntityPool<Bullet>{

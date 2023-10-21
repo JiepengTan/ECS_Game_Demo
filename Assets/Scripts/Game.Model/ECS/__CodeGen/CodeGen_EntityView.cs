@@ -19,11 +19,29 @@ using System.Collections.Generic;
 using System.Collections;                                                                        
 using System.Runtime.CompilerServices;                                                           
 using Lockstep.Game;                                                                             
-using Unity.Burst;                                                                               
 using Lockstep.Math;                                                                             
+using Unity.Burst;                                                                               
 using Unity.Mathematics;                                                                                                                                                                            
 namespace GamesTan.ECS.Game {  
     public static unsafe partial class EntityUtil {
+        public static PClassA* CastToPClassA(Entity* entity){
+            if (entity != null && entity->_ref._type == EntityIds.PClassA) {
+                return (PClassA*) entity;
+            }
+            return null;
+        }
+        public static SubClassA* CastToSubClassA(Entity* entity){
+            if (entity != null && entity->_ref._type == EntityIds.SubClassA) {
+                return (SubClassA*) entity;
+            }
+            return null;
+        }
+        public static SubClassB* CastToSubClassB(Entity* entity){
+            if (entity != null && entity->_ref._type == EntityIds.SubClassB) {
+                return (SubClassB*) entity;
+            }
+            return null;
+        }
         public static Enemy* CastToEnemy(Entity* entity){
             if (entity != null && entity->_ref._type == EntityIds.Enemy) {
                 return (Enemy*) entity;
@@ -47,6 +65,9 @@ namespace GamesTan.ECS.Game {
                 return null;
             }
             switch (entity->_ref._type) {
+                case EntityIds.PClassA: return (object) (*((PClassA*) entity));
+                case EntityIds.SubClassA: return (object) (*((SubClassA*) entity));
+                case EntityIds.SubClassB: return (object) (*((SubClassB*) entity));
                 case EntityIds.Enemy: return (object) (*((Enemy*) entity));
                 case EntityIds.Bullet: return (object) (*((Bullet*) entity));
                 case EntityIds.BulletEmitter: return (object) (*((BulletEmitter*) entity)); 

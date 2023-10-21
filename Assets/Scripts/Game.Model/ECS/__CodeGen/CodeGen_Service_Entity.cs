@@ -19,11 +19,17 @@ using System.Collections.Generic;
 using System.Collections;                                                                        
 using System.Runtime.CompilerServices;                                                           
 using Lockstep.Game;                                                                             
-using Unity.Burst;                                                                               
 using Lockstep.Math;                                                                             
+using Unity.Burst;                                                                               
 using Unity.Mathematics;                                                                                                                                                                            
 namespace GamesTan.ECS.Game {  
     public unsafe partial interface IEntityService {
+        void OnPClassACreated(Context context, PClassA* entity);
+        void OnPClassADestroy(Context context, PClassA* entity);
+        void OnSubClassACreated(Context context, SubClassA* entity);
+        void OnSubClassADestroy(Context context, SubClassA* entity);
+        void OnSubClassBCreated(Context context, SubClassB* entity);
+        void OnSubClassBDestroy(Context context, SubClassB* entity);
         void OnEnemyCreated(Context context, Enemy* entity);
         void OnEnemyDestroy(Context context, Enemy* entity);
         void OnBulletCreated(Context context, Bullet* entity);
@@ -33,6 +39,12 @@ namespace GamesTan.ECS.Game {
     }
 
     public unsafe partial class PureEntityService :IEntityService {
+      public void OnPClassACreated(Context context, PClassA* entity){}
+      public void OnPClassADestroy(Context context, PClassA* entity){}
+      public void OnSubClassACreated(Context context, SubClassA* entity){}
+      public void OnSubClassADestroy(Context context, SubClassA* entity){}
+      public void OnSubClassBCreated(Context context, SubClassB* entity){}
+      public void OnSubClassBDestroy(Context context, SubClassB* entity){}
       public void OnEnemyCreated(Context context, Enemy* entity){}
       public void OnEnemyDestroy(Context context, Enemy* entity){}
       public void OnBulletCreated(Context context, Bullet* entity){}
