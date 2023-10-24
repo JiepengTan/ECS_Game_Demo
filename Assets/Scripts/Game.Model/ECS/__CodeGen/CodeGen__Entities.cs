@@ -68,9 +68,9 @@ namespace GamesTan.ECS.Game {
         private NativeArray<T> _GetAllSubClassA_int<T>(int compFieldOffset) where T: unmanaged{return _GetAllEntityField<T,SubClassA>(_SubClassAAry,_GetOffsetOfSubClassA_Val1()+ compFieldOffset);}
         private NativeArray<int> _GetAllSubClassA_Val1(){return _GetAllEntityField<int,SubClassA>(_SubClassAAry,_GetOffsetOfSubClassA_Val1());} 
         private int _GetOffsetOfSubClassA_Val1(){ var tempObj =  new SubClassA(); SubClassA* ptr = &tempObj;var filedPtr = &(ptr->Val1);  return (int)((long) filedPtr - (long) ptr);        }
-        private NativeArray<T> _GetAllSubClassA_float<T>(int compFieldOffset,FuncEntityFilter<Entity> filterFunc,out int length) where T: unmanaged{return _GetAllEntityField<T,SubClassA>(_SubClassAAry,_GetOffsetOfSubClassA_Val2() + compFieldOffset,filterFunc,out length);}
-        private NativeArray<T> _GetAllSubClassA_float<T>(int compFieldOffset) where T: unmanaged{return _GetAllEntityField<T,SubClassA>(_SubClassAAry,_GetOffsetOfSubClassA_Val2()+ compFieldOffset);}
-        private NativeArray<float> _GetAllSubClassA_Val2(){return _GetAllEntityField<float,SubClassA>(_SubClassAAry,_GetOffsetOfSubClassA_Val2());} 
+        private NativeArray<T> _GetAllSubClassA_LFloat<T>(int compFieldOffset,FuncEntityFilter<Entity> filterFunc,out int length) where T: unmanaged{return _GetAllEntityField<T,SubClassA>(_SubClassAAry,_GetOffsetOfSubClassA_Val2() + compFieldOffset,filterFunc,out length);}
+        private NativeArray<T> _GetAllSubClassA_LFloat<T>(int compFieldOffset) where T: unmanaged{return _GetAllEntityField<T,SubClassA>(_SubClassAAry,_GetOffsetOfSubClassA_Val2()+ compFieldOffset);}
+        private NativeArray<LFloat> _GetAllSubClassA_Val2(){return _GetAllEntityField<LFloat,SubClassA>(_SubClassAAry,_GetOffsetOfSubClassA_Val2());} 
         private int _GetOffsetOfSubClassA_Val2(){ var tempObj =  new SubClassA(); SubClassA* ptr = &tempObj;var filedPtr = &(ptr->Val2);  return (int)((long) filedPtr - (long) ptr);        } 
         private NativeArray<T> _GetAllSubClassB_AssetData<T>(int compFieldOffset,FuncEntityFilter<Entity> filterFunc,out int length) where T: unmanaged{return _GetAllEntityField<T,SubClassB>(_SubClassBAry,_GetOffsetOfSubClassB_AssetData() + compFieldOffset,filterFunc,out length);}
         private NativeArray<T> _GetAllSubClassB_AssetData<T>(int compFieldOffset) where T: unmanaged{return _GetAllEntityField<T,SubClassB>(_SubClassBAry,_GetOffsetOfSubClassB_AssetData()+ compFieldOffset);}
@@ -96,6 +96,34 @@ namespace GamesTan.ECS.Game {
         private NativeArray<T> _GetAllSubClassB_long<T>(int compFieldOffset) where T: unmanaged{return _GetAllEntityField<T,SubClassB>(_SubClassBAry,_GetOffsetOfSubClassB_Val3()+ compFieldOffset);}
         private NativeArray<long> _GetAllSubClassB_Val3(){return _GetAllEntityField<long,SubClassB>(_SubClassBAry,_GetOffsetOfSubClassB_Val3());} 
         private int _GetOffsetOfSubClassB_Val3(){ var tempObj =  new SubClassB(); SubClassB* ptr = &tempObj;var filedPtr = &(ptr->Val3);  return (int)((long) filedPtr - (long) ptr);        } 
+        private NativeArray<T> _GetAllSubClassBC_AssetData<T>(int compFieldOffset,FuncEntityFilter<Entity> filterFunc,out int length) where T: unmanaged{return _GetAllEntityField<T,SubClassBC>(_SubClassBCAry,_GetOffsetOfSubClassBC_AssetData() + compFieldOffset,filterFunc,out length);}
+        private NativeArray<T> _GetAllSubClassBC_AssetData<T>(int compFieldOffset) where T: unmanaged{return _GetAllEntityField<T,SubClassBC>(_SubClassBCAry,_GetOffsetOfSubClassBC_AssetData()+ compFieldOffset);}
+        private NativeArray<AssetData> _GetAllSubClassBC_AssetData(){return _GetAllEntityField<AssetData,SubClassBC>(_SubClassBCAry,_GetOffsetOfSubClassBC_AssetData());} 
+        private int _GetOffsetOfSubClassBC_AssetData(){ var tempObj =  new SubClassBC(); SubClassBC* ptr = &tempObj;var filedPtr = &(ptr->AssetData);  return (int)((long) filedPtr - (long) ptr);        }
+        private NativeArray<T> _GetAllSubClassBC_Transform3D<T>(int compFieldOffset,FuncEntityFilter<Entity> filterFunc,out int length) where T: unmanaged{return _GetAllEntityField<T,SubClassBC>(_SubClassBCAry,_GetOffsetOfSubClassBC_TransformData() + compFieldOffset,filterFunc,out length);}
+        private NativeArray<T> _GetAllSubClassBC_Transform3D<T>(int compFieldOffset) where T: unmanaged{return _GetAllEntityField<T,SubClassBC>(_SubClassBCAry,_GetOffsetOfSubClassBC_TransformData()+ compFieldOffset);}
+        private NativeArray<Transform3D> _GetAllSubClassBC_TransformData(){return _GetAllEntityField<Transform3D,SubClassBC>(_SubClassBCAry,_GetOffsetOfSubClassBC_TransformData());} 
+        private int _GetOffsetOfSubClassBC_TransformData(){ var tempObj =  new SubClassBC(); SubClassBC* ptr = &tempObj;var filedPtr = &(ptr->TransformData);  return (int)((long) filedPtr - (long) ptr);        }
+        private NativeArray<T> _GetAllSubClassBC_BasicData<T>(int compFieldOffset,FuncEntityFilter<Entity> filterFunc,out int length) where T: unmanaged{return _GetAllEntityField<T,SubClassBC>(_SubClassBCAry,_GetOffsetOfSubClassBC_BasicData() + compFieldOffset,filterFunc,out length);}
+        private NativeArray<T> _GetAllSubClassBC_BasicData<T>(int compFieldOffset) where T: unmanaged{return _GetAllEntityField<T,SubClassBC>(_SubClassBCAry,_GetOffsetOfSubClassBC_BasicData()+ compFieldOffset);}
+        private NativeArray<BasicData> _GetAllSubClassBC_BasicData(){return _GetAllEntityField<BasicData,SubClassBC>(_SubClassBCAry,_GetOffsetOfSubClassBC_BasicData());} 
+        private int _GetOffsetOfSubClassBC_BasicData(){ var tempObj =  new SubClassBC(); SubClassBC* ptr = &tempObj;var filedPtr = &(ptr->BasicData);  return (int)((long) filedPtr - (long) ptr);        }
+        private NativeArray<T> _GetAllSubClassBC_PhysicData<T>(int compFieldOffset,FuncEntityFilter<Entity> filterFunc,out int length) where T: unmanaged{return _GetAllEntityField<T,SubClassBC>(_SubClassBCAry,_GetOffsetOfSubClassBC_PhysicData() + compFieldOffset,filterFunc,out length);}
+        private NativeArray<T> _GetAllSubClassBC_PhysicData<T>(int compFieldOffset) where T: unmanaged{return _GetAllEntityField<T,SubClassBC>(_SubClassBCAry,_GetOffsetOfSubClassBC_PhysicData()+ compFieldOffset);}
+        private NativeArray<PhysicData> _GetAllSubClassBC_PhysicData(){return _GetAllEntityField<PhysicData,SubClassBC>(_SubClassBCAry,_GetOffsetOfSubClassBC_PhysicData());} 
+        private int _GetOffsetOfSubClassBC_PhysicData(){ var tempObj =  new SubClassBC(); SubClassBC* ptr = &tempObj;var filedPtr = &(ptr->PhysicData);  return (int)((long) filedPtr - (long) ptr);        }
+        private NativeArray<T> _GetAllSubClassBC_int<T>(int compFieldOffset,FuncEntityFilter<Entity> filterFunc,out int length) where T: unmanaged{return _GetAllEntityField<T,SubClassBC>(_SubClassBCAry,_GetOffsetOfSubClassBC_Val1() + compFieldOffset,filterFunc,out length);}
+        private NativeArray<T> _GetAllSubClassBC_int<T>(int compFieldOffset) where T: unmanaged{return _GetAllEntityField<T,SubClassBC>(_SubClassBCAry,_GetOffsetOfSubClassBC_Val1()+ compFieldOffset);}
+        private NativeArray<int> _GetAllSubClassBC_Val1(){return _GetAllEntityField<int,SubClassBC>(_SubClassBCAry,_GetOffsetOfSubClassBC_Val1());} 
+        private int _GetOffsetOfSubClassBC_Val1(){ var tempObj =  new SubClassBC(); SubClassBC* ptr = &tempObj;var filedPtr = &(ptr->Val1);  return (int)((long) filedPtr - (long) ptr);        }
+        private NativeArray<T> _GetAllSubClassBC_long<T>(int compFieldOffset,FuncEntityFilter<Entity> filterFunc,out int length) where T: unmanaged{return _GetAllEntityField<T,SubClassBC>(_SubClassBCAry,_GetOffsetOfSubClassBC_Val3() + compFieldOffset,filterFunc,out length);}
+        private NativeArray<T> _GetAllSubClassBC_long<T>(int compFieldOffset) where T: unmanaged{return _GetAllEntityField<T,SubClassBC>(_SubClassBCAry,_GetOffsetOfSubClassBC_Val3()+ compFieldOffset);}
+        private NativeArray<long> _GetAllSubClassBC_Val3(){return _GetAllEntityField<long,SubClassBC>(_SubClassBCAry,_GetOffsetOfSubClassBC_Val3());} 
+        private int _GetOffsetOfSubClassBC_Val3(){ var tempObj =  new SubClassBC(); SubClassBC* ptr = &tempObj;var filedPtr = &(ptr->Val3);  return (int)((long) filedPtr - (long) ptr);        }
+        private NativeArray<T> _GetAllSubClassBC_uint<T>(int compFieldOffset,FuncEntityFilter<Entity> filterFunc,out int length) where T: unmanaged{return _GetAllEntityField<T,SubClassBC>(_SubClassBCAry,_GetOffsetOfSubClassBC_Val4() + compFieldOffset,filterFunc,out length);}
+        private NativeArray<T> _GetAllSubClassBC_uint<T>(int compFieldOffset) where T: unmanaged{return _GetAllEntityField<T,SubClassBC>(_SubClassBCAry,_GetOffsetOfSubClassBC_Val4()+ compFieldOffset);}
+        private NativeArray<uint> _GetAllSubClassBC_Val4(){return _GetAllEntityField<uint,SubClassBC>(_SubClassBCAry,_GetOffsetOfSubClassBC_Val4());} 
+        private int _GetOffsetOfSubClassBC_Val4(){ var tempObj =  new SubClassBC(); SubClassBC* ptr = &tempObj;var filedPtr = &(ptr->Val4);  return (int)((long) filedPtr - (long) ptr);        } 
         private NativeArray<T> _GetAllEnemy_AssetData<T>(int compFieldOffset,FuncEntityFilter<Entity> filterFunc,out int length) where T: unmanaged{return _GetAllEntityField<T,Enemy>(_EnemyAry,_GetOffsetOfEnemy_AssetData() + compFieldOffset,filterFunc,out length);}
         private NativeArray<T> _GetAllEnemy_AssetData<T>(int compFieldOffset) where T: unmanaged{return _GetAllEntityField<T,Enemy>(_EnemyAry,_GetOffsetOfEnemy_AssetData()+ compFieldOffset);}
         private NativeArray<AssetData> _GetAllEnemy_AssetData(){return _GetAllEntityField<AssetData,Enemy>(_EnemyAry,_GetOffsetOfEnemy_AssetData());} 
@@ -192,21 +220,21 @@ namespace GamesTan.ECS.Game {
         private int _GetOffsetOfMeshRenderData_Padding(){var tempObj =  new MeshRenderData(); MeshRenderData* ptr = &tempObj; var filedPtr = &(ptr->Padding);return (int)((long) filedPtr - (long) ptr);        }
         private int _GetSizeOfMeshRenderData_Padding(){ return sizeof(int); } 
         private int _GetOffsetOfAnimRenderData_AnimInfo0(){var tempObj =  new AnimRenderData(); AnimRenderData* ptr = &tempObj; var filedPtr = &(ptr->AnimInfo0);return (int)((long) filedPtr - (long) ptr);        }
-        private int _GetSizeOfAnimRenderData_AnimInfo0(){ return sizeof(float4); }
+        private int _GetSizeOfAnimRenderData_AnimInfo0(){ return sizeof(LVector4); }
         private int _GetOffsetOfAnimRenderData_AnimInfo1(){var tempObj =  new AnimRenderData(); AnimRenderData* ptr = &tempObj; var filedPtr = &(ptr->AnimInfo1);return (int)((long) filedPtr - (long) ptr);        }
-        private int _GetSizeOfAnimRenderData_AnimInfo1(){ return sizeof(float4); }
+        private int _GetSizeOfAnimRenderData_AnimInfo1(){ return sizeof(LVector4); }
         private int _GetOffsetOfAnimRenderData_AnimInfo2(){var tempObj =  new AnimRenderData(); AnimRenderData* ptr = &tempObj; var filedPtr = &(ptr->AnimInfo2);return (int)((long) filedPtr - (long) ptr);        }
-        private int _GetSizeOfAnimRenderData_AnimInfo2(){ return sizeof(float4); }
+        private int _GetSizeOfAnimRenderData_AnimInfo2(){ return sizeof(LVector4); }
         private int _GetOffsetOfAnimRenderData_AnimInfo3(){var tempObj =  new AnimRenderData(); AnimRenderData* ptr = &tempObj; var filedPtr = &(ptr->AnimInfo3);return (int)((long) filedPtr - (long) ptr);        }
-        private int _GetSizeOfAnimRenderData_AnimInfo3(){ return sizeof(float4); } 
+        private int _GetSizeOfAnimRenderData_AnimInfo3(){ return sizeof(LVector4); } 
         private int _GetOffsetOfPhysicData_GridCoord(){var tempObj =  new PhysicData(); PhysicData* ptr = &tempObj; var filedPtr = &(ptr->GridCoord);return (int)((long) filedPtr - (long) ptr);        }
-        private int _GetSizeOfPhysicData_GridCoord(){ return sizeof(int2); }
+        private int _GetSizeOfPhysicData_GridCoord(){ return sizeof(LVector2Int); }
         private int _GetOffsetOfPhysicData_Radius(){var tempObj =  new PhysicData(); PhysicData* ptr = &tempObj; var filedPtr = &(ptr->Radius);return (int)((long) filedPtr - (long) ptr);        }
-        private int _GetSizeOfPhysicData_Radius(){ return sizeof(float); }
+        private int _GetSizeOfPhysicData_Radius(){ return sizeof(LFloat); }
         private int _GetOffsetOfPhysicData_Speed(){var tempObj =  new PhysicData(); PhysicData* ptr = &tempObj; var filedPtr = &(ptr->Speed);return (int)((long) filedPtr - (long) ptr);        }
-        private int _GetSizeOfPhysicData_Speed(){ return sizeof(float); }
+        private int _GetSizeOfPhysicData_Speed(){ return sizeof(LFloat); }
         private int _GetOffsetOfPhysicData_RotateSpeed(){var tempObj =  new PhysicData(); PhysicData* ptr = &tempObj; var filedPtr = &(ptr->RotateSpeed);return (int)((long) filedPtr - (long) ptr);        }
-        private int _GetSizeOfPhysicData_RotateSpeed(){ return sizeof(float); } 
+        private int _GetSizeOfPhysicData_RotateSpeed(){ return sizeof(LFloat); } 
         private int _GetOffsetOfBasicData_GObjectId(){var tempObj =  new BasicData(); BasicData* ptr = &tempObj; var filedPtr = &(ptr->GObjectId);return (int)((long) filedPtr - (long) ptr);        }
         private int _GetSizeOfBasicData_GObjectId(){ return sizeof(int); }
         private int _GetOffsetOfBasicData_StatusData(){var tempObj =  new BasicData(); BasicData* ptr = &tempObj; var filedPtr = &(ptr->StatusData);return (int)((long) filedPtr - (long) ptr);        }
@@ -228,27 +256,27 @@ namespace GamesTan.ECS.Game {
         private int _GetOffsetOfEmitterData_Count(){var tempObj =  new EmitterData(); EmitterData* ptr = &tempObj; var filedPtr = &(ptr->Count);return (int)((long) filedPtr - (long) ptr);        }
         private int _GetSizeOfEmitterData_Count(){ return sizeof(int); }
         private int _GetOffsetOfEmitterData_LiveTime(){var tempObj =  new EmitterData(); EmitterData* ptr = &tempObj; var filedPtr = &(ptr->LiveTime);return (int)((long) filedPtr - (long) ptr);        }
-        private int _GetSizeOfEmitterData_LiveTime(){ return sizeof(float); }
+        private int _GetSizeOfEmitterData_LiveTime(){ return sizeof(LFloat); }
         private int _GetOffsetOfEmitterData_Interval(){var tempObj =  new EmitterData(); EmitterData* ptr = &tempObj; var filedPtr = &(ptr->Interval);return (int)((long) filedPtr - (long) ptr);        }
-        private int _GetSizeOfEmitterData_Interval(){ return sizeof(float); }
+        private int _GetSizeOfEmitterData_Interval(){ return sizeof(LFloat); }
         private int _GetOffsetOfEmitterData_Timer(){var tempObj =  new EmitterData(); EmitterData* ptr = &tempObj; var filedPtr = &(ptr->Timer);return (int)((long) filedPtr - (long) ptr);        }
-        private int _GetSizeOfEmitterData_Timer(){ return sizeof(float); } 
+        private int _GetSizeOfEmitterData_Timer(){ return sizeof(LFloat); } 
         private int _GetOffsetOfAIData_AITimer(){var tempObj =  new AIData(); AIData* ptr = &tempObj; var filedPtr = &(ptr->AITimer);return (int)((long) filedPtr - (long) ptr);        }
-        private int _GetSizeOfAIData_AITimer(){ return sizeof(float); }
+        private int _GetSizeOfAIData_AITimer(){ return sizeof(LFloat); }
         private int _GetOffsetOfAIData_TargetDeg(){var tempObj =  new AIData(); AIData* ptr = &tempObj; var filedPtr = &(ptr->TargetDeg);return (int)((long) filedPtr - (long) ptr);        }
-        private int _GetSizeOfAIData_TargetDeg(){ return sizeof(float); }
+        private int _GetSizeOfAIData_TargetDeg(){ return sizeof(LFloat); }
         private int _GetOffsetOfAIData_LerpInterval(){var tempObj =  new AIData(); AIData* ptr = &tempObj; var filedPtr = &(ptr->LerpInterval);return (int)((long) filedPtr - (long) ptr);        }
-        private int _GetSizeOfAIData_LerpInterval(){ return sizeof(float); }
+        private int _GetSizeOfAIData_LerpInterval(){ return sizeof(LFloat); }
         private int _GetOffsetOfAIData_LerpTimer(){var tempObj =  new AIData(); AIData* ptr = &tempObj; var filedPtr = &(ptr->LerpTimer);return (int)((long) filedPtr - (long) ptr);        }
-        private int _GetSizeOfAIData_LerpTimer(){ return sizeof(float); } 
+        private int _GetSizeOfAIData_LerpTimer(){ return sizeof(LFloat); } 
         private int _GetOffsetOfAnimData_Timer(){var tempObj =  new AnimData(); AnimData* ptr = &tempObj; var filedPtr = &(ptr->Timer);return (int)((long) filedPtr - (long) ptr);        }
-        private int _GetSizeOfAnimData_Timer(){ return sizeof(float4); }
+        private int _GetSizeOfAnimData_Timer(){ return sizeof(LVector4); }
         private int _GetOffsetOfAnimData_LerpTimer(){var tempObj =  new AnimData(); AnimData* ptr = &tempObj; var filedPtr = &(ptr->LerpTimer);return (int)((long) filedPtr - (long) ptr);        }
-        private int _GetSizeOfAnimData_LerpTimer(){ return sizeof(float4); }
+        private int _GetSizeOfAnimData_LerpTimer(){ return sizeof(LVector4); }
         private int _GetOffsetOfAnimData_AnimId1(){var tempObj =  new AnimData(); AnimData* ptr = &tempObj; var filedPtr = &(ptr->AnimId1);return (int)((long) filedPtr - (long) ptr);        }
-        private int _GetSizeOfAnimData_AnimId1(){ return sizeof(int4); }
+        private int _GetSizeOfAnimData_AnimId1(){ return sizeof(LVector4Int); }
         private int _GetOffsetOfAnimData_AnimId2(){var tempObj =  new AnimData(); AnimData* ptr = &tempObj; var filedPtr = &(ptr->AnimId2);return (int)((long) filedPtr - (long) ptr);        }
-        private int _GetSizeOfAnimData_AnimId2(){ return sizeof(int4); } 
+        private int _GetSizeOfAnimData_AnimId2(){ return sizeof(LVector4Int); } 
         private int _GetOffsetOfAnimator_Pad(){var tempObj =  new Animator(); Animator* ptr = &tempObj; var filedPtr = &(ptr->Pad);return (int)((long) filedPtr - (long) ptr);        }
         private int _GetSizeOfAnimator_Pad(){ return sizeof(int); } 
         private int _GetOffsetOfCollisionAgent_Collider(){var tempObj =  new CollisionAgent(); CollisionAgent* ptr = &tempObj; var filedPtr = &(ptr->Collider);return (int)((long) filedPtr - (long) ptr);        }
@@ -262,11 +290,11 @@ namespace GamesTan.ECS.Game {
         private int _GetOffsetOfCollisionAgent_IsSleep(){var tempObj =  new CollisionAgent(); CollisionAgent* ptr = &tempObj; var filedPtr = &(ptr->IsSleep);return (int)((long) filedPtr - (long) ptr);        }
         private int _GetSizeOfCollisionAgent_IsSleep(){ return sizeof(bool); }
         private int _GetOffsetOfCollisionAgent_Mass(){var tempObj =  new CollisionAgent(); CollisionAgent* ptr = &tempObj; var filedPtr = &(ptr->Mass);return (int)((long) filedPtr - (long) ptr);        }
-        private int _GetSizeOfCollisionAgent_Mass(){ return sizeof(float); }
+        private int _GetSizeOfCollisionAgent_Mass(){ return sizeof(LFloat); }
         private int _GetOffsetOfCollisionAgent_AngularSpeed(){var tempObj =  new CollisionAgent(); CollisionAgent* ptr = &tempObj; var filedPtr = &(ptr->AngularSpeed);return (int)((long) filedPtr - (long) ptr);        }
-        private int _GetSizeOfCollisionAgent_AngularSpeed(){ return sizeof(float); }
+        private int _GetSizeOfCollisionAgent_AngularSpeed(){ return sizeof(LFloat); }
         private int _GetOffsetOfCollisionAgent_Speed(){var tempObj =  new CollisionAgent(); CollisionAgent* ptr = &tempObj; var filedPtr = &(ptr->Speed);return (int)((long) filedPtr - (long) ptr);        }
-        private int _GetSizeOfCollisionAgent_Speed(){ return sizeof(float3); } 
+        private int _GetSizeOfCollisionAgent_Speed(){ return sizeof(LVector3); } 
         private int _GetOffsetOfNavMeshAgent_Pad(){var tempObj =  new NavMeshAgent(); NavMeshAgent* ptr = &tempObj; var filedPtr = &(ptr->Pad);return (int)((long) filedPtr - (long) ptr);        }
         private int _GetSizeOfNavMeshAgent_Pad(){ return sizeof(int); } 
         private int _GetOffsetOfAssetData_AssetId(){var tempObj =  new AssetData(); AssetData* ptr = &tempObj; var filedPtr = &(ptr->AssetId);return (int)((long) filedPtr - (long) ptr);        }
@@ -274,17 +302,17 @@ namespace GamesTan.ECS.Game {
         private int _GetOffsetOfAssetData_InstancePrefabIdx(){var tempObj =  new AssetData(); AssetData* ptr = &tempObj; var filedPtr = &(ptr->InstancePrefabIdx);return (int)((long) filedPtr - (long) ptr);        }
         private int _GetSizeOfAssetData_InstancePrefabIdx(){ return sizeof(int); } 
         private int _GetOffsetOfTransform2D_Position(){var tempObj =  new Transform2D(); Transform2D* ptr = &tempObj; var filedPtr = &(ptr->Position);return (int)((long) filedPtr - (long) ptr);        }
-        private int _GetSizeOfTransform2D_Position(){ return sizeof(float2); }
+        private int _GetSizeOfTransform2D_Position(){ return sizeof(LVector2); }
         private int _GetOffsetOfTransform2D_Deg(){var tempObj =  new Transform2D(); Transform2D* ptr = &tempObj; var filedPtr = &(ptr->Deg);return (int)((long) filedPtr - (long) ptr);        }
-        private int _GetSizeOfTransform2D_Deg(){ return sizeof(float); }
+        private int _GetSizeOfTransform2D_Deg(){ return sizeof(LFloat); }
         private int _GetOffsetOfTransform2D_Scale(){var tempObj =  new Transform2D(); Transform2D* ptr = &tempObj; var filedPtr = &(ptr->Scale);return (int)((long) filedPtr - (long) ptr);        }
-        private int _GetSizeOfTransform2D_Scale(){ return sizeof(float); } 
+        private int _GetSizeOfTransform2D_Scale(){ return sizeof(LFloat); } 
         private int _GetOffsetOfTransform3D_Position(){var tempObj =  new Transform3D(); Transform3D* ptr = &tempObj; var filedPtr = &(ptr->Position);return (int)((long) filedPtr - (long) ptr);        }
-        private int _GetSizeOfTransform3D_Position(){ return sizeof(float3); }
+        private int _GetSizeOfTransform3D_Position(){ return sizeof(LVector3); }
         private int _GetOffsetOfTransform3D_Rotation(){var tempObj =  new Transform3D(); Transform3D* ptr = &tempObj; var filedPtr = &(ptr->Rotation);return (int)((long) filedPtr - (long) ptr);        }
-        private int _GetSizeOfTransform3D_Rotation(){ return sizeof(float3); }
+        private int _GetSizeOfTransform3D_Rotation(){ return sizeof(LVector3); }
         private int _GetOffsetOfTransform3D_Scale(){var tempObj =  new Transform3D(); Transform3D* ptr = &tempObj; var filedPtr = &(ptr->Scale);return (int)((long) filedPtr - (long) ptr);        }
-        private int _GetSizeOfTransform3D_Scale(){ return sizeof(float3); }        
+        private int _GetSizeOfTransform3D_Scale(){ return sizeof(LVector3); }        
 
 #endregion
 
@@ -293,6 +321,7 @@ namespace GamesTan.ECS.Game {
             + CurPClassACount
             + CurSubClassACount
             + CurSubClassBCount
+            + CurSubClassBCCount
             + CurEnemyCount
             + CurBulletCount
             + CurBulletEmitterCount            

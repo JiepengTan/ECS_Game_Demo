@@ -2,6 +2,7 @@
 using System;
 using System.Diagnostics;
 using GamesTan.ECS;
+using Lockstep.Math;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -14,13 +15,13 @@ namespace GamesTan.Spatial {
         public int EntityCount;
         public Vector2Int DebugCoord;
         public Chunk* Ptr;
-        [NonSerialized] public int2 _coord;
+        [NonSerialized] public LVector2Int _coord;
         [NonSerialized] public bool IsNeedFree;
 
         // left bottom corner
-        public int2 WorldPos => _coord * Chunk.Width;
+        public LVector2Int WorldPos => _coord * Chunk.Width;
 
-        public int2 Coord {
+        public LVector2Int Coord {
             get => _coord;
             set {
                 _coord = value;
@@ -32,7 +33,7 @@ namespace GamesTan.Spatial {
 
         public override bool Equals(object obj) {
             var chunk = obj as ChunkInfo;
-            return math.all(chunk._coord == _coord);
+            return chunk._coord == _coord;
         }
 
         public override int GetHashCode() {
@@ -43,7 +44,7 @@ namespace GamesTan.Spatial {
             return $"WorldCoord:{WorldPos} EntityCount{EntityCount} \n {(Ptr == null ? "null" : Ptr->ToString())}";
         }
 
-        public Grid* GetGrid(int2 worldPos) {
+        public Grid* GetGrid(LVector2Int worldPos) {
             var localPos = worldPos - WorldPos;
             var localGridCoord = Region.WorldPos2GridCoord(localPos);
             return Ptr->GetGrid(localGridCoord);
@@ -66,7 +67,7 @@ namespace GamesTan.Spatial {
             return (EntityIdType)(grid->Entities[idx]);
         }
 
-        public void MoveEntity(EntityIdType data, int2 lastPos, ChunkInfo newChunk, int2 newPos) {
+        public void MoveEntity(EntityIdType data, LVector2Int lastPos, ChunkInfo newChunk, LVector2Int newPos) {
             DebugDump($"MoveEntity Before CrossChunk {_coord}=>{newChunk._coord} worldPos:{lastPos} =>{newPos} entity:{data}   newChunk {newChunk}");
             var lastGrid = GetGrid(lastPos);
             var succ = RemoveGridEntity(lastGrid, data);
@@ -82,7 +83,7 @@ namespace GamesTan.Spatial {
             Debug.Assert(succ, $"MoveEntity Failed CrossChunk {_coord}=>{newChunk._coord} worldPos:{lastPos} =>{newPos} entity:{data}  {this} newChunk {newChunk} ");
         }
 
-        public void MoveEntity(EntityIdType data, int2 lastPos, int2 newPos) {
+        public void MoveEntity(EntityIdType data, LVector2Int lastPos, LVector2Int newPos) {
             DebugDump($"MoveEntity Before InChunk {_coord} worldPos:{lastPos} =>{newPos}  entity:{data} ");
             var lastGrid = GetGrid(lastPos);
             var succ = RemoveGridEntity(lastGrid, data);
@@ -95,7 +96,7 @@ namespace GamesTan.Spatial {
             Debug.Assert(succ, $"MoveEntity Failed InChunk {_coord} worldPos:{lastPos} =>{newPos}  entity:{data} {this}");
         }
 
-        public bool RemoveEntity(EntityIdType data, int2 worldPos) {
+        public bool RemoveEntity(EntityIdType data, LVector2Int worldPos) {
             var grid = GetGrid(worldPos);
             if (RemoveGridEntity(grid, data)) {
                 EntityCount--;
@@ -107,7 +108,7 @@ namespace GamesTan.Spatial {
             return false;
         }
 
-        public void AddEntity(EntityIdType data, int2 worldPos) {
+        public void AddEntity(EntityIdType data, LVector2Int worldPos) {
             var grid = GetGrid(worldPos);
             AddGridEntity(grid, data);
             EntityCount++;

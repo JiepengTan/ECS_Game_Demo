@@ -15,6 +15,11 @@ public partial class SubClassA{
  public override  string FuncA_Virtual() { return default; }
  
  }
+public partial class SubClassBC{ 
+ public override  void FuncCParam_Virtual(int a,float b,string c) {  }
+public virtual  void FuncDParam_Virtual(int a,string b) {  }
+ 
+ }
 public partial class SubClassB{ 
  public override  string FuncA_Virtual() { return default; }
 public override  string FuncB_Virtual() { return default; }

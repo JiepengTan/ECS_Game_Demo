@@ -1,6 +1,6 @@
 ﻿
 using System.Runtime.InteropServices;
-using Unity.Mathematics;
+using Lockstep.Math;
 
 namespace GamesTan.ECS {
     [System.Serializable]
@@ -12,10 +12,10 @@ namespace GamesTan.ECS {
         /// z: FrameIdx
         /// w: useless
         /// </summary>
-        public float4 AnimInfo0;
-        public float4 AnimInfo1;
-        public float4 AnimInfo2;
-        public float4 AnimInfo3;
+        public LVector4 AnimInfo0;
+        public LVector4 AnimInfo1;
+        public LVector4 AnimInfo2;
+        public LVector4 AnimInfo3;
 
         public override string ToString() {
             return

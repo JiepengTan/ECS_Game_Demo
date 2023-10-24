@@ -28,6 +28,7 @@ namespace GamesTan.ECS.Game {
         internal NativeEntityArray<PClassA> _PClassAAry;
         internal NativeEntityArray<SubClassA> _SubClassAAry;
         internal NativeEntityArray<SubClassB> _SubClassBAry;
+        internal NativeEntityArray<SubClassBC> _SubClassBCAry;
         internal NativeEntityArray<Enemy> _EnemyAry;
         internal NativeEntityArray<Bullet> _BulletAry;
         internal NativeEntityArray<BulletEmitter> _BulletEmitterAry; 
@@ -35,6 +36,7 @@ namespace GamesTan.ECS.Game {
             _PClassAAry.Alloc((int)EEntityType.PClassA,128);
             _SubClassAAry.Alloc((int)EEntityType.SubClassA,128);
             _SubClassBAry.Alloc((int)EEntityType.SubClassB,128);
+            _SubClassBCAry.Alloc((int)EEntityType.SubClassBC,128);
             _EnemyAry.Alloc((int)EEntityType.Enemy,128);
             _BulletAry.Alloc((int)EEntityType.Bullet,128);
             _BulletEmitterAry.Alloc((int)EEntityType.BulletEmitter,128); 
@@ -43,6 +45,7 @@ namespace GamesTan.ECS.Game {
             _PClassAAry.Free();
             _SubClassAAry.Free();
             _SubClassBAry.Free();
+            _SubClassBCAry.Free();
             _EnemyAry.Free();
             _BulletAry.Free();
             _BulletEmitterAry.Free(); 
@@ -56,6 +59,7 @@ namespace GamesTan.ECS.Game {
             _PClassAAry.CopyTo(ref dst._PClassAAry);
             _SubClassAAry.CopyTo(ref dst._SubClassAAry);
             _SubClassBAry.CopyTo(ref dst._SubClassBAry);
+            _SubClassBCAry.CopyTo(ref dst._SubClassBCAry);
             _EnemyAry.CopyTo(ref dst._EnemyAry);
             _BulletAry.CopyTo(ref dst._BulletAry);
             _BulletEmitterAry.CopyTo(ref dst._BulletEmitterAry); 
@@ -110,6 +114,23 @@ namespace GamesTan.ECS.Game {
                     ptr->_entity._ref._type = (int)EEntityType.SubClassB;
                 }
                 _SubClassBAry._WaitCreateCount = 0;
+            }
+        }
+        internal unsafe SubClassBC* CreateTempSubClassBC(Context context) {
+            return _SubClassBCAry.CreateTempEntity(context);
+        }
+        internal unsafe SubClassBC* GetTempSubClassBC(int idx) {
+            return _SubClassBCAry.GetTempEntity(idx);
+        }
+        internal unsafe void ClearTempSubClassBCAry(){
+            if (_SubClassBCAry._WaitCreateCount > 0) {
+                var len = _SubClassBCAry._WaitCreateCount;
+                var ptr = _SubClassBCAry._WaitCreateAry.GetPointer(0);
+                for(int i =0;i < len; ++i,++ptr){
+                    *ptr = _DefaultDefine.SubClassBC;
+                    ptr->_entity._ref._type = (int)EEntityType.SubClassBC;
+                }
+                _SubClassBCAry._WaitCreateCount = 0;
             }
         }
         internal unsafe Enemy* CreateTempEnemy(Context context) {
@@ -171,79 +192,84 @@ namespace GamesTan.ECS.Game {
             }
             return new NativeArray<int>();
         }
-        internal NativeArray<float4> GetAllAnimRenderData_AnimInfo0(E_EntityOfAnimRenderData entity){
+        internal NativeArray<LVector4> GetAllAnimRenderData_AnimInfo0(E_EntityOfAnimRenderData entity){
             switch(entity){
-                case E_EntityOfAnimRenderData.Enemy: return _GetAllEnemy_AnimRenderData<float4>(_GetOffsetOfAnimRenderData_AnimInfo0()); break;
+                case E_EntityOfAnimRenderData.Enemy: return _GetAllEnemy_AnimRenderData<LVector4>(_GetOffsetOfAnimRenderData_AnimInfo0()); break;
             }
-            return new NativeArray<float4>();
+            return new NativeArray<LVector4>();
         }
-        internal NativeArray<float4> GetAllAnimRenderData_AnimInfo1(E_EntityOfAnimRenderData entity){
+        internal NativeArray<LVector4> GetAllAnimRenderData_AnimInfo1(E_EntityOfAnimRenderData entity){
             switch(entity){
-                case E_EntityOfAnimRenderData.Enemy: return _GetAllEnemy_AnimRenderData<float4>(_GetOffsetOfAnimRenderData_AnimInfo1()); break;
+                case E_EntityOfAnimRenderData.Enemy: return _GetAllEnemy_AnimRenderData<LVector4>(_GetOffsetOfAnimRenderData_AnimInfo1()); break;
             }
-            return new NativeArray<float4>();
+            return new NativeArray<LVector4>();
         }
-        internal NativeArray<float4> GetAllAnimRenderData_AnimInfo2(E_EntityOfAnimRenderData entity){
+        internal NativeArray<LVector4> GetAllAnimRenderData_AnimInfo2(E_EntityOfAnimRenderData entity){
             switch(entity){
-                case E_EntityOfAnimRenderData.Enemy: return _GetAllEnemy_AnimRenderData<float4>(_GetOffsetOfAnimRenderData_AnimInfo2()); break;
+                case E_EntityOfAnimRenderData.Enemy: return _GetAllEnemy_AnimRenderData<LVector4>(_GetOffsetOfAnimRenderData_AnimInfo2()); break;
             }
-            return new NativeArray<float4>();
+            return new NativeArray<LVector4>();
         }
-        internal NativeArray<float4> GetAllAnimRenderData_AnimInfo3(E_EntityOfAnimRenderData entity){
+        internal NativeArray<LVector4> GetAllAnimRenderData_AnimInfo3(E_EntityOfAnimRenderData entity){
             switch(entity){
-                case E_EntityOfAnimRenderData.Enemy: return _GetAllEnemy_AnimRenderData<float4>(_GetOffsetOfAnimRenderData_AnimInfo3()); break;
+                case E_EntityOfAnimRenderData.Enemy: return _GetAllEnemy_AnimRenderData<LVector4>(_GetOffsetOfAnimRenderData_AnimInfo3()); break;
             }
-            return new NativeArray<float4>();
+            return new NativeArray<LVector4>();
         }
-        internal NativeArray<int2> GetAllPhysicData_GridCoord(E_EntityOfPhysicData entity){
+        internal NativeArray<LVector2Int> GetAllPhysicData_GridCoord(E_EntityOfPhysicData entity){
             switch(entity){
-                case E_EntityOfPhysicData.PClassA: return _GetAllPClassA_PhysicData<int2>(_GetOffsetOfPhysicData_GridCoord()); break;
-                case E_EntityOfPhysicData.SubClassA: return _GetAllSubClassA_PhysicData<int2>(_GetOffsetOfPhysicData_GridCoord()); break;
-                case E_EntityOfPhysicData.SubClassB: return _GetAllSubClassB_PhysicData<int2>(_GetOffsetOfPhysicData_GridCoord()); break;
-                case E_EntityOfPhysicData.Enemy: return _GetAllEnemy_PhysicData<int2>(_GetOffsetOfPhysicData_GridCoord()); break;
-                case E_EntityOfPhysicData.Bullet: return _GetAllBullet_PhysicData<int2>(_GetOffsetOfPhysicData_GridCoord()); break;
-                case E_EntityOfPhysicData.BulletEmitter: return _GetAllBulletEmitter_PhysicData<int2>(_GetOffsetOfPhysicData_GridCoord()); break;
+                case E_EntityOfPhysicData.PClassA: return _GetAllPClassA_PhysicData<LVector2Int>(_GetOffsetOfPhysicData_GridCoord()); break;
+                case E_EntityOfPhysicData.SubClassA: return _GetAllSubClassA_PhysicData<LVector2Int>(_GetOffsetOfPhysicData_GridCoord()); break;
+                case E_EntityOfPhysicData.SubClassB: return _GetAllSubClassB_PhysicData<LVector2Int>(_GetOffsetOfPhysicData_GridCoord()); break;
+                case E_EntityOfPhysicData.SubClassBC: return _GetAllSubClassBC_PhysicData<LVector2Int>(_GetOffsetOfPhysicData_GridCoord()); break;
+                case E_EntityOfPhysicData.Enemy: return _GetAllEnemy_PhysicData<LVector2Int>(_GetOffsetOfPhysicData_GridCoord()); break;
+                case E_EntityOfPhysicData.Bullet: return _GetAllBullet_PhysicData<LVector2Int>(_GetOffsetOfPhysicData_GridCoord()); break;
+                case E_EntityOfPhysicData.BulletEmitter: return _GetAllBulletEmitter_PhysicData<LVector2Int>(_GetOffsetOfPhysicData_GridCoord()); break;
             }
-            return new NativeArray<int2>();
+            return new NativeArray<LVector2Int>();
         }
-        internal NativeArray<float> GetAllPhysicData_Radius(E_EntityOfPhysicData entity){
+        internal NativeArray<LFloat> GetAllPhysicData_Radius(E_EntityOfPhysicData entity){
             switch(entity){
-                case E_EntityOfPhysicData.PClassA: return _GetAllPClassA_PhysicData<float>(_GetOffsetOfPhysicData_Radius()); break;
-                case E_EntityOfPhysicData.SubClassA: return _GetAllSubClassA_PhysicData<float>(_GetOffsetOfPhysicData_Radius()); break;
-                case E_EntityOfPhysicData.SubClassB: return _GetAllSubClassB_PhysicData<float>(_GetOffsetOfPhysicData_Radius()); break;
-                case E_EntityOfPhysicData.Enemy: return _GetAllEnemy_PhysicData<float>(_GetOffsetOfPhysicData_Radius()); break;
-                case E_EntityOfPhysicData.Bullet: return _GetAllBullet_PhysicData<float>(_GetOffsetOfPhysicData_Radius()); break;
-                case E_EntityOfPhysicData.BulletEmitter: return _GetAllBulletEmitter_PhysicData<float>(_GetOffsetOfPhysicData_Radius()); break;
+                case E_EntityOfPhysicData.PClassA: return _GetAllPClassA_PhysicData<LFloat>(_GetOffsetOfPhysicData_Radius()); break;
+                case E_EntityOfPhysicData.SubClassA: return _GetAllSubClassA_PhysicData<LFloat>(_GetOffsetOfPhysicData_Radius()); break;
+                case E_EntityOfPhysicData.SubClassB: return _GetAllSubClassB_PhysicData<LFloat>(_GetOffsetOfPhysicData_Radius()); break;
+                case E_EntityOfPhysicData.SubClassBC: return _GetAllSubClassBC_PhysicData<LFloat>(_GetOffsetOfPhysicData_Radius()); break;
+                case E_EntityOfPhysicData.Enemy: return _GetAllEnemy_PhysicData<LFloat>(_GetOffsetOfPhysicData_Radius()); break;
+                case E_EntityOfPhysicData.Bullet: return _GetAllBullet_PhysicData<LFloat>(_GetOffsetOfPhysicData_Radius()); break;
+                case E_EntityOfPhysicData.BulletEmitter: return _GetAllBulletEmitter_PhysicData<LFloat>(_GetOffsetOfPhysicData_Radius()); break;
             }
-            return new NativeArray<float>();
+            return new NativeArray<LFloat>();
         }
-        internal NativeArray<float> GetAllPhysicData_Speed(E_EntityOfPhysicData entity){
+        internal NativeArray<LFloat> GetAllPhysicData_Speed(E_EntityOfPhysicData entity){
             switch(entity){
-                case E_EntityOfPhysicData.PClassA: return _GetAllPClassA_PhysicData<float>(_GetOffsetOfPhysicData_Speed()); break;
-                case E_EntityOfPhysicData.SubClassA: return _GetAllSubClassA_PhysicData<float>(_GetOffsetOfPhysicData_Speed()); break;
-                case E_EntityOfPhysicData.SubClassB: return _GetAllSubClassB_PhysicData<float>(_GetOffsetOfPhysicData_Speed()); break;
-                case E_EntityOfPhysicData.Enemy: return _GetAllEnemy_PhysicData<float>(_GetOffsetOfPhysicData_Speed()); break;
-                case E_EntityOfPhysicData.Bullet: return _GetAllBullet_PhysicData<float>(_GetOffsetOfPhysicData_Speed()); break;
-                case E_EntityOfPhysicData.BulletEmitter: return _GetAllBulletEmitter_PhysicData<float>(_GetOffsetOfPhysicData_Speed()); break;
+                case E_EntityOfPhysicData.PClassA: return _GetAllPClassA_PhysicData<LFloat>(_GetOffsetOfPhysicData_Speed()); break;
+                case E_EntityOfPhysicData.SubClassA: return _GetAllSubClassA_PhysicData<LFloat>(_GetOffsetOfPhysicData_Speed()); break;
+                case E_EntityOfPhysicData.SubClassB: return _GetAllSubClassB_PhysicData<LFloat>(_GetOffsetOfPhysicData_Speed()); break;
+                case E_EntityOfPhysicData.SubClassBC: return _GetAllSubClassBC_PhysicData<LFloat>(_GetOffsetOfPhysicData_Speed()); break;
+                case E_EntityOfPhysicData.Enemy: return _GetAllEnemy_PhysicData<LFloat>(_GetOffsetOfPhysicData_Speed()); break;
+                case E_EntityOfPhysicData.Bullet: return _GetAllBullet_PhysicData<LFloat>(_GetOffsetOfPhysicData_Speed()); break;
+                case E_EntityOfPhysicData.BulletEmitter: return _GetAllBulletEmitter_PhysicData<LFloat>(_GetOffsetOfPhysicData_Speed()); break;
             }
-            return new NativeArray<float>();
+            return new NativeArray<LFloat>();
         }
-        internal NativeArray<float> GetAllPhysicData_RotateSpeed(E_EntityOfPhysicData entity){
+        internal NativeArray<LFloat> GetAllPhysicData_RotateSpeed(E_EntityOfPhysicData entity){
             switch(entity){
-                case E_EntityOfPhysicData.PClassA: return _GetAllPClassA_PhysicData<float>(_GetOffsetOfPhysicData_RotateSpeed()); break;
-                case E_EntityOfPhysicData.SubClassA: return _GetAllSubClassA_PhysicData<float>(_GetOffsetOfPhysicData_RotateSpeed()); break;
-                case E_EntityOfPhysicData.SubClassB: return _GetAllSubClassB_PhysicData<float>(_GetOffsetOfPhysicData_RotateSpeed()); break;
-                case E_EntityOfPhysicData.Enemy: return _GetAllEnemy_PhysicData<float>(_GetOffsetOfPhysicData_RotateSpeed()); break;
-                case E_EntityOfPhysicData.Bullet: return _GetAllBullet_PhysicData<float>(_GetOffsetOfPhysicData_RotateSpeed()); break;
-                case E_EntityOfPhysicData.BulletEmitter: return _GetAllBulletEmitter_PhysicData<float>(_GetOffsetOfPhysicData_RotateSpeed()); break;
+                case E_EntityOfPhysicData.PClassA: return _GetAllPClassA_PhysicData<LFloat>(_GetOffsetOfPhysicData_RotateSpeed()); break;
+                case E_EntityOfPhysicData.SubClassA: return _GetAllSubClassA_PhysicData<LFloat>(_GetOffsetOfPhysicData_RotateSpeed()); break;
+                case E_EntityOfPhysicData.SubClassB: return _GetAllSubClassB_PhysicData<LFloat>(_GetOffsetOfPhysicData_RotateSpeed()); break;
+                case E_EntityOfPhysicData.SubClassBC: return _GetAllSubClassBC_PhysicData<LFloat>(_GetOffsetOfPhysicData_RotateSpeed()); break;
+                case E_EntityOfPhysicData.Enemy: return _GetAllEnemy_PhysicData<LFloat>(_GetOffsetOfPhysicData_RotateSpeed()); break;
+                case E_EntityOfPhysicData.Bullet: return _GetAllBullet_PhysicData<LFloat>(_GetOffsetOfPhysicData_RotateSpeed()); break;
+                case E_EntityOfPhysicData.BulletEmitter: return _GetAllBulletEmitter_PhysicData<LFloat>(_GetOffsetOfPhysicData_RotateSpeed()); break;
             }
-            return new NativeArray<float>();
+            return new NativeArray<LFloat>();
         }
         internal NativeArray<int> GetAllBasicData_GObjectId(E_EntityOfBasicData entity){
             switch(entity){
                 case E_EntityOfBasicData.PClassA: return _GetAllPClassA_BasicData<int>(_GetOffsetOfBasicData_GObjectId()); break;
                 case E_EntityOfBasicData.SubClassA: return _GetAllSubClassA_BasicData<int>(_GetOffsetOfBasicData_GObjectId()); break;
                 case E_EntityOfBasicData.SubClassB: return _GetAllSubClassB_BasicData<int>(_GetOffsetOfBasicData_GObjectId()); break;
+                case E_EntityOfBasicData.SubClassBC: return _GetAllSubClassBC_BasicData<int>(_GetOffsetOfBasicData_GObjectId()); break;
                 case E_EntityOfBasicData.Enemy: return _GetAllEnemy_BasicData<int>(_GetOffsetOfBasicData_GObjectId()); break;
                 case E_EntityOfBasicData.Bullet: return _GetAllBullet_BasicData<int>(_GetOffsetOfBasicData_GObjectId()); break;
                 case E_EntityOfBasicData.BulletEmitter: return _GetAllBulletEmitter_BasicData<int>(_GetOffsetOfBasicData_GObjectId()); break;
@@ -255,6 +281,7 @@ namespace GamesTan.ECS.Game {
                 case E_EntityOfBasicData.PClassA: return _GetAllPClassA_BasicData<Bitset32>(_GetOffsetOfBasicData_StatusData()); break;
                 case E_EntityOfBasicData.SubClassA: return _GetAllSubClassA_BasicData<Bitset32>(_GetOffsetOfBasicData_StatusData()); break;
                 case E_EntityOfBasicData.SubClassB: return _GetAllSubClassB_BasicData<Bitset32>(_GetOffsetOfBasicData_StatusData()); break;
+                case E_EntityOfBasicData.SubClassBC: return _GetAllSubClassBC_BasicData<Bitset32>(_GetOffsetOfBasicData_StatusData()); break;
                 case E_EntityOfBasicData.Enemy: return _GetAllEnemy_BasicData<Bitset32>(_GetOffsetOfBasicData_StatusData()); break;
                 case E_EntityOfBasicData.Bullet: return _GetAllBullet_BasicData<Bitset32>(_GetOffsetOfBasicData_StatusData()); break;
                 case E_EntityOfBasicData.BulletEmitter: return _GetAllBulletEmitter_BasicData<Bitset32>(_GetOffsetOfBasicData_StatusData()); break;
@@ -312,71 +339,71 @@ namespace GamesTan.ECS.Game {
             }
             return new NativeArray<int>();
         }
-        internal NativeArray<float> GetAllEmitterData_LiveTime(E_EntityOfEmitterData entity){
+        internal NativeArray<LFloat> GetAllEmitterData_LiveTime(E_EntityOfEmitterData entity){
             switch(entity){
-                case E_EntityOfEmitterData.BulletEmitter: return _GetAllBulletEmitter_EmitterData<float>(_GetOffsetOfEmitterData_LiveTime()); break;
+                case E_EntityOfEmitterData.BulletEmitter: return _GetAllBulletEmitter_EmitterData<LFloat>(_GetOffsetOfEmitterData_LiveTime()); break;
             }
-            return new NativeArray<float>();
+            return new NativeArray<LFloat>();
         }
-        internal NativeArray<float> GetAllEmitterData_Interval(E_EntityOfEmitterData entity){
+        internal NativeArray<LFloat> GetAllEmitterData_Interval(E_EntityOfEmitterData entity){
             switch(entity){
-                case E_EntityOfEmitterData.BulletEmitter: return _GetAllBulletEmitter_EmitterData<float>(_GetOffsetOfEmitterData_Interval()); break;
+                case E_EntityOfEmitterData.BulletEmitter: return _GetAllBulletEmitter_EmitterData<LFloat>(_GetOffsetOfEmitterData_Interval()); break;
             }
-            return new NativeArray<float>();
+            return new NativeArray<LFloat>();
         }
-        internal NativeArray<float> GetAllEmitterData_Timer(E_EntityOfEmitterData entity){
+        internal NativeArray<LFloat> GetAllEmitterData_Timer(E_EntityOfEmitterData entity){
             switch(entity){
-                case E_EntityOfEmitterData.BulletEmitter: return _GetAllBulletEmitter_EmitterData<float>(_GetOffsetOfEmitterData_Timer()); break;
+                case E_EntityOfEmitterData.BulletEmitter: return _GetAllBulletEmitter_EmitterData<LFloat>(_GetOffsetOfEmitterData_Timer()); break;
             }
-            return new NativeArray<float>();
+            return new NativeArray<LFloat>();
         }
-        internal NativeArray<float> GetAllAIData_AITimer(E_EntityOfAIData entity){
+        internal NativeArray<LFloat> GetAllAIData_AITimer(E_EntityOfAIData entity){
             switch(entity){
-                case E_EntityOfAIData.Enemy: return _GetAllEnemy_AIData<float>(_GetOffsetOfAIData_AITimer()); break;
+                case E_EntityOfAIData.Enemy: return _GetAllEnemy_AIData<LFloat>(_GetOffsetOfAIData_AITimer()); break;
             }
-            return new NativeArray<float>();
+            return new NativeArray<LFloat>();
         }
-        internal NativeArray<float> GetAllAIData_TargetDeg(E_EntityOfAIData entity){
+        internal NativeArray<LFloat> GetAllAIData_TargetDeg(E_EntityOfAIData entity){
             switch(entity){
-                case E_EntityOfAIData.Enemy: return _GetAllEnemy_AIData<float>(_GetOffsetOfAIData_TargetDeg()); break;
+                case E_EntityOfAIData.Enemy: return _GetAllEnemy_AIData<LFloat>(_GetOffsetOfAIData_TargetDeg()); break;
             }
-            return new NativeArray<float>();
+            return new NativeArray<LFloat>();
         }
-        internal NativeArray<float> GetAllAIData_LerpInterval(E_EntityOfAIData entity){
+        internal NativeArray<LFloat> GetAllAIData_LerpInterval(E_EntityOfAIData entity){
             switch(entity){
-                case E_EntityOfAIData.Enemy: return _GetAllEnemy_AIData<float>(_GetOffsetOfAIData_LerpInterval()); break;
+                case E_EntityOfAIData.Enemy: return _GetAllEnemy_AIData<LFloat>(_GetOffsetOfAIData_LerpInterval()); break;
             }
-            return new NativeArray<float>();
+            return new NativeArray<LFloat>();
         }
-        internal NativeArray<float> GetAllAIData_LerpTimer(E_EntityOfAIData entity){
+        internal NativeArray<LFloat> GetAllAIData_LerpTimer(E_EntityOfAIData entity){
             switch(entity){
-                case E_EntityOfAIData.Enemy: return _GetAllEnemy_AIData<float>(_GetOffsetOfAIData_LerpTimer()); break;
+                case E_EntityOfAIData.Enemy: return _GetAllEnemy_AIData<LFloat>(_GetOffsetOfAIData_LerpTimer()); break;
             }
-            return new NativeArray<float>();
+            return new NativeArray<LFloat>();
         }
-        internal NativeArray<float4> GetAllAnimData_Timer(E_EntityOfAnimData entity){
+        internal NativeArray<LVector4> GetAllAnimData_Timer(E_EntityOfAnimData entity){
             switch(entity){
-                case E_EntityOfAnimData.Enemy: return _GetAllEnemy_AnimData<float4>(_GetOffsetOfAnimData_Timer()); break;
+                case E_EntityOfAnimData.Enemy: return _GetAllEnemy_AnimData<LVector4>(_GetOffsetOfAnimData_Timer()); break;
             }
-            return new NativeArray<float4>();
+            return new NativeArray<LVector4>();
         }
-        internal NativeArray<float4> GetAllAnimData_LerpTimer(E_EntityOfAnimData entity){
+        internal NativeArray<LVector4> GetAllAnimData_LerpTimer(E_EntityOfAnimData entity){
             switch(entity){
-                case E_EntityOfAnimData.Enemy: return _GetAllEnemy_AnimData<float4>(_GetOffsetOfAnimData_LerpTimer()); break;
+                case E_EntityOfAnimData.Enemy: return _GetAllEnemy_AnimData<LVector4>(_GetOffsetOfAnimData_LerpTimer()); break;
             }
-            return new NativeArray<float4>();
+            return new NativeArray<LVector4>();
         }
-        internal NativeArray<int4> GetAllAnimData_AnimId1(E_EntityOfAnimData entity){
+        internal NativeArray<LVector4Int> GetAllAnimData_AnimId1(E_EntityOfAnimData entity){
             switch(entity){
-                case E_EntityOfAnimData.Enemy: return _GetAllEnemy_AnimData<int4>(_GetOffsetOfAnimData_AnimId1()); break;
+                case E_EntityOfAnimData.Enemy: return _GetAllEnemy_AnimData<LVector4Int>(_GetOffsetOfAnimData_AnimId1()); break;
             }
-            return new NativeArray<int4>();
+            return new NativeArray<LVector4Int>();
         }
-        internal NativeArray<int4> GetAllAnimData_AnimId2(E_EntityOfAnimData entity){
+        internal NativeArray<LVector4Int> GetAllAnimData_AnimId2(E_EntityOfAnimData entity){
             switch(entity){
-                case E_EntityOfAnimData.Enemy: return _GetAllEnemy_AnimData<int4>(_GetOffsetOfAnimData_AnimId2()); break;
+                case E_EntityOfAnimData.Enemy: return _GetAllEnemy_AnimData<LVector4Int>(_GetOffsetOfAnimData_AnimId2()); break;
             }
-            return new NativeArray<int4>();
+            return new NativeArray<LVector4Int>();
         }
         internal NativeArray<int> GetAllAnimator_Pad(E_EntityOfAnimator entity){
             switch(entity){
@@ -414,23 +441,23 @@ namespace GamesTan.ECS.Game {
             }
             return new NativeArray<bool>();
         }
-        internal NativeArray<float> GetAllCollisionAgent_Mass(E_EntityOfCollisionAgent entity){
+        internal NativeArray<LFloat> GetAllCollisionAgent_Mass(E_EntityOfCollisionAgent entity){
             switch(entity){
 
             }
-            return new NativeArray<float>();
+            return new NativeArray<LFloat>();
         }
-        internal NativeArray<float> GetAllCollisionAgent_AngularSpeed(E_EntityOfCollisionAgent entity){
+        internal NativeArray<LFloat> GetAllCollisionAgent_AngularSpeed(E_EntityOfCollisionAgent entity){
             switch(entity){
 
             }
-            return new NativeArray<float>();
+            return new NativeArray<LFloat>();
         }
-        internal NativeArray<float3> GetAllCollisionAgent_Speed(E_EntityOfCollisionAgent entity){
+        internal NativeArray<LVector3> GetAllCollisionAgent_Speed(E_EntityOfCollisionAgent entity){
             switch(entity){
 
             }
-            return new NativeArray<float3>();
+            return new NativeArray<LVector3>();
         }
         internal NativeArray<int> GetAllNavMeshAgent_Pad(E_EntityOfNavMeshAgent entity){
             switch(entity){
@@ -443,6 +470,7 @@ namespace GamesTan.ECS.Game {
                 case E_EntityOfAssetData.PClassA: return _GetAllPClassA_AssetData<int>(_GetOffsetOfAssetData_AssetId()); break;
                 case E_EntityOfAssetData.SubClassA: return _GetAllSubClassA_AssetData<int>(_GetOffsetOfAssetData_AssetId()); break;
                 case E_EntityOfAssetData.SubClassB: return _GetAllSubClassB_AssetData<int>(_GetOffsetOfAssetData_AssetId()); break;
+                case E_EntityOfAssetData.SubClassBC: return _GetAllSubClassBC_AssetData<int>(_GetOffsetOfAssetData_AssetId()); break;
                 case E_EntityOfAssetData.Enemy: return _GetAllEnemy_AssetData<int>(_GetOffsetOfAssetData_AssetId()); break;
                 case E_EntityOfAssetData.Bullet: return _GetAllBullet_AssetData<int>(_GetOffsetOfAssetData_AssetId()); break;
                 case E_EntityOfAssetData.BulletEmitter: return _GetAllBulletEmitter_AssetData<int>(_GetOffsetOfAssetData_AssetId()); break;
@@ -454,62 +482,66 @@ namespace GamesTan.ECS.Game {
                 case E_EntityOfAssetData.PClassA: return _GetAllPClassA_AssetData<int>(_GetOffsetOfAssetData_InstancePrefabIdx()); break;
                 case E_EntityOfAssetData.SubClassA: return _GetAllSubClassA_AssetData<int>(_GetOffsetOfAssetData_InstancePrefabIdx()); break;
                 case E_EntityOfAssetData.SubClassB: return _GetAllSubClassB_AssetData<int>(_GetOffsetOfAssetData_InstancePrefabIdx()); break;
+                case E_EntityOfAssetData.SubClassBC: return _GetAllSubClassBC_AssetData<int>(_GetOffsetOfAssetData_InstancePrefabIdx()); break;
                 case E_EntityOfAssetData.Enemy: return _GetAllEnemy_AssetData<int>(_GetOffsetOfAssetData_InstancePrefabIdx()); break;
                 case E_EntityOfAssetData.Bullet: return _GetAllBullet_AssetData<int>(_GetOffsetOfAssetData_InstancePrefabIdx()); break;
                 case E_EntityOfAssetData.BulletEmitter: return _GetAllBulletEmitter_AssetData<int>(_GetOffsetOfAssetData_InstancePrefabIdx()); break;
             }
             return new NativeArray<int>();
         }
-        internal NativeArray<float2> GetAllTransform2D_Position(E_EntityOfTransform2D entity){
+        internal NativeArray<LVector2> GetAllTransform2D_Position(E_EntityOfTransform2D entity){
             switch(entity){
 
             }
-            return new NativeArray<float2>();
+            return new NativeArray<LVector2>();
         }
-        internal NativeArray<float> GetAllTransform2D_Deg(E_EntityOfTransform2D entity){
+        internal NativeArray<LFloat> GetAllTransform2D_Deg(E_EntityOfTransform2D entity){
             switch(entity){
 
             }
-            return new NativeArray<float>();
+            return new NativeArray<LFloat>();
         }
-        internal NativeArray<float> GetAllTransform2D_Scale(E_EntityOfTransform2D entity){
+        internal NativeArray<LFloat> GetAllTransform2D_Scale(E_EntityOfTransform2D entity){
             switch(entity){
 
             }
-            return new NativeArray<float>();
+            return new NativeArray<LFloat>();
         }
-        internal NativeArray<float3> GetAllTransform3D_Position(E_EntityOfTransform3D entity){
+        internal NativeArray<LVector3> GetAllTransform3D_Position(E_EntityOfTransform3D entity){
             switch(entity){
-                case E_EntityOfTransform3D.PClassA: return _GetAllPClassA_Transform3D<float3>(_GetOffsetOfTransform3D_Position()); break;
-                case E_EntityOfTransform3D.SubClassA: return _GetAllSubClassA_Transform3D<float3>(_GetOffsetOfTransform3D_Position()); break;
-                case E_EntityOfTransform3D.SubClassB: return _GetAllSubClassB_Transform3D<float3>(_GetOffsetOfTransform3D_Position()); break;
-                case E_EntityOfTransform3D.Enemy: return _GetAllEnemy_Transform3D<float3>(_GetOffsetOfTransform3D_Position()); break;
-                case E_EntityOfTransform3D.Bullet: return _GetAllBullet_Transform3D<float3>(_GetOffsetOfTransform3D_Position()); break;
-                case E_EntityOfTransform3D.BulletEmitter: return _GetAllBulletEmitter_Transform3D<float3>(_GetOffsetOfTransform3D_Position()); break;
+                case E_EntityOfTransform3D.PClassA: return _GetAllPClassA_Transform3D<LVector3>(_GetOffsetOfTransform3D_Position()); break;
+                case E_EntityOfTransform3D.SubClassA: return _GetAllSubClassA_Transform3D<LVector3>(_GetOffsetOfTransform3D_Position()); break;
+                case E_EntityOfTransform3D.SubClassB: return _GetAllSubClassB_Transform3D<LVector3>(_GetOffsetOfTransform3D_Position()); break;
+                case E_EntityOfTransform3D.SubClassBC: return _GetAllSubClassBC_Transform3D<LVector3>(_GetOffsetOfTransform3D_Position()); break;
+                case E_EntityOfTransform3D.Enemy: return _GetAllEnemy_Transform3D<LVector3>(_GetOffsetOfTransform3D_Position()); break;
+                case E_EntityOfTransform3D.Bullet: return _GetAllBullet_Transform3D<LVector3>(_GetOffsetOfTransform3D_Position()); break;
+                case E_EntityOfTransform3D.BulletEmitter: return _GetAllBulletEmitter_Transform3D<LVector3>(_GetOffsetOfTransform3D_Position()); break;
             }
-            return new NativeArray<float3>();
+            return new NativeArray<LVector3>();
         }
-        internal NativeArray<float3> GetAllTransform3D_Rotation(E_EntityOfTransform3D entity){
+        internal NativeArray<LVector3> GetAllTransform3D_Rotation(E_EntityOfTransform3D entity){
             switch(entity){
-                case E_EntityOfTransform3D.PClassA: return _GetAllPClassA_Transform3D<float3>(_GetOffsetOfTransform3D_Rotation()); break;
-                case E_EntityOfTransform3D.SubClassA: return _GetAllSubClassA_Transform3D<float3>(_GetOffsetOfTransform3D_Rotation()); break;
-                case E_EntityOfTransform3D.SubClassB: return _GetAllSubClassB_Transform3D<float3>(_GetOffsetOfTransform3D_Rotation()); break;
-                case E_EntityOfTransform3D.Enemy: return _GetAllEnemy_Transform3D<float3>(_GetOffsetOfTransform3D_Rotation()); break;
-                case E_EntityOfTransform3D.Bullet: return _GetAllBullet_Transform3D<float3>(_GetOffsetOfTransform3D_Rotation()); break;
-                case E_EntityOfTransform3D.BulletEmitter: return _GetAllBulletEmitter_Transform3D<float3>(_GetOffsetOfTransform3D_Rotation()); break;
+                case E_EntityOfTransform3D.PClassA: return _GetAllPClassA_Transform3D<LVector3>(_GetOffsetOfTransform3D_Rotation()); break;
+                case E_EntityOfTransform3D.SubClassA: return _GetAllSubClassA_Transform3D<LVector3>(_GetOffsetOfTransform3D_Rotation()); break;
+                case E_EntityOfTransform3D.SubClassB: return _GetAllSubClassB_Transform3D<LVector3>(_GetOffsetOfTransform3D_Rotation()); break;
+                case E_EntityOfTransform3D.SubClassBC: return _GetAllSubClassBC_Transform3D<LVector3>(_GetOffsetOfTransform3D_Rotation()); break;
+                case E_EntityOfTransform3D.Enemy: return _GetAllEnemy_Transform3D<LVector3>(_GetOffsetOfTransform3D_Rotation()); break;
+                case E_EntityOfTransform3D.Bullet: return _GetAllBullet_Transform3D<LVector3>(_GetOffsetOfTransform3D_Rotation()); break;
+                case E_EntityOfTransform3D.BulletEmitter: return _GetAllBulletEmitter_Transform3D<LVector3>(_GetOffsetOfTransform3D_Rotation()); break;
             }
-            return new NativeArray<float3>();
+            return new NativeArray<LVector3>();
         }
-        internal NativeArray<float3> GetAllTransform3D_Scale(E_EntityOfTransform3D entity){
+        internal NativeArray<LVector3> GetAllTransform3D_Scale(E_EntityOfTransform3D entity){
             switch(entity){
-                case E_EntityOfTransform3D.PClassA: return _GetAllPClassA_Transform3D<float3>(_GetOffsetOfTransform3D_Scale()); break;
-                case E_EntityOfTransform3D.SubClassA: return _GetAllSubClassA_Transform3D<float3>(_GetOffsetOfTransform3D_Scale()); break;
-                case E_EntityOfTransform3D.SubClassB: return _GetAllSubClassB_Transform3D<float3>(_GetOffsetOfTransform3D_Scale()); break;
-                case E_EntityOfTransform3D.Enemy: return _GetAllEnemy_Transform3D<float3>(_GetOffsetOfTransform3D_Scale()); break;
-                case E_EntityOfTransform3D.Bullet: return _GetAllBullet_Transform3D<float3>(_GetOffsetOfTransform3D_Scale()); break;
-                case E_EntityOfTransform3D.BulletEmitter: return _GetAllBulletEmitter_Transform3D<float3>(_GetOffsetOfTransform3D_Scale()); break;
+                case E_EntityOfTransform3D.PClassA: return _GetAllPClassA_Transform3D<LVector3>(_GetOffsetOfTransform3D_Scale()); break;
+                case E_EntityOfTransform3D.SubClassA: return _GetAllSubClassA_Transform3D<LVector3>(_GetOffsetOfTransform3D_Scale()); break;
+                case E_EntityOfTransform3D.SubClassB: return _GetAllSubClassB_Transform3D<LVector3>(_GetOffsetOfTransform3D_Scale()); break;
+                case E_EntityOfTransform3D.SubClassBC: return _GetAllSubClassBC_Transform3D<LVector3>(_GetOffsetOfTransform3D_Scale()); break;
+                case E_EntityOfTransform3D.Enemy: return _GetAllEnemy_Transform3D<LVector3>(_GetOffsetOfTransform3D_Scale()); break;
+                case E_EntityOfTransform3D.Bullet: return _GetAllBullet_Transform3D<LVector3>(_GetOffsetOfTransform3D_Scale()); break;
+                case E_EntityOfTransform3D.BulletEmitter: return _GetAllBulletEmitter_Transform3D<LVector3>(_GetOffsetOfTransform3D_Scale()); break;
             }
-            return new NativeArray<float3>();
+            return new NativeArray<LVector3>();
         }
 
         internal NativeArray<int> GetAllMeshRenderData_Padding(E_EntityOfMeshRenderData entity,FuncEntityFilter<Entity> filterFunc,out int length){
@@ -519,79 +551,84 @@ namespace GamesTan.ECS.Game {
             }
             length = 0;return new NativeArray<int>();
         }
-        internal NativeArray<float4> GetAllAnimRenderData_AnimInfo0(E_EntityOfAnimRenderData entity,FuncEntityFilter<Entity> filterFunc,out int length){
+        internal NativeArray<LVector4> GetAllAnimRenderData_AnimInfo0(E_EntityOfAnimRenderData entity,FuncEntityFilter<Entity> filterFunc,out int length){
             switch(entity){
-                case E_EntityOfAnimRenderData.Enemy: return _GetAllEnemy_AnimRenderData<float4>(_GetOffsetOfAnimRenderData_AnimInfo0(),filterFunc,out length); break;
+                case E_EntityOfAnimRenderData.Enemy: return _GetAllEnemy_AnimRenderData<LVector4>(_GetOffsetOfAnimRenderData_AnimInfo0(),filterFunc,out length); break;
             }
-            length = 0;return new NativeArray<float4>();
+            length = 0;return new NativeArray<LVector4>();
         }
-        internal NativeArray<float4> GetAllAnimRenderData_AnimInfo1(E_EntityOfAnimRenderData entity,FuncEntityFilter<Entity> filterFunc,out int length){
+        internal NativeArray<LVector4> GetAllAnimRenderData_AnimInfo1(E_EntityOfAnimRenderData entity,FuncEntityFilter<Entity> filterFunc,out int length){
             switch(entity){
-                case E_EntityOfAnimRenderData.Enemy: return _GetAllEnemy_AnimRenderData<float4>(_GetOffsetOfAnimRenderData_AnimInfo1(),filterFunc,out length); break;
+                case E_EntityOfAnimRenderData.Enemy: return _GetAllEnemy_AnimRenderData<LVector4>(_GetOffsetOfAnimRenderData_AnimInfo1(),filterFunc,out length); break;
             }
-            length = 0;return new NativeArray<float4>();
+            length = 0;return new NativeArray<LVector4>();
         }
-        internal NativeArray<float4> GetAllAnimRenderData_AnimInfo2(E_EntityOfAnimRenderData entity,FuncEntityFilter<Entity> filterFunc,out int length){
+        internal NativeArray<LVector4> GetAllAnimRenderData_AnimInfo2(E_EntityOfAnimRenderData entity,FuncEntityFilter<Entity> filterFunc,out int length){
             switch(entity){
-                case E_EntityOfAnimRenderData.Enemy: return _GetAllEnemy_AnimRenderData<float4>(_GetOffsetOfAnimRenderData_AnimInfo2(),filterFunc,out length); break;
+                case E_EntityOfAnimRenderData.Enemy: return _GetAllEnemy_AnimRenderData<LVector4>(_GetOffsetOfAnimRenderData_AnimInfo2(),filterFunc,out length); break;
             }
-            length = 0;return new NativeArray<float4>();
+            length = 0;return new NativeArray<LVector4>();
         }
-        internal NativeArray<float4> GetAllAnimRenderData_AnimInfo3(E_EntityOfAnimRenderData entity,FuncEntityFilter<Entity> filterFunc,out int length){
+        internal NativeArray<LVector4> GetAllAnimRenderData_AnimInfo3(E_EntityOfAnimRenderData entity,FuncEntityFilter<Entity> filterFunc,out int length){
             switch(entity){
-                case E_EntityOfAnimRenderData.Enemy: return _GetAllEnemy_AnimRenderData<float4>(_GetOffsetOfAnimRenderData_AnimInfo3(),filterFunc,out length); break;
+                case E_EntityOfAnimRenderData.Enemy: return _GetAllEnemy_AnimRenderData<LVector4>(_GetOffsetOfAnimRenderData_AnimInfo3(),filterFunc,out length); break;
             }
-            length = 0;return new NativeArray<float4>();
+            length = 0;return new NativeArray<LVector4>();
         }
-        internal NativeArray<int2> GetAllPhysicData_GridCoord(E_EntityOfPhysicData entity,FuncEntityFilter<Entity> filterFunc,out int length){
+        internal NativeArray<LVector2Int> GetAllPhysicData_GridCoord(E_EntityOfPhysicData entity,FuncEntityFilter<Entity> filterFunc,out int length){
             switch(entity){
-                case E_EntityOfPhysicData.PClassA: return _GetAllPClassA_PhysicData<int2>(_GetOffsetOfPhysicData_GridCoord(),filterFunc,out length); break;
-                case E_EntityOfPhysicData.SubClassA: return _GetAllSubClassA_PhysicData<int2>(_GetOffsetOfPhysicData_GridCoord(),filterFunc,out length); break;
-                case E_EntityOfPhysicData.SubClassB: return _GetAllSubClassB_PhysicData<int2>(_GetOffsetOfPhysicData_GridCoord(),filterFunc,out length); break;
-                case E_EntityOfPhysicData.Enemy: return _GetAllEnemy_PhysicData<int2>(_GetOffsetOfPhysicData_GridCoord(),filterFunc,out length); break;
-                case E_EntityOfPhysicData.Bullet: return _GetAllBullet_PhysicData<int2>(_GetOffsetOfPhysicData_GridCoord(),filterFunc,out length); break;
-                case E_EntityOfPhysicData.BulletEmitter: return _GetAllBulletEmitter_PhysicData<int2>(_GetOffsetOfPhysicData_GridCoord(),filterFunc,out length); break;
+                case E_EntityOfPhysicData.PClassA: return _GetAllPClassA_PhysicData<LVector2Int>(_GetOffsetOfPhysicData_GridCoord(),filterFunc,out length); break;
+                case E_EntityOfPhysicData.SubClassA: return _GetAllSubClassA_PhysicData<LVector2Int>(_GetOffsetOfPhysicData_GridCoord(),filterFunc,out length); break;
+                case E_EntityOfPhysicData.SubClassB: return _GetAllSubClassB_PhysicData<LVector2Int>(_GetOffsetOfPhysicData_GridCoord(),filterFunc,out length); break;
+                case E_EntityOfPhysicData.SubClassBC: return _GetAllSubClassBC_PhysicData<LVector2Int>(_GetOffsetOfPhysicData_GridCoord(),filterFunc,out length); break;
+                case E_EntityOfPhysicData.Enemy: return _GetAllEnemy_PhysicData<LVector2Int>(_GetOffsetOfPhysicData_GridCoord(),filterFunc,out length); break;
+                case E_EntityOfPhysicData.Bullet: return _GetAllBullet_PhysicData<LVector2Int>(_GetOffsetOfPhysicData_GridCoord(),filterFunc,out length); break;
+                case E_EntityOfPhysicData.BulletEmitter: return _GetAllBulletEmitter_PhysicData<LVector2Int>(_GetOffsetOfPhysicData_GridCoord(),filterFunc,out length); break;
             }
-            length = 0;return new NativeArray<int2>();
+            length = 0;return new NativeArray<LVector2Int>();
         }
-        internal NativeArray<float> GetAllPhysicData_Radius(E_EntityOfPhysicData entity,FuncEntityFilter<Entity> filterFunc,out int length){
+        internal NativeArray<LFloat> GetAllPhysicData_Radius(E_EntityOfPhysicData entity,FuncEntityFilter<Entity> filterFunc,out int length){
             switch(entity){
-                case E_EntityOfPhysicData.PClassA: return _GetAllPClassA_PhysicData<float>(_GetOffsetOfPhysicData_Radius(),filterFunc,out length); break;
-                case E_EntityOfPhysicData.SubClassA: return _GetAllSubClassA_PhysicData<float>(_GetOffsetOfPhysicData_Radius(),filterFunc,out length); break;
-                case E_EntityOfPhysicData.SubClassB: return _GetAllSubClassB_PhysicData<float>(_GetOffsetOfPhysicData_Radius(),filterFunc,out length); break;
-                case E_EntityOfPhysicData.Enemy: return _GetAllEnemy_PhysicData<float>(_GetOffsetOfPhysicData_Radius(),filterFunc,out length); break;
-                case E_EntityOfPhysicData.Bullet: return _GetAllBullet_PhysicData<float>(_GetOffsetOfPhysicData_Radius(),filterFunc,out length); break;
-                case E_EntityOfPhysicData.BulletEmitter: return _GetAllBulletEmitter_PhysicData<float>(_GetOffsetOfPhysicData_Radius(),filterFunc,out length); break;
+                case E_EntityOfPhysicData.PClassA: return _GetAllPClassA_PhysicData<LFloat>(_GetOffsetOfPhysicData_Radius(),filterFunc,out length); break;
+                case E_EntityOfPhysicData.SubClassA: return _GetAllSubClassA_PhysicData<LFloat>(_GetOffsetOfPhysicData_Radius(),filterFunc,out length); break;
+                case E_EntityOfPhysicData.SubClassB: return _GetAllSubClassB_PhysicData<LFloat>(_GetOffsetOfPhysicData_Radius(),filterFunc,out length); break;
+                case E_EntityOfPhysicData.SubClassBC: return _GetAllSubClassBC_PhysicData<LFloat>(_GetOffsetOfPhysicData_Radius(),filterFunc,out length); break;
+                case E_EntityOfPhysicData.Enemy: return _GetAllEnemy_PhysicData<LFloat>(_GetOffsetOfPhysicData_Radius(),filterFunc,out length); break;
+                case E_EntityOfPhysicData.Bullet: return _GetAllBullet_PhysicData<LFloat>(_GetOffsetOfPhysicData_Radius(),filterFunc,out length); break;
+                case E_EntityOfPhysicData.BulletEmitter: return _GetAllBulletEmitter_PhysicData<LFloat>(_GetOffsetOfPhysicData_Radius(),filterFunc,out length); break;
             }
-            length = 0;return new NativeArray<float>();
+            length = 0;return new NativeArray<LFloat>();
         }
-        internal NativeArray<float> GetAllPhysicData_Speed(E_EntityOfPhysicData entity,FuncEntityFilter<Entity> filterFunc,out int length){
+        internal NativeArray<LFloat> GetAllPhysicData_Speed(E_EntityOfPhysicData entity,FuncEntityFilter<Entity> filterFunc,out int length){
             switch(entity){
-                case E_EntityOfPhysicData.PClassA: return _GetAllPClassA_PhysicData<float>(_GetOffsetOfPhysicData_Speed(),filterFunc,out length); break;
-                case E_EntityOfPhysicData.SubClassA: return _GetAllSubClassA_PhysicData<float>(_GetOffsetOfPhysicData_Speed(),filterFunc,out length); break;
-                case E_EntityOfPhysicData.SubClassB: return _GetAllSubClassB_PhysicData<float>(_GetOffsetOfPhysicData_Speed(),filterFunc,out length); break;
-                case E_EntityOfPhysicData.Enemy: return _GetAllEnemy_PhysicData<float>(_GetOffsetOfPhysicData_Speed(),filterFunc,out length); break;
-                case E_EntityOfPhysicData.Bullet: return _GetAllBullet_PhysicData<float>(_GetOffsetOfPhysicData_Speed(),filterFunc,out length); break;
-                case E_EntityOfPhysicData.BulletEmitter: return _GetAllBulletEmitter_PhysicData<float>(_GetOffsetOfPhysicData_Speed(),filterFunc,out length); break;
+                case E_EntityOfPhysicData.PClassA: return _GetAllPClassA_PhysicData<LFloat>(_GetOffsetOfPhysicData_Speed(),filterFunc,out length); break;
+                case E_EntityOfPhysicData.SubClassA: return _GetAllSubClassA_PhysicData<LFloat>(_GetOffsetOfPhysicData_Speed(),filterFunc,out length); break;
+                case E_EntityOfPhysicData.SubClassB: return _GetAllSubClassB_PhysicData<LFloat>(_GetOffsetOfPhysicData_Speed(),filterFunc,out length); break;
+                case E_EntityOfPhysicData.SubClassBC: return _GetAllSubClassBC_PhysicData<LFloat>(_GetOffsetOfPhysicData_Speed(),filterFunc,out length); break;
+                case E_EntityOfPhysicData.Enemy: return _GetAllEnemy_PhysicData<LFloat>(_GetOffsetOfPhysicData_Speed(),filterFunc,out length); break;
+                case E_EntityOfPhysicData.Bullet: return _GetAllBullet_PhysicData<LFloat>(_GetOffsetOfPhysicData_Speed(),filterFunc,out length); break;
+                case E_EntityOfPhysicData.BulletEmitter: return _GetAllBulletEmitter_PhysicData<LFloat>(_GetOffsetOfPhysicData_Speed(),filterFunc,out length); break;
             }
-            length = 0;return new NativeArray<float>();
+            length = 0;return new NativeArray<LFloat>();
         }
-        internal NativeArray<float> GetAllPhysicData_RotateSpeed(E_EntityOfPhysicData entity,FuncEntityFilter<Entity> filterFunc,out int length){
+        internal NativeArray<LFloat> GetAllPhysicData_RotateSpeed(E_EntityOfPhysicData entity,FuncEntityFilter<Entity> filterFunc,out int length){
             switch(entity){
-                case E_EntityOfPhysicData.PClassA: return _GetAllPClassA_PhysicData<float>(_GetOffsetOfPhysicData_RotateSpeed(),filterFunc,out length); break;
-                case E_EntityOfPhysicData.SubClassA: return _GetAllSubClassA_PhysicData<float>(_GetOffsetOfPhysicData_RotateSpeed(),filterFunc,out length); break;
-                case E_EntityOfPhysicData.SubClassB: return _GetAllSubClassB_PhysicData<float>(_GetOffsetOfPhysicData_RotateSpeed(),filterFunc,out length); break;
-                case E_EntityOfPhysicData.Enemy: return _GetAllEnemy_PhysicData<float>(_GetOffsetOfPhysicData_RotateSpeed(),filterFunc,out length); break;
-                case E_EntityOfPhysicData.Bullet: return _GetAllBullet_PhysicData<float>(_GetOffsetOfPhysicData_RotateSpeed(),filterFunc,out length); break;
-                case E_EntityOfPhysicData.BulletEmitter: return _GetAllBulletEmitter_PhysicData<float>(_GetOffsetOfPhysicData_RotateSpeed(),filterFunc,out length); break;
+                case E_EntityOfPhysicData.PClassA: return _GetAllPClassA_PhysicData<LFloat>(_GetOffsetOfPhysicData_RotateSpeed(),filterFunc,out length); break;
+                case E_EntityOfPhysicData.SubClassA: return _GetAllSubClassA_PhysicData<LFloat>(_GetOffsetOfPhysicData_RotateSpeed(),filterFunc,out length); break;
+                case E_EntityOfPhysicData.SubClassB: return _GetAllSubClassB_PhysicData<LFloat>(_GetOffsetOfPhysicData_RotateSpeed(),filterFunc,out length); break;
+                case E_EntityOfPhysicData.SubClassBC: return _GetAllSubClassBC_PhysicData<LFloat>(_GetOffsetOfPhysicData_RotateSpeed(),filterFunc,out length); break;
+                case E_EntityOfPhysicData.Enemy: return _GetAllEnemy_PhysicData<LFloat>(_GetOffsetOfPhysicData_RotateSpeed(),filterFunc,out length); break;
+                case E_EntityOfPhysicData.Bullet: return _GetAllBullet_PhysicData<LFloat>(_GetOffsetOfPhysicData_RotateSpeed(),filterFunc,out length); break;
+                case E_EntityOfPhysicData.BulletEmitter: return _GetAllBulletEmitter_PhysicData<LFloat>(_GetOffsetOfPhysicData_RotateSpeed(),filterFunc,out length); break;
             }
-            length = 0;return new NativeArray<float>();
+            length = 0;return new NativeArray<LFloat>();
         }
         internal NativeArray<int> GetAllBasicData_GObjectId(E_EntityOfBasicData entity,FuncEntityFilter<Entity> filterFunc,out int length){
             switch(entity){
                 case E_EntityOfBasicData.PClassA: return _GetAllPClassA_BasicData<int>(_GetOffsetOfBasicData_GObjectId(),filterFunc,out length); break;
                 case E_EntityOfBasicData.SubClassA: return _GetAllSubClassA_BasicData<int>(_GetOffsetOfBasicData_GObjectId(),filterFunc,out length); break;
                 case E_EntityOfBasicData.SubClassB: return _GetAllSubClassB_BasicData<int>(_GetOffsetOfBasicData_GObjectId(),filterFunc,out length); break;
+                case E_EntityOfBasicData.SubClassBC: return _GetAllSubClassBC_BasicData<int>(_GetOffsetOfBasicData_GObjectId(),filterFunc,out length); break;
                 case E_EntityOfBasicData.Enemy: return _GetAllEnemy_BasicData<int>(_GetOffsetOfBasicData_GObjectId(),filterFunc,out length); break;
                 case E_EntityOfBasicData.Bullet: return _GetAllBullet_BasicData<int>(_GetOffsetOfBasicData_GObjectId(),filterFunc,out length); break;
                 case E_EntityOfBasicData.BulletEmitter: return _GetAllBulletEmitter_BasicData<int>(_GetOffsetOfBasicData_GObjectId(),filterFunc,out length); break;
@@ -603,6 +640,7 @@ namespace GamesTan.ECS.Game {
                 case E_EntityOfBasicData.PClassA: return _GetAllPClassA_BasicData<Bitset32>(_GetOffsetOfBasicData_StatusData(),filterFunc,out length); break;
                 case E_EntityOfBasicData.SubClassA: return _GetAllSubClassA_BasicData<Bitset32>(_GetOffsetOfBasicData_StatusData(),filterFunc,out length); break;
                 case E_EntityOfBasicData.SubClassB: return _GetAllSubClassB_BasicData<Bitset32>(_GetOffsetOfBasicData_StatusData(),filterFunc,out length); break;
+                case E_EntityOfBasicData.SubClassBC: return _GetAllSubClassBC_BasicData<Bitset32>(_GetOffsetOfBasicData_StatusData(),filterFunc,out length); break;
                 case E_EntityOfBasicData.Enemy: return _GetAllEnemy_BasicData<Bitset32>(_GetOffsetOfBasicData_StatusData(),filterFunc,out length); break;
                 case E_EntityOfBasicData.Bullet: return _GetAllBullet_BasicData<Bitset32>(_GetOffsetOfBasicData_StatusData(),filterFunc,out length); break;
                 case E_EntityOfBasicData.BulletEmitter: return _GetAllBulletEmitter_BasicData<Bitset32>(_GetOffsetOfBasicData_StatusData(),filterFunc,out length); break;
@@ -660,71 +698,71 @@ namespace GamesTan.ECS.Game {
             }
             length = 0;return new NativeArray<int>();
         }
-        internal NativeArray<float> GetAllEmitterData_LiveTime(E_EntityOfEmitterData entity,FuncEntityFilter<Entity> filterFunc,out int length){
+        internal NativeArray<LFloat> GetAllEmitterData_LiveTime(E_EntityOfEmitterData entity,FuncEntityFilter<Entity> filterFunc,out int length){
             switch(entity){
-                case E_EntityOfEmitterData.BulletEmitter: return _GetAllBulletEmitter_EmitterData<float>(_GetOffsetOfEmitterData_LiveTime(),filterFunc,out length); break;
+                case E_EntityOfEmitterData.BulletEmitter: return _GetAllBulletEmitter_EmitterData<LFloat>(_GetOffsetOfEmitterData_LiveTime(),filterFunc,out length); break;
             }
-            length = 0;return new NativeArray<float>();
+            length = 0;return new NativeArray<LFloat>();
         }
-        internal NativeArray<float> GetAllEmitterData_Interval(E_EntityOfEmitterData entity,FuncEntityFilter<Entity> filterFunc,out int length){
+        internal NativeArray<LFloat> GetAllEmitterData_Interval(E_EntityOfEmitterData entity,FuncEntityFilter<Entity> filterFunc,out int length){
             switch(entity){
-                case E_EntityOfEmitterData.BulletEmitter: return _GetAllBulletEmitter_EmitterData<float>(_GetOffsetOfEmitterData_Interval(),filterFunc,out length); break;
+                case E_EntityOfEmitterData.BulletEmitter: return _GetAllBulletEmitter_EmitterData<LFloat>(_GetOffsetOfEmitterData_Interval(),filterFunc,out length); break;
             }
-            length = 0;return new NativeArray<float>();
+            length = 0;return new NativeArray<LFloat>();
         }
-        internal NativeArray<float> GetAllEmitterData_Timer(E_EntityOfEmitterData entity,FuncEntityFilter<Entity> filterFunc,out int length){
+        internal NativeArray<LFloat> GetAllEmitterData_Timer(E_EntityOfEmitterData entity,FuncEntityFilter<Entity> filterFunc,out int length){
             switch(entity){
-                case E_EntityOfEmitterData.BulletEmitter: return _GetAllBulletEmitter_EmitterData<float>(_GetOffsetOfEmitterData_Timer(),filterFunc,out length); break;
+                case E_EntityOfEmitterData.BulletEmitter: return _GetAllBulletEmitter_EmitterData<LFloat>(_GetOffsetOfEmitterData_Timer(),filterFunc,out length); break;
             }
-            length = 0;return new NativeArray<float>();
+            length = 0;return new NativeArray<LFloat>();
         }
-        internal NativeArray<float> GetAllAIData_AITimer(E_EntityOfAIData entity,FuncEntityFilter<Entity> filterFunc,out int length){
+        internal NativeArray<LFloat> GetAllAIData_AITimer(E_EntityOfAIData entity,FuncEntityFilter<Entity> filterFunc,out int length){
             switch(entity){
-                case E_EntityOfAIData.Enemy: return _GetAllEnemy_AIData<float>(_GetOffsetOfAIData_AITimer(),filterFunc,out length); break;
+                case E_EntityOfAIData.Enemy: return _GetAllEnemy_AIData<LFloat>(_GetOffsetOfAIData_AITimer(),filterFunc,out length); break;
             }
-            length = 0;return new NativeArray<float>();
+            length = 0;return new NativeArray<LFloat>();
         }
-        internal NativeArray<float> GetAllAIData_TargetDeg(E_EntityOfAIData entity,FuncEntityFilter<Entity> filterFunc,out int length){
+        internal NativeArray<LFloat> GetAllAIData_TargetDeg(E_EntityOfAIData entity,FuncEntityFilter<Entity> filterFunc,out int length){
             switch(entity){
-                case E_EntityOfAIData.Enemy: return _GetAllEnemy_AIData<float>(_GetOffsetOfAIData_TargetDeg(),filterFunc,out length); break;
+                case E_EntityOfAIData.Enemy: return _GetAllEnemy_AIData<LFloat>(_GetOffsetOfAIData_TargetDeg(),filterFunc,out length); break;
             }
-            length = 0;return new NativeArray<float>();
+            length = 0;return new NativeArray<LFloat>();
         }
-        internal NativeArray<float> GetAllAIData_LerpInterval(E_EntityOfAIData entity,FuncEntityFilter<Entity> filterFunc,out int length){
+        internal NativeArray<LFloat> GetAllAIData_LerpInterval(E_EntityOfAIData entity,FuncEntityFilter<Entity> filterFunc,out int length){
             switch(entity){
-                case E_EntityOfAIData.Enemy: return _GetAllEnemy_AIData<float>(_GetOffsetOfAIData_LerpInterval(),filterFunc,out length); break;
+                case E_EntityOfAIData.Enemy: return _GetAllEnemy_AIData<LFloat>(_GetOffsetOfAIData_LerpInterval(),filterFunc,out length); break;
             }
-            length = 0;return new NativeArray<float>();
+            length = 0;return new NativeArray<LFloat>();
         }
-        internal NativeArray<float> GetAllAIData_LerpTimer(E_EntityOfAIData entity,FuncEntityFilter<Entity> filterFunc,out int length){
+        internal NativeArray<LFloat> GetAllAIData_LerpTimer(E_EntityOfAIData entity,FuncEntityFilter<Entity> filterFunc,out int length){
             switch(entity){
-                case E_EntityOfAIData.Enemy: return _GetAllEnemy_AIData<float>(_GetOffsetOfAIData_LerpTimer(),filterFunc,out length); break;
+                case E_EntityOfAIData.Enemy: return _GetAllEnemy_AIData<LFloat>(_GetOffsetOfAIData_LerpTimer(),filterFunc,out length); break;
             }
-            length = 0;return new NativeArray<float>();
+            length = 0;return new NativeArray<LFloat>();
         }
-        internal NativeArray<float4> GetAllAnimData_Timer(E_EntityOfAnimData entity,FuncEntityFilter<Entity> filterFunc,out int length){
+        internal NativeArray<LVector4> GetAllAnimData_Timer(E_EntityOfAnimData entity,FuncEntityFilter<Entity> filterFunc,out int length){
             switch(entity){
-                case E_EntityOfAnimData.Enemy: return _GetAllEnemy_AnimData<float4>(_GetOffsetOfAnimData_Timer(),filterFunc,out length); break;
+                case E_EntityOfAnimData.Enemy: return _GetAllEnemy_AnimData<LVector4>(_GetOffsetOfAnimData_Timer(),filterFunc,out length); break;
             }
-            length = 0;return new NativeArray<float4>();
+            length = 0;return new NativeArray<LVector4>();
         }
-        internal NativeArray<float4> GetAllAnimData_LerpTimer(E_EntityOfAnimData entity,FuncEntityFilter<Entity> filterFunc,out int length){
+        internal NativeArray<LVector4> GetAllAnimData_LerpTimer(E_EntityOfAnimData entity,FuncEntityFilter<Entity> filterFunc,out int length){
             switch(entity){
-                case E_EntityOfAnimData.Enemy: return _GetAllEnemy_AnimData<float4>(_GetOffsetOfAnimData_LerpTimer(),filterFunc,out length); break;
+                case E_EntityOfAnimData.Enemy: return _GetAllEnemy_AnimData<LVector4>(_GetOffsetOfAnimData_LerpTimer(),filterFunc,out length); break;
             }
-            length = 0;return new NativeArray<float4>();
+            length = 0;return new NativeArray<LVector4>();
         }
-        internal NativeArray<int4> GetAllAnimData_AnimId1(E_EntityOfAnimData entity,FuncEntityFilter<Entity> filterFunc,out int length){
+        internal NativeArray<LVector4Int> GetAllAnimData_AnimId1(E_EntityOfAnimData entity,FuncEntityFilter<Entity> filterFunc,out int length){
             switch(entity){
-                case E_EntityOfAnimData.Enemy: return _GetAllEnemy_AnimData<int4>(_GetOffsetOfAnimData_AnimId1(),filterFunc,out length); break;
+                case E_EntityOfAnimData.Enemy: return _GetAllEnemy_AnimData<LVector4Int>(_GetOffsetOfAnimData_AnimId1(),filterFunc,out length); break;
             }
-            length = 0;return new NativeArray<int4>();
+            length = 0;return new NativeArray<LVector4Int>();
         }
-        internal NativeArray<int4> GetAllAnimData_AnimId2(E_EntityOfAnimData entity,FuncEntityFilter<Entity> filterFunc,out int length){
+        internal NativeArray<LVector4Int> GetAllAnimData_AnimId2(E_EntityOfAnimData entity,FuncEntityFilter<Entity> filterFunc,out int length){
             switch(entity){
-                case E_EntityOfAnimData.Enemy: return _GetAllEnemy_AnimData<int4>(_GetOffsetOfAnimData_AnimId2(),filterFunc,out length); break;
+                case E_EntityOfAnimData.Enemy: return _GetAllEnemy_AnimData<LVector4Int>(_GetOffsetOfAnimData_AnimId2(),filterFunc,out length); break;
             }
-            length = 0;return new NativeArray<int4>();
+            length = 0;return new NativeArray<LVector4Int>();
         }
         internal NativeArray<int> GetAllAnimator_Pad(E_EntityOfAnimator entity,FuncEntityFilter<Entity> filterFunc,out int length){
             switch(entity){
@@ -762,23 +800,23 @@ namespace GamesTan.ECS.Game {
             }
             length = 0;return new NativeArray<bool>();
         }
-        internal NativeArray<float> GetAllCollisionAgent_Mass(E_EntityOfCollisionAgent entity,FuncEntityFilter<Entity> filterFunc,out int length){
+        internal NativeArray<LFloat> GetAllCollisionAgent_Mass(E_EntityOfCollisionAgent entity,FuncEntityFilter<Entity> filterFunc,out int length){
             switch(entity){
 
             }
-            length = 0;return new NativeArray<float>();
+            length = 0;return new NativeArray<LFloat>();
         }
-        internal NativeArray<float> GetAllCollisionAgent_AngularSpeed(E_EntityOfCollisionAgent entity,FuncEntityFilter<Entity> filterFunc,out int length){
+        internal NativeArray<LFloat> GetAllCollisionAgent_AngularSpeed(E_EntityOfCollisionAgent entity,FuncEntityFilter<Entity> filterFunc,out int length){
             switch(entity){
 
             }
-            length = 0;return new NativeArray<float>();
+            length = 0;return new NativeArray<LFloat>();
         }
-        internal NativeArray<float3> GetAllCollisionAgent_Speed(E_EntityOfCollisionAgent entity,FuncEntityFilter<Entity> filterFunc,out int length){
+        internal NativeArray<LVector3> GetAllCollisionAgent_Speed(E_EntityOfCollisionAgent entity,FuncEntityFilter<Entity> filterFunc,out int length){
             switch(entity){
 
             }
-            length = 0;return new NativeArray<float3>();
+            length = 0;return new NativeArray<LVector3>();
         }
         internal NativeArray<int> GetAllNavMeshAgent_Pad(E_EntityOfNavMeshAgent entity,FuncEntityFilter<Entity> filterFunc,out int length){
             switch(entity){
@@ -791,6 +829,7 @@ namespace GamesTan.ECS.Game {
                 case E_EntityOfAssetData.PClassA: return _GetAllPClassA_AssetData<int>(_GetOffsetOfAssetData_AssetId(),filterFunc,out length); break;
                 case E_EntityOfAssetData.SubClassA: return _GetAllSubClassA_AssetData<int>(_GetOffsetOfAssetData_AssetId(),filterFunc,out length); break;
                 case E_EntityOfAssetData.SubClassB: return _GetAllSubClassB_AssetData<int>(_GetOffsetOfAssetData_AssetId(),filterFunc,out length); break;
+                case E_EntityOfAssetData.SubClassBC: return _GetAllSubClassBC_AssetData<int>(_GetOffsetOfAssetData_AssetId(),filterFunc,out length); break;
                 case E_EntityOfAssetData.Enemy: return _GetAllEnemy_AssetData<int>(_GetOffsetOfAssetData_AssetId(),filterFunc,out length); break;
                 case E_EntityOfAssetData.Bullet: return _GetAllBullet_AssetData<int>(_GetOffsetOfAssetData_AssetId(),filterFunc,out length); break;
                 case E_EntityOfAssetData.BulletEmitter: return _GetAllBulletEmitter_AssetData<int>(_GetOffsetOfAssetData_AssetId(),filterFunc,out length); break;
@@ -802,62 +841,66 @@ namespace GamesTan.ECS.Game {
                 case E_EntityOfAssetData.PClassA: return _GetAllPClassA_AssetData<int>(_GetOffsetOfAssetData_InstancePrefabIdx(),filterFunc,out length); break;
                 case E_EntityOfAssetData.SubClassA: return _GetAllSubClassA_AssetData<int>(_GetOffsetOfAssetData_InstancePrefabIdx(),filterFunc,out length); break;
                 case E_EntityOfAssetData.SubClassB: return _GetAllSubClassB_AssetData<int>(_GetOffsetOfAssetData_InstancePrefabIdx(),filterFunc,out length); break;
+                case E_EntityOfAssetData.SubClassBC: return _GetAllSubClassBC_AssetData<int>(_GetOffsetOfAssetData_InstancePrefabIdx(),filterFunc,out length); break;
                 case E_EntityOfAssetData.Enemy: return _GetAllEnemy_AssetData<int>(_GetOffsetOfAssetData_InstancePrefabIdx(),filterFunc,out length); break;
                 case E_EntityOfAssetData.Bullet: return _GetAllBullet_AssetData<int>(_GetOffsetOfAssetData_InstancePrefabIdx(),filterFunc,out length); break;
                 case E_EntityOfAssetData.BulletEmitter: return _GetAllBulletEmitter_AssetData<int>(_GetOffsetOfAssetData_InstancePrefabIdx(),filterFunc,out length); break;
             }
             length = 0;return new NativeArray<int>();
         }
-        internal NativeArray<float2> GetAllTransform2D_Position(E_EntityOfTransform2D entity,FuncEntityFilter<Entity> filterFunc,out int length){
+        internal NativeArray<LVector2> GetAllTransform2D_Position(E_EntityOfTransform2D entity,FuncEntityFilter<Entity> filterFunc,out int length){
             switch(entity){
 
             }
-            length = 0;return new NativeArray<float2>();
+            length = 0;return new NativeArray<LVector2>();
         }
-        internal NativeArray<float> GetAllTransform2D_Deg(E_EntityOfTransform2D entity,FuncEntityFilter<Entity> filterFunc,out int length){
+        internal NativeArray<LFloat> GetAllTransform2D_Deg(E_EntityOfTransform2D entity,FuncEntityFilter<Entity> filterFunc,out int length){
             switch(entity){
 
             }
-            length = 0;return new NativeArray<float>();
+            length = 0;return new NativeArray<LFloat>();
         }
-        internal NativeArray<float> GetAllTransform2D_Scale(E_EntityOfTransform2D entity,FuncEntityFilter<Entity> filterFunc,out int length){
+        internal NativeArray<LFloat> GetAllTransform2D_Scale(E_EntityOfTransform2D entity,FuncEntityFilter<Entity> filterFunc,out int length){
             switch(entity){
 
             }
-            length = 0;return new NativeArray<float>();
+            length = 0;return new NativeArray<LFloat>();
         }
-        internal NativeArray<float3> GetAllTransform3D_Position(E_EntityOfTransform3D entity,FuncEntityFilter<Entity> filterFunc,out int length){
+        internal NativeArray<LVector3> GetAllTransform3D_Position(E_EntityOfTransform3D entity,FuncEntityFilter<Entity> filterFunc,out int length){
             switch(entity){
-                case E_EntityOfTransform3D.PClassA: return _GetAllPClassA_Transform3D<float3>(_GetOffsetOfTransform3D_Position(),filterFunc,out length); break;
-                case E_EntityOfTransform3D.SubClassA: return _GetAllSubClassA_Transform3D<float3>(_GetOffsetOfTransform3D_Position(),filterFunc,out length); break;
-                case E_EntityOfTransform3D.SubClassB: return _GetAllSubClassB_Transform3D<float3>(_GetOffsetOfTransform3D_Position(),filterFunc,out length); break;
-                case E_EntityOfTransform3D.Enemy: return _GetAllEnemy_Transform3D<float3>(_GetOffsetOfTransform3D_Position(),filterFunc,out length); break;
-                case E_EntityOfTransform3D.Bullet: return _GetAllBullet_Transform3D<float3>(_GetOffsetOfTransform3D_Position(),filterFunc,out length); break;
-                case E_EntityOfTransform3D.BulletEmitter: return _GetAllBulletEmitter_Transform3D<float3>(_GetOffsetOfTransform3D_Position(),filterFunc,out length); break;
+                case E_EntityOfTransform3D.PClassA: return _GetAllPClassA_Transform3D<LVector3>(_GetOffsetOfTransform3D_Position(),filterFunc,out length); break;
+                case E_EntityOfTransform3D.SubClassA: return _GetAllSubClassA_Transform3D<LVector3>(_GetOffsetOfTransform3D_Position(),filterFunc,out length); break;
+                case E_EntityOfTransform3D.SubClassB: return _GetAllSubClassB_Transform3D<LVector3>(_GetOffsetOfTransform3D_Position(),filterFunc,out length); break;
+                case E_EntityOfTransform3D.SubClassBC: return _GetAllSubClassBC_Transform3D<LVector3>(_GetOffsetOfTransform3D_Position(),filterFunc,out length); break;
+                case E_EntityOfTransform3D.Enemy: return _GetAllEnemy_Transform3D<LVector3>(_GetOffsetOfTransform3D_Position(),filterFunc,out length); break;
+                case E_EntityOfTransform3D.Bullet: return _GetAllBullet_Transform3D<LVector3>(_GetOffsetOfTransform3D_Position(),filterFunc,out length); break;
+                case E_EntityOfTransform3D.BulletEmitter: return _GetAllBulletEmitter_Transform3D<LVector3>(_GetOffsetOfTransform3D_Position(),filterFunc,out length); break;
             }
-            length = 0;return new NativeArray<float3>();
+            length = 0;return new NativeArray<LVector3>();
         }
-        internal NativeArray<float3> GetAllTransform3D_Rotation(E_EntityOfTransform3D entity,FuncEntityFilter<Entity> filterFunc,out int length){
+        internal NativeArray<LVector3> GetAllTransform3D_Rotation(E_EntityOfTransform3D entity,FuncEntityFilter<Entity> filterFunc,out int length){
             switch(entity){
-                case E_EntityOfTransform3D.PClassA: return _GetAllPClassA_Transform3D<float3>(_GetOffsetOfTransform3D_Rotation(),filterFunc,out length); break;
-                case E_EntityOfTransform3D.SubClassA: return _GetAllSubClassA_Transform3D<float3>(_GetOffsetOfTransform3D_Rotation(),filterFunc,out length); break;
-                case E_EntityOfTransform3D.SubClassB: return _GetAllSubClassB_Transform3D<float3>(_GetOffsetOfTransform3D_Rotation(),filterFunc,out length); break;
-                case E_EntityOfTransform3D.Enemy: return _GetAllEnemy_Transform3D<float3>(_GetOffsetOfTransform3D_Rotation(),filterFunc,out length); break;
-                case E_EntityOfTransform3D.Bullet: return _GetAllBullet_Transform3D<float3>(_GetOffsetOfTransform3D_Rotation(),filterFunc,out length); break;
-                case E_EntityOfTransform3D.BulletEmitter: return _GetAllBulletEmitter_Transform3D<float3>(_GetOffsetOfTransform3D_Rotation(),filterFunc,out length); break;
+                case E_EntityOfTransform3D.PClassA: return _GetAllPClassA_Transform3D<LVector3>(_GetOffsetOfTransform3D_Rotation(),filterFunc,out length); break;
+                case E_EntityOfTransform3D.SubClassA: return _GetAllSubClassA_Transform3D<LVector3>(_GetOffsetOfTransform3D_Rotation(),filterFunc,out length); break;
+                case E_EntityOfTransform3D.SubClassB: return _GetAllSubClassB_Transform3D<LVector3>(_GetOffsetOfTransform3D_Rotation(),filterFunc,out length); break;
+                case E_EntityOfTransform3D.SubClassBC: return _GetAllSubClassBC_Transform3D<LVector3>(_GetOffsetOfTransform3D_Rotation(),filterFunc,out length); break;
+                case E_EntityOfTransform3D.Enemy: return _GetAllEnemy_Transform3D<LVector3>(_GetOffsetOfTransform3D_Rotation(),filterFunc,out length); break;
+                case E_EntityOfTransform3D.Bullet: return _GetAllBullet_Transform3D<LVector3>(_GetOffsetOfTransform3D_Rotation(),filterFunc,out length); break;
+                case E_EntityOfTransform3D.BulletEmitter: return _GetAllBulletEmitter_Transform3D<LVector3>(_GetOffsetOfTransform3D_Rotation(),filterFunc,out length); break;
             }
-            length = 0;return new NativeArray<float3>();
+            length = 0;return new NativeArray<LVector3>();
         }
-        internal NativeArray<float3> GetAllTransform3D_Scale(E_EntityOfTransform3D entity,FuncEntityFilter<Entity> filterFunc,out int length){
+        internal NativeArray<LVector3> GetAllTransform3D_Scale(E_EntityOfTransform3D entity,FuncEntityFilter<Entity> filterFunc,out int length){
             switch(entity){
-                case E_EntityOfTransform3D.PClassA: return _GetAllPClassA_Transform3D<float3>(_GetOffsetOfTransform3D_Scale(),filterFunc,out length); break;
-                case E_EntityOfTransform3D.SubClassA: return _GetAllSubClassA_Transform3D<float3>(_GetOffsetOfTransform3D_Scale(),filterFunc,out length); break;
-                case E_EntityOfTransform3D.SubClassB: return _GetAllSubClassB_Transform3D<float3>(_GetOffsetOfTransform3D_Scale(),filterFunc,out length); break;
-                case E_EntityOfTransform3D.Enemy: return _GetAllEnemy_Transform3D<float3>(_GetOffsetOfTransform3D_Scale(),filterFunc,out length); break;
-                case E_EntityOfTransform3D.Bullet: return _GetAllBullet_Transform3D<float3>(_GetOffsetOfTransform3D_Scale(),filterFunc,out length); break;
-                case E_EntityOfTransform3D.BulletEmitter: return _GetAllBulletEmitter_Transform3D<float3>(_GetOffsetOfTransform3D_Scale(),filterFunc,out length); break;
+                case E_EntityOfTransform3D.PClassA: return _GetAllPClassA_Transform3D<LVector3>(_GetOffsetOfTransform3D_Scale(),filterFunc,out length); break;
+                case E_EntityOfTransform3D.SubClassA: return _GetAllSubClassA_Transform3D<LVector3>(_GetOffsetOfTransform3D_Scale(),filterFunc,out length); break;
+                case E_EntityOfTransform3D.SubClassB: return _GetAllSubClassB_Transform3D<LVector3>(_GetOffsetOfTransform3D_Scale(),filterFunc,out length); break;
+                case E_EntityOfTransform3D.SubClassBC: return _GetAllSubClassBC_Transform3D<LVector3>(_GetOffsetOfTransform3D_Scale(),filterFunc,out length); break;
+                case E_EntityOfTransform3D.Enemy: return _GetAllEnemy_Transform3D<LVector3>(_GetOffsetOfTransform3D_Scale(),filterFunc,out length); break;
+                case E_EntityOfTransform3D.Bullet: return _GetAllBullet_Transform3D<LVector3>(_GetOffsetOfTransform3D_Scale(),filterFunc,out length); break;
+                case E_EntityOfTransform3D.BulletEmitter: return _GetAllBulletEmitter_Transform3D<LVector3>(_GetOffsetOfTransform3D_Scale(),filterFunc,out length); break;
             }
-            length = 0;return new NativeArray<float3>();
+            length = 0;return new NativeArray<LVector3>();
         }
 
         internal NativeArray<MeshRenderData> GetAllMeshRenderData(E_EntityOfMeshRenderData entity){
@@ -878,6 +921,7 @@ namespace GamesTan.ECS.Game {
                 case E_EntityOfPhysicData.PClassA: return _GetAllPClassA_PhysicData<PhysicData>(0); break;
                 case E_EntityOfPhysicData.SubClassA: return _GetAllSubClassA_PhysicData<PhysicData>(0); break;
                 case E_EntityOfPhysicData.SubClassB: return _GetAllSubClassB_PhysicData<PhysicData>(0); break;
+                case E_EntityOfPhysicData.SubClassBC: return _GetAllSubClassBC_PhysicData<PhysicData>(0); break;
                 case E_EntityOfPhysicData.Enemy: return _GetAllEnemy_PhysicData<PhysicData>(0); break;
                 case E_EntityOfPhysicData.Bullet: return _GetAllBullet_PhysicData<PhysicData>(0); break;
                 case E_EntityOfPhysicData.BulletEmitter: return _GetAllBulletEmitter_PhysicData<PhysicData>(0); break;
@@ -889,6 +933,7 @@ namespace GamesTan.ECS.Game {
                 case E_EntityOfBasicData.PClassA: return _GetAllPClassA_BasicData<BasicData>(0); break;
                 case E_EntityOfBasicData.SubClassA: return _GetAllSubClassA_BasicData<BasicData>(0); break;
                 case E_EntityOfBasicData.SubClassB: return _GetAllSubClassB_BasicData<BasicData>(0); break;
+                case E_EntityOfBasicData.SubClassBC: return _GetAllSubClassBC_BasicData<BasicData>(0); break;
                 case E_EntityOfBasicData.Enemy: return _GetAllEnemy_BasicData<BasicData>(0); break;
                 case E_EntityOfBasicData.Bullet: return _GetAllBullet_BasicData<BasicData>(0); break;
                 case E_EntityOfBasicData.BulletEmitter: return _GetAllBulletEmitter_BasicData<BasicData>(0); break;
@@ -961,6 +1006,7 @@ namespace GamesTan.ECS.Game {
                 case E_EntityOfAssetData.PClassA: return _GetAllPClassA_AssetData<AssetData>(0); break;
                 case E_EntityOfAssetData.SubClassA: return _GetAllSubClassA_AssetData<AssetData>(0); break;
                 case E_EntityOfAssetData.SubClassB: return _GetAllSubClassB_AssetData<AssetData>(0); break;
+                case E_EntityOfAssetData.SubClassBC: return _GetAllSubClassBC_AssetData<AssetData>(0); break;
                 case E_EntityOfAssetData.Enemy: return _GetAllEnemy_AssetData<AssetData>(0); break;
                 case E_EntityOfAssetData.Bullet: return _GetAllBullet_AssetData<AssetData>(0); break;
                 case E_EntityOfAssetData.BulletEmitter: return _GetAllBulletEmitter_AssetData<AssetData>(0); break;
@@ -978,6 +1024,7 @@ namespace GamesTan.ECS.Game {
                 case E_EntityOfTransform3D.PClassA: return _GetAllPClassA_Transform3D<Transform3D>(0); break;
                 case E_EntityOfTransform3D.SubClassA: return _GetAllSubClassA_Transform3D<Transform3D>(0); break;
                 case E_EntityOfTransform3D.SubClassB: return _GetAllSubClassB_Transform3D<Transform3D>(0); break;
+                case E_EntityOfTransform3D.SubClassBC: return _GetAllSubClassBC_Transform3D<Transform3D>(0); break;
                 case E_EntityOfTransform3D.Enemy: return _GetAllEnemy_Transform3D<Transform3D>(0); break;
                 case E_EntityOfTransform3D.Bullet: return _GetAllBullet_Transform3D<Transform3D>(0); break;
                 case E_EntityOfTransform3D.BulletEmitter: return _GetAllBulletEmitter_Transform3D<Transform3D>(0); break;
@@ -1007,6 +1054,7 @@ namespace GamesTan.ECS.Game {
                 case E_EntityOfPhysicData.PClassA: return _GetAllPClassA_PhysicData<PhysicData>(0,filterFunc,out length); break;
                 case E_EntityOfPhysicData.SubClassA: return _GetAllSubClassA_PhysicData<PhysicData>(0,filterFunc,out length); break;
                 case E_EntityOfPhysicData.SubClassB: return _GetAllSubClassB_PhysicData<PhysicData>(0,filterFunc,out length); break;
+                case E_EntityOfPhysicData.SubClassBC: return _GetAllSubClassBC_PhysicData<PhysicData>(0,filterFunc,out length); break;
                 case E_EntityOfPhysicData.Enemy: return _GetAllEnemy_PhysicData<PhysicData>(0,filterFunc,out length); break;
                 case E_EntityOfPhysicData.Bullet: return _GetAllBullet_PhysicData<PhysicData>(0,filterFunc,out length); break;
                 case E_EntityOfPhysicData.BulletEmitter: return _GetAllBulletEmitter_PhysicData<PhysicData>(0,filterFunc,out length); break;
@@ -1019,6 +1067,7 @@ namespace GamesTan.ECS.Game {
                 case E_EntityOfBasicData.PClassA: return _GetAllPClassA_BasicData<BasicData>(0,filterFunc,out length); break;
                 case E_EntityOfBasicData.SubClassA: return _GetAllSubClassA_BasicData<BasicData>(0,filterFunc,out length); break;
                 case E_EntityOfBasicData.SubClassB: return _GetAllSubClassB_BasicData<BasicData>(0,filterFunc,out length); break;
+                case E_EntityOfBasicData.SubClassBC: return _GetAllSubClassBC_BasicData<BasicData>(0,filterFunc,out length); break;
                 case E_EntityOfBasicData.Enemy: return _GetAllEnemy_BasicData<BasicData>(0,filterFunc,out length); break;
                 case E_EntityOfBasicData.Bullet: return _GetAllBullet_BasicData<BasicData>(0,filterFunc,out length); break;
                 case E_EntityOfBasicData.BulletEmitter: return _GetAllBulletEmitter_BasicData<BasicData>(0,filterFunc,out length); break;
@@ -1102,6 +1151,7 @@ namespace GamesTan.ECS.Game {
                 case E_EntityOfAssetData.PClassA: return _GetAllPClassA_AssetData<AssetData>(0,filterFunc,out length); break;
                 case E_EntityOfAssetData.SubClassA: return _GetAllSubClassA_AssetData<AssetData>(0,filterFunc,out length); break;
                 case E_EntityOfAssetData.SubClassB: return _GetAllSubClassB_AssetData<AssetData>(0,filterFunc,out length); break;
+                case E_EntityOfAssetData.SubClassBC: return _GetAllSubClassBC_AssetData<AssetData>(0,filterFunc,out length); break;
                 case E_EntityOfAssetData.Enemy: return _GetAllEnemy_AssetData<AssetData>(0,filterFunc,out length); break;
                 case E_EntityOfAssetData.Bullet: return _GetAllBullet_AssetData<AssetData>(0,filterFunc,out length); break;
                 case E_EntityOfAssetData.BulletEmitter: return _GetAllBulletEmitter_AssetData<AssetData>(0,filterFunc,out length); break;
@@ -1121,6 +1171,7 @@ namespace GamesTan.ECS.Game {
                 case E_EntityOfTransform3D.PClassA: return _GetAllPClassA_Transform3D<Transform3D>(0,filterFunc,out length); break;
                 case E_EntityOfTransform3D.SubClassA: return _GetAllSubClassA_Transform3D<Transform3D>(0,filterFunc,out length); break;
                 case E_EntityOfTransform3D.SubClassB: return _GetAllSubClassB_Transform3D<Transform3D>(0,filterFunc,out length); break;
+                case E_EntityOfTransform3D.SubClassBC: return _GetAllSubClassBC_Transform3D<Transform3D>(0,filterFunc,out length); break;
                 case E_EntityOfTransform3D.Enemy: return _GetAllEnemy_Transform3D<Transform3D>(0,filterFunc,out length); break;
                 case E_EntityOfTransform3D.Bullet: return _GetAllBullet_Transform3D<Transform3D>(0,filterFunc,out length); break;
                 case E_EntityOfTransform3D.BulletEmitter: return _GetAllBulletEmitter_Transform3D<Transform3D>(0,filterFunc,out length); break;
@@ -1151,6 +1202,14 @@ namespace GamesTan.ECS.Game {
         [MethodImpl(MethodImplOptions.AggressiveInlining)] internal unsafe SubClassB* GetSubClassB(int index) { return _SubClassBAry.GetEntity(index); }
         [MethodImpl(MethodImplOptions.AggressiveInlining)] internal unsafe SubClassB* GetSubClassB(EntityRef entityRef){
             var ptr = _SubClassBAry.GetEntity(entityRef._index);
+            if (ptr->EntityRef != entityRef) return null;
+            return ptr;
+        } 
+        internal int CurSubClassBCCount => _SubClassBCAry.CurEntityCount;
+        internal int MaxSubClassBCIndex => _SubClassBCAry.Length - 1;
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] internal unsafe SubClassBC* GetSubClassBC(int index) { return _SubClassBCAry.GetEntity(index); }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] internal unsafe SubClassBC* GetSubClassBC(EntityRef entityRef){
+            var ptr = _SubClassBCAry.GetEntity(entityRef._index);
             if (ptr->EntityRef != entityRef) return null;
             return ptr;
         } 

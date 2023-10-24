@@ -41,6 +41,15 @@ namespace GamesTan.ECS.Game {
         }
     }
 
+    public unsafe partial struct SubClassBC {
+   
+        [VirtualFunction(typeof(SubClassBC))]
+        public static void FuncCParam_Virtual(SubClassBC* ptr,int a,float b,string c) {
+        }
+        [VirtualFunction(typeof(SubClassBC))]
+        public static void FuncDParam_Virtual(SubClassBC* ptr,int a,string b) {
+        }
+    }
     public class TestStructVirtualFunctions : MonoBehaviour {
         unsafe void Start() {
             TestVirtualStruct();

@@ -71,6 +71,8 @@ namespace GamesTan.ECS.Game {
         public virtual void OnSubClassADestroy(Context context, SubClassA* entity){}
         public virtual void OnSubClassBCreated(Context context, SubClassB* entity){}
         public virtual void OnSubClassBDestroy(Context context, SubClassB* entity){}
+        public virtual void OnSubClassBCCreated(Context context, SubClassBC* entity){}
+        public virtual void OnSubClassBCDestroy(Context context, SubClassBC* entity){}
         public virtual void OnEnemyCreated(Context context, Enemy* entity){}
         public virtual void OnEnemyDestroy(Context context, Enemy* entity){}
         public virtual void OnBulletCreated(Context context, Bullet* entity){}

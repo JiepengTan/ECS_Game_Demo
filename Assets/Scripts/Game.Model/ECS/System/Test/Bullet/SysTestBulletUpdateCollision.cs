@@ -1,10 +1,13 @@
 ﻿using System.Collections.Generic;
+using Lockstep.Game;
+using Lockstep.Serialization;
 using Unity.Burst;
 using Unity.Mathematics;
 
 namespace GamesTan.ECS.Game {
     public unsafe partial class SysTestBulletUpdateCollision : BaseGameExecuteSystem {
         public void Execute(Bullet* entity) {
+           
             var lst = WorldRegion.QueryCollision(entity->TransformData.Position, entity->PhysicData.Radius);
             foreach (var item in lst) {
                 var target = EntityManager.GetEnemy((int)item);

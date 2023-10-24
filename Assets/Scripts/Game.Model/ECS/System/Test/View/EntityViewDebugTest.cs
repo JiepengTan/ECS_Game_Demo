@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Lockstep.Math;
+using UnityEngine;
 
 namespace GamesTan.ECS.Game {
     public unsafe class EntityViewDebugTest : MonoBehaviour {
@@ -9,16 +10,9 @@ namespace GamesTan.ECS.Game {
         public void Update() {
             var entity = Context.GetEnemy(Entity);
             if (entity != null) {
-                if (IsControlByEntity) {
-                    transform.position = entity->TransformData.Position;
-                    transform.eulerAngles = entity->TransformData.Rotation;
-                    transform.localScale = entity->TransformData.Scale;
-                }
-                else {
-                    entity->TransformData.Position = transform.position;
-                    entity->TransformData.Rotation = transform.eulerAngles;
-                    entity->TransformData.Scale = transform.localScale;
-                }
+                transform.position = entity->TransformData.Position.ToVector3();
+                transform.eulerAngles = entity->TransformData.Rotation.ToVector3();
+                transform.localScale = entity->TransformData.Scale.ToVector3();
             }
         }
     }

@@ -81,9 +81,9 @@ namespace GamesTan.ECS.Game {
     public unsafe partial struct EmitterData {
         public int Deg;
         public int Count;
-        public float LiveTime;
-        public float Interval;
-        public float Timer; 
+        public LFloat LiveTime;
+        public LFloat Interval;
+        public LFloat Timer; 
         public override Int32 GetHashCode() {
             unchecked {
                 var hash = 7;
@@ -99,10 +99,10 @@ namespace GamesTan.ECS.Game {
     [StructLayoutAttribute(LayoutKind.Sequential)]
     [System.Serializable]
     public unsafe partial struct AIData {
-        public float AITimer;
-        public float TargetDeg;
-        public float LerpInterval;
-        public float LerpTimer; 
+        public LFloat AITimer;
+        public LFloat TargetDeg;
+        public LFloat LerpInterval;
+        public LFloat LerpTimer; 
         public override Int32 GetHashCode() {
             unchecked {
                 var hash = 7;
@@ -117,10 +117,10 @@ namespace GamesTan.ECS.Game {
     [StructLayoutAttribute(LayoutKind.Sequential)]
     [System.Serializable]
     public unsafe partial struct AnimData {
-        public float4 Timer;
-        public float4 LerpTimer;
-        public int4 AnimId1;
-        public int4 AnimId2; 
+        public LVector4 Timer;
+        public LVector4 LerpTimer;
+        public LVector4Int AnimId1;
+        public LVector4Int AnimId2; 
         public override Int32 GetHashCode() {
             unchecked {
                 var hash = 7;

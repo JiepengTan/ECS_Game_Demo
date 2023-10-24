@@ -23,7 +23,14 @@ namespace GamesTan.ECS.Game {
         public bool DebugStopAnimation = false;
         public bool DebugStopAI = false;
         public bool IsOnlyOnePreafb = false;
-        
-        
+        public GamePlayerInput[] InputCmds = new GamePlayerInput[10];
+
+
+        public override void DoAwake(IServiceContainer services) {
+            base.DoAwake(services);
+            for (int i = 0; i < InputCmds.Length; i++) {
+                InputCmds[i] = new GamePlayerInput();
+            }
+        }
     }
 }

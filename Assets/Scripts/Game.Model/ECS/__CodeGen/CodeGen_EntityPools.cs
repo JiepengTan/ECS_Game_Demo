@@ -29,6 +29,8 @@ namespace GamesTan.ECS.Game {
     }
     public unsafe class NativePoolSubClassB :NativeEntityPool<SubClassB>{
     }
+    public unsafe class NativePoolSubClassBC :NativeEntityPool<SubClassBC>{
+    }
     public unsafe class NativePoolEnemy :NativeEntityPool<Enemy>{
     }
     public unsafe class NativePoolBullet :NativeEntityPool<Bullet>{

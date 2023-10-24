@@ -61,44 +61,44 @@ namespace GamesTan.ECS.Game {
         }
 
         /// <summary> 旋转   /// </summary>
-        public float DegY {
+        public LFloat DegY {
             get => TransformData.Rotation.y;
             set => TransformData.Rotation.y = value;
         }
 
-        public float3 Forward {
+        public LVector3 Forward {
             get {
-                float deg = math.radians(-DegY + 90);
-                return new float3(math.cos(deg), 0, math.sin(deg));
+                LFloat deg = LMath.Deg2Rad*(-DegY + 90);
+                return new LVector3(LMath.Cos(deg), 0, LMath.Sin(deg));
             }
         }
 
-        public float2 Forward2 {
+        public LVector2 Forward2 {
             get {
-                float deg = math.radians(-DegY + 90);
-                return new float2(math.cos(deg), math.sin(deg));
+                LFloat deg = LMath.Deg2Rad*(-DegY + 90);
+                return new LVector2(LMath.Cos(deg), LMath.Sin(deg));
             }
         }
-        public float Radius {
+        public LFloat Radius {
             get => PhysicData.Radius;
             set => PhysicData.Radius = value;
         }
-        public float3 Pos3 {
+        public LVector3 Pos3 {
             get => TransformData.Position;
             set => TransformData.Position = value;
         }
-        public float3 Rot3 {
+        public LVector3 Rot3 {
             get => TransformData.Rotation;
             set => TransformData.Rotation = value;
         }
-        public float3 Scale3 {
+        public LVector3 Scale3 {
             get => TransformData.Scale;
             set => TransformData.Scale = value;
         }
-        public float Scale {
+        public LFloat Scale {
             get => TransformData.Scale.x;
             set {
-                TransformData.Scale = new float3(2, 2, 2) * value;
+                TransformData.Scale = new LVector3(2, 2, 2) * value;
                 PhysicData.Radius = value;
             }
         }
@@ -127,7 +127,7 @@ namespace GamesTan.ECS.Game {
         public BasicData BasicData;
         public PhysicData PhysicData;
         public int Val1;
-        public float Val2; 
+        public LFloat Val2; 
 
         /// <summary> GameObject Id   /// </summary>
         public int GObjectId {
@@ -142,44 +142,44 @@ namespace GamesTan.ECS.Game {
         }
 
         /// <summary> 旋转   /// </summary>
-        public float DegY {
+        public LFloat DegY {
             get => TransformData.Rotation.y;
             set => TransformData.Rotation.y = value;
         }
 
-        public float3 Forward {
+        public LVector3 Forward {
             get {
-                float deg = math.radians(-DegY + 90);
-                return new float3(math.cos(deg), 0, math.sin(deg));
+                LFloat deg = LMath.Deg2Rad*(-DegY + 90);
+                return new LVector3(LMath.Cos(deg), 0, LMath.Sin(deg));
             }
         }
 
-        public float2 Forward2 {
+        public LVector2 Forward2 {
             get {
-                float deg = math.radians(-DegY + 90);
-                return new float2(math.cos(deg), math.sin(deg));
+                LFloat deg = LMath.Deg2Rad*(-DegY + 90);
+                return new LVector2(LMath.Cos(deg), LMath.Sin(deg));
             }
         }
-        public float Radius {
+        public LFloat Radius {
             get => PhysicData.Radius;
             set => PhysicData.Radius = value;
         }
-        public float3 Pos3 {
+        public LVector3 Pos3 {
             get => TransformData.Position;
             set => TransformData.Position = value;
         }
-        public float3 Rot3 {
+        public LVector3 Rot3 {
             get => TransformData.Rotation;
             set => TransformData.Rotation = value;
         }
-        public float3 Scale3 {
+        public LVector3 Scale3 {
             get => TransformData.Scale;
             set => TransformData.Scale = value;
         }
-        public float Scale {
+        public LFloat Scale {
             get => TransformData.Scale.x;
             set {
-                TransformData.Scale = new float3(2, 2, 2) * value;
+                TransformData.Scale = new LVector3(2, 2, 2) * value;
                 PhysicData.Radius = value;
             }
         }
@@ -223,44 +223,126 @@ namespace GamesTan.ECS.Game {
         }
 
         /// <summary> 旋转   /// </summary>
-        public float DegY {
+        public LFloat DegY {
             get => TransformData.Rotation.y;
             set => TransformData.Rotation.y = value;
         }
 
-        public float3 Forward {
+        public LVector3 Forward {
             get {
-                float deg = math.radians(-DegY + 90);
-                return new float3(math.cos(deg), 0, math.sin(deg));
+                LFloat deg = LMath.Deg2Rad*(-DegY + 90);
+                return new LVector3(LMath.Cos(deg), 0, LMath.Sin(deg));
             }
         }
 
-        public float2 Forward2 {
+        public LVector2 Forward2 {
             get {
-                float deg = math.radians(-DegY + 90);
-                return new float2(math.cos(deg), math.sin(deg));
+                LFloat deg = LMath.Deg2Rad*(-DegY + 90);
+                return new LVector2(LMath.Cos(deg), LMath.Sin(deg));
             }
         }
-        public float Radius {
+        public LFloat Radius {
             get => PhysicData.Radius;
             set => PhysicData.Radius = value;
         }
-        public float3 Pos3 {
+        public LVector3 Pos3 {
             get => TransformData.Position;
             set => TransformData.Position = value;
         }
-        public float3 Rot3 {
+        public LVector3 Rot3 {
             get => TransformData.Rotation;
             set => TransformData.Rotation = value;
         }
-        public float3 Scale3 {
+        public LVector3 Scale3 {
             get => TransformData.Scale;
             set => TransformData.Scale = value;
         }
-        public float Scale {
+        public LFloat Scale {
             get => TransformData.Scale.x;
             set {
-                TransformData.Scale = new float3(2, 2, 2) * value;
+                TransformData.Scale = new LVector3(2, 2, 2) * value;
+                PhysicData.Radius = value;
+            }
+        }
+
+    }
+    [System.Serializable]
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe partial struct SubClassBC :IEntity {
+
+        public const Int32 INIT_COUNT = 1;
+        public Entity _entity;
+        public  void _SetEntityRef(EntityRef value) {
+            _entity._ref = value;
+        }
+        public bool IsValid => _entity._active;
+        // BuildIn properties
+        public EntityRef EntityRef =>_entity._ref;
+        public int EntityIndex =>_entity.EntityIndex;
+        public EEntityType EntityType => (EEntityType)(_entity.TypeId);
+        public bool IsActive =>_entity._active;
+        public int EntityId => _entity._localId;
+
+        // Fields
+        public AssetData AssetData;
+        public Transform3D TransformData;
+        public BasicData BasicData;
+        public PhysicData PhysicData;
+        public int Val1;
+        public long Val3;
+        public uint Val4; 
+
+        /// <summary> GameObject Id   /// </summary>
+        public int GObjectId {
+            get => BasicData.GObjectId;
+            set => BasicData.GObjectId = value;
+        }
+        
+        /// <summary> 是否已经释放   /// </summary>
+        public bool IsAlreadyStart {
+            get => BasicData.StatusData.Is(0);
+            set => BasicData.StatusData.Set(0, value);
+        }
+
+        /// <summary> 旋转   /// </summary>
+        public LFloat DegY {
+            get => TransformData.Rotation.y;
+            set => TransformData.Rotation.y = value;
+        }
+
+        public LVector3 Forward {
+            get {
+                LFloat deg = LMath.Deg2Rad*(-DegY + 90);
+                return new LVector3(LMath.Cos(deg), 0, LMath.Sin(deg));
+            }
+        }
+
+        public LVector2 Forward2 {
+            get {
+                LFloat deg = LMath.Deg2Rad*(-DegY + 90);
+                return new LVector2(LMath.Cos(deg), LMath.Sin(deg));
+            }
+        }
+        public LFloat Radius {
+            get => PhysicData.Radius;
+            set => PhysicData.Radius = value;
+        }
+        public LVector3 Pos3 {
+            get => TransformData.Position;
+            set => TransformData.Position = value;
+        }
+        public LVector3 Rot3 {
+            get => TransformData.Rotation;
+            set => TransformData.Rotation = value;
+        }
+        public LVector3 Scale3 {
+            get => TransformData.Scale;
+            set => TransformData.Scale = value;
+        }
+        public LFloat Scale {
+            get => TransformData.Scale.x;
+            set {
+                TransformData.Scale = new LVector3(2, 2, 2) * value;
                 PhysicData.Radius = value;
             }
         }
@@ -307,44 +389,44 @@ namespace GamesTan.ECS.Game {
         }
 
         /// <summary> 旋转   /// </summary>
-        public float DegY {
+        public LFloat DegY {
             get => TransformData.Rotation.y;
             set => TransformData.Rotation.y = value;
         }
 
-        public float3 Forward {
+        public LVector3 Forward {
             get {
-                float deg = math.radians(-DegY + 90);
-                return new float3(math.cos(deg), 0, math.sin(deg));
+                LFloat deg = LMath.Deg2Rad*(-DegY + 90);
+                return new LVector3(LMath.Cos(deg), 0, LMath.Sin(deg));
             }
         }
 
-        public float2 Forward2 {
+        public LVector2 Forward2 {
             get {
-                float deg = math.radians(-DegY + 90);
-                return new float2(math.cos(deg), math.sin(deg));
+                LFloat deg = LMath.Deg2Rad*(-DegY + 90);
+                return new LVector2(LMath.Cos(deg), LMath.Sin(deg));
             }
         }
-        public float Radius {
+        public LFloat Radius {
             get => PhysicData.Radius;
             set => PhysicData.Radius = value;
         }
-        public float3 Pos3 {
+        public LVector3 Pos3 {
             get => TransformData.Position;
             set => TransformData.Position = value;
         }
-        public float3 Rot3 {
+        public LVector3 Rot3 {
             get => TransformData.Rotation;
             set => TransformData.Rotation = value;
         }
-        public float3 Scale3 {
+        public LVector3 Scale3 {
             get => TransformData.Scale;
             set => TransformData.Scale = value;
         }
-        public float Scale {
+        public LFloat Scale {
             get => TransformData.Scale.x;
             set {
-                TransformData.Scale = new float3(2, 2, 2) * value;
+                TransformData.Scale = new LVector3(2, 2, 2) * value;
                 PhysicData.Radius = value;
             }
         }
@@ -389,44 +471,44 @@ namespace GamesTan.ECS.Game {
         }
 
         /// <summary> 旋转   /// </summary>
-        public float DegY {
+        public LFloat DegY {
             get => TransformData.Rotation.y;
             set => TransformData.Rotation.y = value;
         }
 
-        public float3 Forward {
+        public LVector3 Forward {
             get {
-                float deg = math.radians(-DegY + 90);
-                return new float3(math.cos(deg), 0, math.sin(deg));
+                LFloat deg = LMath.Deg2Rad*(-DegY + 90);
+                return new LVector3(LMath.Cos(deg), 0, LMath.Sin(deg));
             }
         }
 
-        public float2 Forward2 {
+        public LVector2 Forward2 {
             get {
-                float deg = math.radians(-DegY + 90);
-                return new float2(math.cos(deg), math.sin(deg));
+                LFloat deg = LMath.Deg2Rad*(-DegY + 90);
+                return new LVector2(LMath.Cos(deg), LMath.Sin(deg));
             }
         }
-        public float Radius {
+        public LFloat Radius {
             get => PhysicData.Radius;
             set => PhysicData.Radius = value;
         }
-        public float3 Pos3 {
+        public LVector3 Pos3 {
             get => TransformData.Position;
             set => TransformData.Position = value;
         }
-        public float3 Rot3 {
+        public LVector3 Rot3 {
             get => TransformData.Rotation;
             set => TransformData.Rotation = value;
         }
-        public float3 Scale3 {
+        public LVector3 Scale3 {
             get => TransformData.Scale;
             set => TransformData.Scale = value;
         }
-        public float Scale {
+        public LFloat Scale {
             get => TransformData.Scale.x;
             set {
-                TransformData.Scale = new float3(2, 2, 2) * value;
+                TransformData.Scale = new LVector3(2, 2, 2) * value;
                 PhysicData.Radius = value;
             }
         }
@@ -471,44 +553,44 @@ namespace GamesTan.ECS.Game {
         }
 
         /// <summary> 旋转   /// </summary>
-        public float DegY {
+        public LFloat DegY {
             get => TransformData.Rotation.y;
             set => TransformData.Rotation.y = value;
         }
 
-        public float3 Forward {
+        public LVector3 Forward {
             get {
-                float deg = math.radians(-DegY + 90);
-                return new float3(math.cos(deg), 0, math.sin(deg));
+                LFloat deg = LMath.Deg2Rad*(-DegY + 90);
+                return new LVector3(LMath.Cos(deg), 0, LMath.Sin(deg));
             }
         }
 
-        public float2 Forward2 {
+        public LVector2 Forward2 {
             get {
-                float deg = math.radians(-DegY + 90);
-                return new float2(math.cos(deg), math.sin(deg));
+                LFloat deg = LMath.Deg2Rad*(-DegY + 90);
+                return new LVector2(LMath.Cos(deg), LMath.Sin(deg));
             }
         }
-        public float Radius {
+        public LFloat Radius {
             get => PhysicData.Radius;
             set => PhysicData.Radius = value;
         }
-        public float3 Pos3 {
+        public LVector3 Pos3 {
             get => TransformData.Position;
             set => TransformData.Position = value;
         }
-        public float3 Rot3 {
+        public LVector3 Rot3 {
             get => TransformData.Rotation;
             set => TransformData.Rotation = value;
         }
-        public float3 Scale3 {
+        public LVector3 Scale3 {
             get => TransformData.Scale;
             set => TransformData.Scale = value;
         }
-        public float Scale {
+        public LFloat Scale {
             get => TransformData.Scale.x;
             set {
-                TransformData.Scale = new float3(2, 2, 2) * value;
+                TransformData.Scale = new LVector3(2, 2, 2) * value;
                 PhysicData.Radius = value;
             }
         }

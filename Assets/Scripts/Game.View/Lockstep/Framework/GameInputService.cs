@@ -23,14 +23,11 @@ namespace Lockstep.Game {
             var input = new Deserializer(cmd.content).Parse<GamePlayerInput>();
             var playerInput = entity as GamePlayerInput;
             playerInput.SkillId = input.SkillId;
-            playerInput.Deg = input.Deg;
-            //Debug.Log("InputUV  " + input.inputUV);
+            playerInput.Dir = input.Dir;
+            Debug.Log("Input Dir  " + input.Dir);
         }
 
         public List<InputCmd> GetInputCmds(){
-#if !UNITY_EDITOR
-            CurGameInput.Deg = ((ushort)(short)1);
-#endif
             return new List<InputCmd>() {
                 new InputCmd() {
                     content = CurGameInput.ToBytes()
@@ -42,8 +39,7 @@ namespace Lockstep.Game {
             return new List<InputCmd>() {
                 new InputCmd() {
                     content = new GamePlayerInput() {
-                        Deg = (ushort)LRandom.Range(0,4),
-                        SkillId = (ushort)LRandom.Range(0,3)
+                        Dir = (ushort)LRandom.Range(0,4),
                     }.ToBytes()
                 }
             };

@@ -19,10 +19,10 @@ namespace GamesTan.ECS.Game {
         public virtual void OnSkillDone(LFloat range){}
 
         protected void UpdatePosRot(ref Transform3D  transform3D){
-            var targetPos = transform3D.Position;
+            var targetPos = transform3D.Position.ToVector3();
             transform.position = Vector3.Lerp(transform.position, targetPos, _LerpVal);
-            transform.rotation =  Quaternion.Lerp(transform.rotation, Quaternion.Euler(transform3D.Rotation), _LerpVal);
-            transform.localScale =  transform3D.Scale; 
+            transform.rotation =  Quaternion.Lerp(transform.rotation, Quaternion.Euler(transform3D.Rotation.ToVector3()), _LerpVal);
+            transform.localScale =  transform3D.Scale.ToVector3(); 
         }
     }
 }

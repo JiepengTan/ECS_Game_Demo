@@ -19,6 +19,7 @@ namespace GamesTan.ECS.Game {
             // normal update
             Add(new SysTestEnemyUpdateAI());
             Add(new SysTestEnemyUpdateAnimation());
+            Add(new SysTestBulletUpdatePos());
             Add(new SysTestBulletUpdateCollision());
         }
 

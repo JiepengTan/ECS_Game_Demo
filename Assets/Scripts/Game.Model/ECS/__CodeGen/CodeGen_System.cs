@@ -145,6 +145,20 @@ namespace GamesTan.ECS.Game {
                     }
                 }
             } 
+        }
+        private static void ScheduleSysTestBulletUpdatePos(BaseContext context, ISystem sys){
+            var system = (GamesTan.ECS.Game.SysTestBulletUpdatePos) sys;
+            var entities = ((Context)context)._entities;
+            {
+                var ptr = entities._BulletAry.GetEntity(0);
+                var len = entities._BulletAry.Length;
+                for (int i = 0,idx = 0; i < len; i++, ++ptr ) {
+                    if (ptr->_entity._active) {
+                        system.Execute((Bullet*) ptr);
+                        idx++;
+                    }
+                }
+            } 
         } 
 
 

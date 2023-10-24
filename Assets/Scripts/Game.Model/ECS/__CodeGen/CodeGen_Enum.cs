@@ -29,6 +29,7 @@ namespace GamesTan.ECS.Game {
         PClassA,
         SubClassA,
         SubClassB,
+        SubClassBC,
         Enemy,
         Bullet,
         BulletEmitter, 
@@ -39,6 +40,7 @@ namespace GamesTan.ECS.Game {
       	public const int PClassA = (int)(EEntityType.PClassA);
       	public const int SubClassA = (int)(EEntityType.SubClassA);
       	public const int SubClassB = (int)(EEntityType.SubClassB);
+      	public const int SubClassBC = (int)(EEntityType.SubClassBC);
       	public const int Enemy = (int)(EEntityType.Enemy);
       	public const int Bullet = (int)(EEntityType.Bullet);
       	public const int BulletEmitter = (int)(EEntityType.BulletEmitter); 
@@ -121,6 +123,7 @@ namespace GamesTan.ECS.Game {
         PClassA,
         SubClassA,
         SubClassB,
+        SubClassBC,
         Enemy,
         Bullet,
         BulletEmitter,
@@ -129,6 +132,7 @@ namespace GamesTan.ECS.Game {
         PClassA,
         SubClassA,
         SubClassB,
+        SubClassBC,
         Enemy,
         Bullet,
         BulletEmitter,
@@ -168,6 +172,7 @@ namespace GamesTan.ECS.Game {
         PClassA,
         SubClassA,
         SubClassB,
+        SubClassBC,
         Enemy,
         Bullet,
         BulletEmitter,
@@ -179,6 +184,7 @@ namespace GamesTan.ECS.Game {
         PClassA,
         SubClassA,
         SubClassB,
+        SubClassBC,
         Enemy,
         Bullet,
         BulletEmitter,

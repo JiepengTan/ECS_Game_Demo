@@ -30,6 +30,8 @@ namespace GamesTan.ECS.Game {
         void OnSubClassADestroy(Context context, SubClassA* entity);
         void OnSubClassBCreated(Context context, SubClassB* entity);
         void OnSubClassBDestroy(Context context, SubClassB* entity);
+        void OnSubClassBCCreated(Context context, SubClassBC* entity);
+        void OnSubClassBCDestroy(Context context, SubClassBC* entity);
         void OnEnemyCreated(Context context, Enemy* entity);
         void OnEnemyDestroy(Context context, Enemy* entity);
         void OnBulletCreated(Context context, Bullet* entity);
@@ -45,6 +47,8 @@ namespace GamesTan.ECS.Game {
       public void OnSubClassADestroy(Context context, SubClassA* entity){}
       public void OnSubClassBCreated(Context context, SubClassB* entity){}
       public void OnSubClassBDestroy(Context context, SubClassB* entity){}
+      public void OnSubClassBCCreated(Context context, SubClassBC* entity){}
+      public void OnSubClassBCDestroy(Context context, SubClassBC* entity){}
       public void OnEnemyCreated(Context context, Enemy* entity){}
       public void OnEnemyDestroy(Context context, Enemy* entity){}
       public void OnBulletCreated(Context context, Bullet* entity){}

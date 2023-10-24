@@ -31,5 +31,8 @@ namespace GamesTan.UnsafeECSDefine {
     public class SysTestBulletUpdateCollision : ISystemWithSpecifyEntity {
         public Bullet Entity;
     }
+    public class SysTestBulletUpdatePos : ISystemWithSpecifyEntity {
+        public Bullet Entity;
+    }
     
 }

@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Text;
 using GamesTan.ECS;
 using GamesTan.ECS.Game;
 using GamesTan.ECSInternal;
+using Lockstep.Math;
 using Unity.Burst;
 using Unity.Mathematics;
 using UnityEngine;
@@ -89,13 +91,13 @@ namespace GamesTan.Rendering {
 
         public bool isDirty;
 
-        public Transform3D[] transformData;
+        public Transform3DForRendering[] transformData;
 
         public InstanceBound[] bounds;
 
         public SortingData[] sortingData;
 
-        public AnimRenderData[] animData;
+        public AnimRenderDataForRendering[] animData;
 
 
         public Action OnLayoutChangedEvent;
@@ -124,14 +126,14 @@ namespace GamesTan.Rendering {
                 for (int instanceIdx = 0; instanceIdx < count; instanceIdx++) {
                     var item = info[instanceIdx];
                     var curIdx = offset + instanceIdx;
-                    transformData[curIdx] = item.trans;
+                    transformData[curIdx].From(ref item.trans);
 
                     InstanceBound bound = new InstanceBound();
-                    bound.boundsCenter = item.trans.Position;
-                    bound.boundsExtents = item.trans.Scale * prefabSize[item.prefabIdx]; // TODO correct bound size
+                    bound.boundsCenter = item.trans.Position.ToVector3();
+                    bound.boundsExtents = item.trans.Scale.ToVector3() * prefabSize[item.prefabIdx]; // TODO correct bound size
                     bounds[curIdx] = bound;
                     sortingData[curIdx].drawCallInstanceIndex = (((uint)prefabIdx << 24) + ((uint)curIdx));
-                    animData[curIdx] = item.anim;
+                    animData[curIdx].From(ref item.anim);
                 }
 
                 offset += info.Count;
@@ -196,11 +198,11 @@ namespace GamesTan.Rendering {
         private void ResetCapacity(int capacity) {
             Debug.LogWarning("OnRenderResetCapacity" + capacity);
             Capacity = capacity;
-            transformData = new Transform3D[capacity];
+            transformData = new Transform3DForRendering[capacity];
 
             bounds = new InstanceBound[capacity];
             sortingData = new SortingData[capacity];
-            animData = new AnimRenderData[capacity];
+            animData = new AnimRenderDataForRendering[capacity];
         }
     }
 }

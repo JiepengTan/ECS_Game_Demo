@@ -46,18 +46,19 @@ namespace GamesTan.ECS.Game {
             null,
             null,
             null,
+            null,
             _OnBindEntityViewBullet,
             null,        
         };
         static BaseEntityView _OnBindEntityViewBullet(Entity* ptr,int assetId, Transform3D* trans){
             GameObject go = null;
             if (assetId != 0) {
-                go= ResourcesService.Instance.Instantiate(assetId, trans->Position, trans->Rotation);
+                go= ResourcesService.Instance.Instantiate(assetId, trans->Position.ToVector3(), trans->Rotation.ToVector3());
             }
 
             if (go == null) {            
                 go = new GameObject();  
-                go.transform.SetPositionAndRotation(trans->Position,Quaternion.Euler(trans->Rotation));
+                go.transform.SetPositionAndRotation(trans->Position.ToVector3(),Quaternion.Euler(trans->Rotation.ToVector3()));
             }
             go.name = ptr->_localId + "Bullet";
             var comp = go.AddComponent<EntityViewBullet>();

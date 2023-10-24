@@ -1,5 +1,6 @@
 // Copyright 2019 谭杰鹏. All Rights Reserved //https://github.com/JiepengTan 
 
+using System;
 using System.Collections.Generic;
 using GamesTan.UnsafeECSDefine;
 
@@ -17,6 +18,11 @@ namespace GamesTan.UnsafeECSDefine {
     [InitEntityCount(1)]
     public partial class SubClassB : PClassA {
         public long Val3;
+    }
+    
+    [InitEntityCount(1)]
+    public partial class SubClassBC : SubClassB {
+        public UInt32 Val4;
     }
     
     [InitEntityCount(1)]

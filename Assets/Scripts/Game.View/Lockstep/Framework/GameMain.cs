@@ -17,6 +17,7 @@ namespace GamesTan.Game.View {
         private int _lastDebugEntityCount = 0;
 
         private GameGlobalStateService _stateService;
+        
         [UnityEngine.Range(0, 40)] public int DebugAreaCount = 8;
         [UnityEngine.Range(1, 3000)] public int DebugEntityCount = 100;
         [UnityEngine.Range(1, 400)] public int DebugEntityBornPosRange = 100;

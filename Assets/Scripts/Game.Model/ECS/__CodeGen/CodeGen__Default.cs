@@ -35,6 +35,7 @@ namespace GamesTan.ECS.Game {
         public static PClassA PClassA;
         public static SubClassA SubClassA;
         public static SubClassB SubClassB;
+        public static SubClassBC SubClassBC;
         public static Enemy Enemy;
         public static Bullet Bullet;
         public static BulletEmitter BulletEmitter;  

@@ -56,6 +56,16 @@ namespace GamesTan.ECS.Game {
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)] public unsafe SubClassB* GetSubClassBInternalByIdx(int index) { return _entities.GetSubClassB(index); }
         [MethodImpl(MethodImplOptions.AggressiveInlining)] public unsafe SubClassB* GetSubClassB(EntityRef entityRef) {  return _entities.GetSubClassB(entityRef); }
+        public int CurSubClassBCCount => _entities.CurSubClassBCCount;
+        public int MaxSubClassBCIndex => _entities.MaxSubClassBCIndex;
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] public unsafe SubClassBC* GetSubClassBC(int entityId) { 
+            var ptr = GetEntity(entityId);
+            if (ptr == null) return null;
+            if (ptr->TypeId != EntityIds.SubClassBC) return null;
+            return (SubClassBC*)ptr;
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] public unsafe SubClassBC* GetSubClassBCInternalByIdx(int index) { return _entities.GetSubClassBC(index); }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] public unsafe SubClassBC* GetSubClassBC(EntityRef entityRef) {  return _entities.GetSubClassBC(entityRef); }
         public int CurEnemyCount => _entities.CurEnemyCount;
         public int MaxEnemyIndex => _entities.MaxEnemyIndex;
         [MethodImpl(MethodImplOptions.AggressiveInlining)] public unsafe Enemy* GetEnemy(int entityId) { 
@@ -139,7 +149,7 @@ namespace GamesTan.ECS.Game {
              (elst,clst,p)=>{ if (p->IsActive && filterFunc(p)) { elst.Add(p->EntityRef);clst.Add(p->Val1); } });
         }
         public void GetAllSubClassA_Val2(EAllocatorType allocatorType, out NativeArray<EntityRef> entityAry,
-            out NativeArray<float> compArray, FuncEntityFilter<SubClassA> filterFunc){
+            out NativeArray<LFloat> compArray, FuncEntityFilter<SubClassA> filterFunc){
             _FilterEntity(allocatorType,_entities._SubClassAAry._EntityAry,out entityAry,out compArray,filterFunc,
              (elst,clst,p)=>{ if (p->IsActive && filterFunc(p)) { elst.Add(p->EntityRef);clst.Add(p->Val2); } });
         } 
@@ -172,6 +182,41 @@ namespace GamesTan.ECS.Game {
             out NativeArray<long> compArray, FuncEntityFilter<SubClassB> filterFunc){
             _FilterEntity(allocatorType,_entities._SubClassBAry._EntityAry,out entityAry,out compArray,filterFunc,
              (elst,clst,p)=>{ if (p->IsActive && filterFunc(p)) { elst.Add(p->EntityRef);clst.Add(p->Val3); } });
+        } 
+        public void GetAllSubClassBC_AssetData(EAllocatorType allocatorType, out NativeArray<EntityRef> entityAry,
+            out NativeArray<AssetData> compArray, FuncEntityFilter<SubClassBC> filterFunc){
+            _FilterEntity(allocatorType,_entities._SubClassBCAry._EntityAry,out entityAry,out compArray,filterFunc,
+             (elst,clst,p)=>{ if (p->IsActive && filterFunc(p)) { elst.Add(p->EntityRef);clst.Add(p->AssetData); } });
+        }
+        public void GetAllSubClassBC_TransformData(EAllocatorType allocatorType, out NativeArray<EntityRef> entityAry,
+            out NativeArray<Transform3D> compArray, FuncEntityFilter<SubClassBC> filterFunc){
+            _FilterEntity(allocatorType,_entities._SubClassBCAry._EntityAry,out entityAry,out compArray,filterFunc,
+             (elst,clst,p)=>{ if (p->IsActive && filterFunc(p)) { elst.Add(p->EntityRef);clst.Add(p->TransformData); } });
+        }
+        public void GetAllSubClassBC_BasicData(EAllocatorType allocatorType, out NativeArray<EntityRef> entityAry,
+            out NativeArray<BasicData> compArray, FuncEntityFilter<SubClassBC> filterFunc){
+            _FilterEntity(allocatorType,_entities._SubClassBCAry._EntityAry,out entityAry,out compArray,filterFunc,
+             (elst,clst,p)=>{ if (p->IsActive && filterFunc(p)) { elst.Add(p->EntityRef);clst.Add(p->BasicData); } });
+        }
+        public void GetAllSubClassBC_PhysicData(EAllocatorType allocatorType, out NativeArray<EntityRef> entityAry,
+            out NativeArray<PhysicData> compArray, FuncEntityFilter<SubClassBC> filterFunc){
+            _FilterEntity(allocatorType,_entities._SubClassBCAry._EntityAry,out entityAry,out compArray,filterFunc,
+             (elst,clst,p)=>{ if (p->IsActive && filterFunc(p)) { elst.Add(p->EntityRef);clst.Add(p->PhysicData); } });
+        }
+        public void GetAllSubClassBC_Val1(EAllocatorType allocatorType, out NativeArray<EntityRef> entityAry,
+            out NativeArray<int> compArray, FuncEntityFilter<SubClassBC> filterFunc){
+            _FilterEntity(allocatorType,_entities._SubClassBCAry._EntityAry,out entityAry,out compArray,filterFunc,
+             (elst,clst,p)=>{ if (p->IsActive && filterFunc(p)) { elst.Add(p->EntityRef);clst.Add(p->Val1); } });
+        }
+        public void GetAllSubClassBC_Val3(EAllocatorType allocatorType, out NativeArray<EntityRef> entityAry,
+            out NativeArray<long> compArray, FuncEntityFilter<SubClassBC> filterFunc){
+            _FilterEntity(allocatorType,_entities._SubClassBCAry._EntityAry,out entityAry,out compArray,filterFunc,
+             (elst,clst,p)=>{ if (p->IsActive && filterFunc(p)) { elst.Add(p->EntityRef);clst.Add(p->Val3); } });
+        }
+        public void GetAllSubClassBC_Val4(EAllocatorType allocatorType, out NativeArray<EntityRef> entityAry,
+            out NativeArray<uint> compArray, FuncEntityFilter<SubClassBC> filterFunc){
+            _FilterEntity(allocatorType,_entities._SubClassBCAry._EntityAry,out entityAry,out compArray,filterFunc,
+             (elst,clst,p)=>{ if (p->IsActive && filterFunc(p)) { elst.Add(p->EntityRef);clst.Add(p->Val4); } });
         } 
         public void GetAllEnemy_AssetData(EAllocatorType allocatorType, out NativeArray<EntityRef> entityAry,
             out NativeArray<AssetData> compArray, FuncEntityFilter<Enemy> filterFunc){
@@ -325,22 +370,22 @@ namespace GamesTan.ECS.Game {
 
         public NativeArray<int> GetAllMeshRenderData_Padding(EAllocatorType allocatorType,E_EntityOfMeshRenderData entity){var val = _entities.GetAllMeshRenderData_Padding(entity);_RegisterAry(allocatorType,ref val);; return val; }
         public NativeArray<int> GetAllMeshRenderData_Padding(EAllocatorType allocatorType,E_EntityOfMeshRenderData entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllMeshRenderData_Padding(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
-        public NativeArray<float4> GetAllAnimRenderData_AnimInfo0(EAllocatorType allocatorType,E_EntityOfAnimRenderData entity){var val = _entities.GetAllAnimRenderData_AnimInfo0(entity);_RegisterAry(allocatorType,ref val);; return val; }
-        public NativeArray<float4> GetAllAnimRenderData_AnimInfo0(EAllocatorType allocatorType,E_EntityOfAnimRenderData entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllAnimRenderData_AnimInfo0(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
-        public NativeArray<float4> GetAllAnimRenderData_AnimInfo1(EAllocatorType allocatorType,E_EntityOfAnimRenderData entity){var val = _entities.GetAllAnimRenderData_AnimInfo1(entity);_RegisterAry(allocatorType,ref val);; return val; }
-        public NativeArray<float4> GetAllAnimRenderData_AnimInfo1(EAllocatorType allocatorType,E_EntityOfAnimRenderData entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllAnimRenderData_AnimInfo1(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
-        public NativeArray<float4> GetAllAnimRenderData_AnimInfo2(EAllocatorType allocatorType,E_EntityOfAnimRenderData entity){var val = _entities.GetAllAnimRenderData_AnimInfo2(entity);_RegisterAry(allocatorType,ref val);; return val; }
-        public NativeArray<float4> GetAllAnimRenderData_AnimInfo2(EAllocatorType allocatorType,E_EntityOfAnimRenderData entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllAnimRenderData_AnimInfo2(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
-        public NativeArray<float4> GetAllAnimRenderData_AnimInfo3(EAllocatorType allocatorType,E_EntityOfAnimRenderData entity){var val = _entities.GetAllAnimRenderData_AnimInfo3(entity);_RegisterAry(allocatorType,ref val);; return val; }
-        public NativeArray<float4> GetAllAnimRenderData_AnimInfo3(EAllocatorType allocatorType,E_EntityOfAnimRenderData entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllAnimRenderData_AnimInfo3(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
-        public NativeArray<int2> GetAllPhysicData_GridCoord(EAllocatorType allocatorType,E_EntityOfPhysicData entity){var val = _entities.GetAllPhysicData_GridCoord(entity);_RegisterAry(allocatorType,ref val);; return val; }
-        public NativeArray<int2> GetAllPhysicData_GridCoord(EAllocatorType allocatorType,E_EntityOfPhysicData entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllPhysicData_GridCoord(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
-        public NativeArray<float> GetAllPhysicData_Radius(EAllocatorType allocatorType,E_EntityOfPhysicData entity){var val = _entities.GetAllPhysicData_Radius(entity);_RegisterAry(allocatorType,ref val);; return val; }
-        public NativeArray<float> GetAllPhysicData_Radius(EAllocatorType allocatorType,E_EntityOfPhysicData entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllPhysicData_Radius(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
-        public NativeArray<float> GetAllPhysicData_Speed(EAllocatorType allocatorType,E_EntityOfPhysicData entity){var val = _entities.GetAllPhysicData_Speed(entity);_RegisterAry(allocatorType,ref val);; return val; }
-        public NativeArray<float> GetAllPhysicData_Speed(EAllocatorType allocatorType,E_EntityOfPhysicData entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllPhysicData_Speed(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
-        public NativeArray<float> GetAllPhysicData_RotateSpeed(EAllocatorType allocatorType,E_EntityOfPhysicData entity){var val = _entities.GetAllPhysicData_RotateSpeed(entity);_RegisterAry(allocatorType,ref val);; return val; }
-        public NativeArray<float> GetAllPhysicData_RotateSpeed(EAllocatorType allocatorType,E_EntityOfPhysicData entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllPhysicData_RotateSpeed(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
+        public NativeArray<LVector4> GetAllAnimRenderData_AnimInfo0(EAllocatorType allocatorType,E_EntityOfAnimRenderData entity){var val = _entities.GetAllAnimRenderData_AnimInfo0(entity);_RegisterAry(allocatorType,ref val);; return val; }
+        public NativeArray<LVector4> GetAllAnimRenderData_AnimInfo0(EAllocatorType allocatorType,E_EntityOfAnimRenderData entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllAnimRenderData_AnimInfo0(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
+        public NativeArray<LVector4> GetAllAnimRenderData_AnimInfo1(EAllocatorType allocatorType,E_EntityOfAnimRenderData entity){var val = _entities.GetAllAnimRenderData_AnimInfo1(entity);_RegisterAry(allocatorType,ref val);; return val; }
+        public NativeArray<LVector4> GetAllAnimRenderData_AnimInfo1(EAllocatorType allocatorType,E_EntityOfAnimRenderData entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllAnimRenderData_AnimInfo1(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
+        public NativeArray<LVector4> GetAllAnimRenderData_AnimInfo2(EAllocatorType allocatorType,E_EntityOfAnimRenderData entity){var val = _entities.GetAllAnimRenderData_AnimInfo2(entity);_RegisterAry(allocatorType,ref val);; return val; }
+        public NativeArray<LVector4> GetAllAnimRenderData_AnimInfo2(EAllocatorType allocatorType,E_EntityOfAnimRenderData entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllAnimRenderData_AnimInfo2(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
+        public NativeArray<LVector4> GetAllAnimRenderData_AnimInfo3(EAllocatorType allocatorType,E_EntityOfAnimRenderData entity){var val = _entities.GetAllAnimRenderData_AnimInfo3(entity);_RegisterAry(allocatorType,ref val);; return val; }
+        public NativeArray<LVector4> GetAllAnimRenderData_AnimInfo3(EAllocatorType allocatorType,E_EntityOfAnimRenderData entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllAnimRenderData_AnimInfo3(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
+        public NativeArray<LVector2Int> GetAllPhysicData_GridCoord(EAllocatorType allocatorType,E_EntityOfPhysicData entity){var val = _entities.GetAllPhysicData_GridCoord(entity);_RegisterAry(allocatorType,ref val);; return val; }
+        public NativeArray<LVector2Int> GetAllPhysicData_GridCoord(EAllocatorType allocatorType,E_EntityOfPhysicData entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllPhysicData_GridCoord(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
+        public NativeArray<LFloat> GetAllPhysicData_Radius(EAllocatorType allocatorType,E_EntityOfPhysicData entity){var val = _entities.GetAllPhysicData_Radius(entity);_RegisterAry(allocatorType,ref val);; return val; }
+        public NativeArray<LFloat> GetAllPhysicData_Radius(EAllocatorType allocatorType,E_EntityOfPhysicData entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllPhysicData_Radius(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
+        public NativeArray<LFloat> GetAllPhysicData_Speed(EAllocatorType allocatorType,E_EntityOfPhysicData entity){var val = _entities.GetAllPhysicData_Speed(entity);_RegisterAry(allocatorType,ref val);; return val; }
+        public NativeArray<LFloat> GetAllPhysicData_Speed(EAllocatorType allocatorType,E_EntityOfPhysicData entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllPhysicData_Speed(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
+        public NativeArray<LFloat> GetAllPhysicData_RotateSpeed(EAllocatorType allocatorType,E_EntityOfPhysicData entity){var val = _entities.GetAllPhysicData_RotateSpeed(entity);_RegisterAry(allocatorType,ref val);; return val; }
+        public NativeArray<LFloat> GetAllPhysicData_RotateSpeed(EAllocatorType allocatorType,E_EntityOfPhysicData entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllPhysicData_RotateSpeed(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
         public NativeArray<int> GetAllBasicData_GObjectId(EAllocatorType allocatorType,E_EntityOfBasicData entity){var val = _entities.GetAllBasicData_GObjectId(entity);_RegisterAry(allocatorType,ref val);; return val; }
         public NativeArray<int> GetAllBasicData_GObjectId(EAllocatorType allocatorType,E_EntityOfBasicData entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllBasicData_GObjectId(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
         public NativeArray<Bitset32> GetAllBasicData_StatusData(EAllocatorType allocatorType,E_EntityOfBasicData entity){var val = _entities.GetAllBasicData_StatusData(entity);_RegisterAry(allocatorType,ref val);; return val; }
@@ -361,28 +406,28 @@ namespace GamesTan.ECS.Game {
         public NativeArray<int> GetAllEmitterData_Deg(EAllocatorType allocatorType,E_EntityOfEmitterData entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllEmitterData_Deg(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
         public NativeArray<int> GetAllEmitterData_Count(EAllocatorType allocatorType,E_EntityOfEmitterData entity){var val = _entities.GetAllEmitterData_Count(entity);_RegisterAry(allocatorType,ref val);; return val; }
         public NativeArray<int> GetAllEmitterData_Count(EAllocatorType allocatorType,E_EntityOfEmitterData entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllEmitterData_Count(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
-        public NativeArray<float> GetAllEmitterData_LiveTime(EAllocatorType allocatorType,E_EntityOfEmitterData entity){var val = _entities.GetAllEmitterData_LiveTime(entity);_RegisterAry(allocatorType,ref val);; return val; }
-        public NativeArray<float> GetAllEmitterData_LiveTime(EAllocatorType allocatorType,E_EntityOfEmitterData entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllEmitterData_LiveTime(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
-        public NativeArray<float> GetAllEmitterData_Interval(EAllocatorType allocatorType,E_EntityOfEmitterData entity){var val = _entities.GetAllEmitterData_Interval(entity);_RegisterAry(allocatorType,ref val);; return val; }
-        public NativeArray<float> GetAllEmitterData_Interval(EAllocatorType allocatorType,E_EntityOfEmitterData entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllEmitterData_Interval(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
-        public NativeArray<float> GetAllEmitterData_Timer(EAllocatorType allocatorType,E_EntityOfEmitterData entity){var val = _entities.GetAllEmitterData_Timer(entity);_RegisterAry(allocatorType,ref val);; return val; }
-        public NativeArray<float> GetAllEmitterData_Timer(EAllocatorType allocatorType,E_EntityOfEmitterData entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllEmitterData_Timer(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
-        public NativeArray<float> GetAllAIData_AITimer(EAllocatorType allocatorType,E_EntityOfAIData entity){var val = _entities.GetAllAIData_AITimer(entity);_RegisterAry(allocatorType,ref val);; return val; }
-        public NativeArray<float> GetAllAIData_AITimer(EAllocatorType allocatorType,E_EntityOfAIData entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllAIData_AITimer(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
-        public NativeArray<float> GetAllAIData_TargetDeg(EAllocatorType allocatorType,E_EntityOfAIData entity){var val = _entities.GetAllAIData_TargetDeg(entity);_RegisterAry(allocatorType,ref val);; return val; }
-        public NativeArray<float> GetAllAIData_TargetDeg(EAllocatorType allocatorType,E_EntityOfAIData entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllAIData_TargetDeg(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
-        public NativeArray<float> GetAllAIData_LerpInterval(EAllocatorType allocatorType,E_EntityOfAIData entity){var val = _entities.GetAllAIData_LerpInterval(entity);_RegisterAry(allocatorType,ref val);; return val; }
-        public NativeArray<float> GetAllAIData_LerpInterval(EAllocatorType allocatorType,E_EntityOfAIData entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllAIData_LerpInterval(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
-        public NativeArray<float> GetAllAIData_LerpTimer(EAllocatorType allocatorType,E_EntityOfAIData entity){var val = _entities.GetAllAIData_LerpTimer(entity);_RegisterAry(allocatorType,ref val);; return val; }
-        public NativeArray<float> GetAllAIData_LerpTimer(EAllocatorType allocatorType,E_EntityOfAIData entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllAIData_LerpTimer(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
-        public NativeArray<float4> GetAllAnimData_Timer(EAllocatorType allocatorType,E_EntityOfAnimData entity){var val = _entities.GetAllAnimData_Timer(entity);_RegisterAry(allocatorType,ref val);; return val; }
-        public NativeArray<float4> GetAllAnimData_Timer(EAllocatorType allocatorType,E_EntityOfAnimData entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllAnimData_Timer(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
-        public NativeArray<float4> GetAllAnimData_LerpTimer(EAllocatorType allocatorType,E_EntityOfAnimData entity){var val = _entities.GetAllAnimData_LerpTimer(entity);_RegisterAry(allocatorType,ref val);; return val; }
-        public NativeArray<float4> GetAllAnimData_LerpTimer(EAllocatorType allocatorType,E_EntityOfAnimData entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllAnimData_LerpTimer(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
-        public NativeArray<int4> GetAllAnimData_AnimId1(EAllocatorType allocatorType,E_EntityOfAnimData entity){var val = _entities.GetAllAnimData_AnimId1(entity);_RegisterAry(allocatorType,ref val);; return val; }
-        public NativeArray<int4> GetAllAnimData_AnimId1(EAllocatorType allocatorType,E_EntityOfAnimData entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllAnimData_AnimId1(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
-        public NativeArray<int4> GetAllAnimData_AnimId2(EAllocatorType allocatorType,E_EntityOfAnimData entity){var val = _entities.GetAllAnimData_AnimId2(entity);_RegisterAry(allocatorType,ref val);; return val; }
-        public NativeArray<int4> GetAllAnimData_AnimId2(EAllocatorType allocatorType,E_EntityOfAnimData entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllAnimData_AnimId2(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
+        public NativeArray<LFloat> GetAllEmitterData_LiveTime(EAllocatorType allocatorType,E_EntityOfEmitterData entity){var val = _entities.GetAllEmitterData_LiveTime(entity);_RegisterAry(allocatorType,ref val);; return val; }
+        public NativeArray<LFloat> GetAllEmitterData_LiveTime(EAllocatorType allocatorType,E_EntityOfEmitterData entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllEmitterData_LiveTime(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
+        public NativeArray<LFloat> GetAllEmitterData_Interval(EAllocatorType allocatorType,E_EntityOfEmitterData entity){var val = _entities.GetAllEmitterData_Interval(entity);_RegisterAry(allocatorType,ref val);; return val; }
+        public NativeArray<LFloat> GetAllEmitterData_Interval(EAllocatorType allocatorType,E_EntityOfEmitterData entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllEmitterData_Interval(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
+        public NativeArray<LFloat> GetAllEmitterData_Timer(EAllocatorType allocatorType,E_EntityOfEmitterData entity){var val = _entities.GetAllEmitterData_Timer(entity);_RegisterAry(allocatorType,ref val);; return val; }
+        public NativeArray<LFloat> GetAllEmitterData_Timer(EAllocatorType allocatorType,E_EntityOfEmitterData entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllEmitterData_Timer(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
+        public NativeArray<LFloat> GetAllAIData_AITimer(EAllocatorType allocatorType,E_EntityOfAIData entity){var val = _entities.GetAllAIData_AITimer(entity);_RegisterAry(allocatorType,ref val);; return val; }
+        public NativeArray<LFloat> GetAllAIData_AITimer(EAllocatorType allocatorType,E_EntityOfAIData entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllAIData_AITimer(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
+        public NativeArray<LFloat> GetAllAIData_TargetDeg(EAllocatorType allocatorType,E_EntityOfAIData entity){var val = _entities.GetAllAIData_TargetDeg(entity);_RegisterAry(allocatorType,ref val);; return val; }
+        public NativeArray<LFloat> GetAllAIData_TargetDeg(EAllocatorType allocatorType,E_EntityOfAIData entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllAIData_TargetDeg(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
+        public NativeArray<LFloat> GetAllAIData_LerpInterval(EAllocatorType allocatorType,E_EntityOfAIData entity){var val = _entities.GetAllAIData_LerpInterval(entity);_RegisterAry(allocatorType,ref val);; return val; }
+        public NativeArray<LFloat> GetAllAIData_LerpInterval(EAllocatorType allocatorType,E_EntityOfAIData entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllAIData_LerpInterval(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
+        public NativeArray<LFloat> GetAllAIData_LerpTimer(EAllocatorType allocatorType,E_EntityOfAIData entity){var val = _entities.GetAllAIData_LerpTimer(entity);_RegisterAry(allocatorType,ref val);; return val; }
+        public NativeArray<LFloat> GetAllAIData_LerpTimer(EAllocatorType allocatorType,E_EntityOfAIData entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllAIData_LerpTimer(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
+        public NativeArray<LVector4> GetAllAnimData_Timer(EAllocatorType allocatorType,E_EntityOfAnimData entity){var val = _entities.GetAllAnimData_Timer(entity);_RegisterAry(allocatorType,ref val);; return val; }
+        public NativeArray<LVector4> GetAllAnimData_Timer(EAllocatorType allocatorType,E_EntityOfAnimData entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllAnimData_Timer(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
+        public NativeArray<LVector4> GetAllAnimData_LerpTimer(EAllocatorType allocatorType,E_EntityOfAnimData entity){var val = _entities.GetAllAnimData_LerpTimer(entity);_RegisterAry(allocatorType,ref val);; return val; }
+        public NativeArray<LVector4> GetAllAnimData_LerpTimer(EAllocatorType allocatorType,E_EntityOfAnimData entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllAnimData_LerpTimer(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
+        public NativeArray<LVector4Int> GetAllAnimData_AnimId1(EAllocatorType allocatorType,E_EntityOfAnimData entity){var val = _entities.GetAllAnimData_AnimId1(entity);_RegisterAry(allocatorType,ref val);; return val; }
+        public NativeArray<LVector4Int> GetAllAnimData_AnimId1(EAllocatorType allocatorType,E_EntityOfAnimData entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllAnimData_AnimId1(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
+        public NativeArray<LVector4Int> GetAllAnimData_AnimId2(EAllocatorType allocatorType,E_EntityOfAnimData entity){var val = _entities.GetAllAnimData_AnimId2(entity);_RegisterAry(allocatorType,ref val);; return val; }
+        public NativeArray<LVector4Int> GetAllAnimData_AnimId2(EAllocatorType allocatorType,E_EntityOfAnimData entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllAnimData_AnimId2(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
         public NativeArray<int> GetAllAnimator_Pad(EAllocatorType allocatorType,E_EntityOfAnimator entity){var val = _entities.GetAllAnimator_Pad(entity);_RegisterAry(allocatorType,ref val);; return val; }
         public NativeArray<int> GetAllAnimator_Pad(EAllocatorType allocatorType,E_EntityOfAnimator entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllAnimator_Pad(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
         public NativeArray<CollisionShape> GetAllCollisionAgent_Collider(EAllocatorType allocatorType,E_EntityOfCollisionAgent entity){var val = _entities.GetAllCollisionAgent_Collider(entity);_RegisterAry(allocatorType,ref val);; return val; }
@@ -395,30 +440,30 @@ namespace GamesTan.ECS.Game {
         public NativeArray<bool> GetAllCollisionAgent_IsEnable(EAllocatorType allocatorType,E_EntityOfCollisionAgent entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllCollisionAgent_IsEnable(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
         public NativeArray<bool> GetAllCollisionAgent_IsSleep(EAllocatorType allocatorType,E_EntityOfCollisionAgent entity){var val = _entities.GetAllCollisionAgent_IsSleep(entity);_RegisterAry(allocatorType,ref val);; return val; }
         public NativeArray<bool> GetAllCollisionAgent_IsSleep(EAllocatorType allocatorType,E_EntityOfCollisionAgent entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllCollisionAgent_IsSleep(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
-        public NativeArray<float> GetAllCollisionAgent_Mass(EAllocatorType allocatorType,E_EntityOfCollisionAgent entity){var val = _entities.GetAllCollisionAgent_Mass(entity);_RegisterAry(allocatorType,ref val);; return val; }
-        public NativeArray<float> GetAllCollisionAgent_Mass(EAllocatorType allocatorType,E_EntityOfCollisionAgent entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllCollisionAgent_Mass(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
-        public NativeArray<float> GetAllCollisionAgent_AngularSpeed(EAllocatorType allocatorType,E_EntityOfCollisionAgent entity){var val = _entities.GetAllCollisionAgent_AngularSpeed(entity);_RegisterAry(allocatorType,ref val);; return val; }
-        public NativeArray<float> GetAllCollisionAgent_AngularSpeed(EAllocatorType allocatorType,E_EntityOfCollisionAgent entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllCollisionAgent_AngularSpeed(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
-        public NativeArray<float3> GetAllCollisionAgent_Speed(EAllocatorType allocatorType,E_EntityOfCollisionAgent entity){var val = _entities.GetAllCollisionAgent_Speed(entity);_RegisterAry(allocatorType,ref val);; return val; }
-        public NativeArray<float3> GetAllCollisionAgent_Speed(EAllocatorType allocatorType,E_EntityOfCollisionAgent entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllCollisionAgent_Speed(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
+        public NativeArray<LFloat> GetAllCollisionAgent_Mass(EAllocatorType allocatorType,E_EntityOfCollisionAgent entity){var val = _entities.GetAllCollisionAgent_Mass(entity);_RegisterAry(allocatorType,ref val);; return val; }
+        public NativeArray<LFloat> GetAllCollisionAgent_Mass(EAllocatorType allocatorType,E_EntityOfCollisionAgent entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllCollisionAgent_Mass(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
+        public NativeArray<LFloat> GetAllCollisionAgent_AngularSpeed(EAllocatorType allocatorType,E_EntityOfCollisionAgent entity){var val = _entities.GetAllCollisionAgent_AngularSpeed(entity);_RegisterAry(allocatorType,ref val);; return val; }
+        public NativeArray<LFloat> GetAllCollisionAgent_AngularSpeed(EAllocatorType allocatorType,E_EntityOfCollisionAgent entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllCollisionAgent_AngularSpeed(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
+        public NativeArray<LVector3> GetAllCollisionAgent_Speed(EAllocatorType allocatorType,E_EntityOfCollisionAgent entity){var val = _entities.GetAllCollisionAgent_Speed(entity);_RegisterAry(allocatorType,ref val);; return val; }
+        public NativeArray<LVector3> GetAllCollisionAgent_Speed(EAllocatorType allocatorType,E_EntityOfCollisionAgent entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllCollisionAgent_Speed(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
         public NativeArray<int> GetAllNavMeshAgent_Pad(EAllocatorType allocatorType,E_EntityOfNavMeshAgent entity){var val = _entities.GetAllNavMeshAgent_Pad(entity);_RegisterAry(allocatorType,ref val);; return val; }
         public NativeArray<int> GetAllNavMeshAgent_Pad(EAllocatorType allocatorType,E_EntityOfNavMeshAgent entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllNavMeshAgent_Pad(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
         public NativeArray<int> GetAllAssetData_AssetId(EAllocatorType allocatorType,E_EntityOfAssetData entity){var val = _entities.GetAllAssetData_AssetId(entity);_RegisterAry(allocatorType,ref val);; return val; }
         public NativeArray<int> GetAllAssetData_AssetId(EAllocatorType allocatorType,E_EntityOfAssetData entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllAssetData_AssetId(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
         public NativeArray<int> GetAllAssetData_InstancePrefabIdx(EAllocatorType allocatorType,E_EntityOfAssetData entity){var val = _entities.GetAllAssetData_InstancePrefabIdx(entity);_RegisterAry(allocatorType,ref val);; return val; }
         public NativeArray<int> GetAllAssetData_InstancePrefabIdx(EAllocatorType allocatorType,E_EntityOfAssetData entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllAssetData_InstancePrefabIdx(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
-        public NativeArray<float2> GetAllTransform2D_Position(EAllocatorType allocatorType,E_EntityOfTransform2D entity){var val = _entities.GetAllTransform2D_Position(entity);_RegisterAry(allocatorType,ref val);; return val; }
-        public NativeArray<float2> GetAllTransform2D_Position(EAllocatorType allocatorType,E_EntityOfTransform2D entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllTransform2D_Position(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
-        public NativeArray<float> GetAllTransform2D_Deg(EAllocatorType allocatorType,E_EntityOfTransform2D entity){var val = _entities.GetAllTransform2D_Deg(entity);_RegisterAry(allocatorType,ref val);; return val; }
-        public NativeArray<float> GetAllTransform2D_Deg(EAllocatorType allocatorType,E_EntityOfTransform2D entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllTransform2D_Deg(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
-        public NativeArray<float> GetAllTransform2D_Scale(EAllocatorType allocatorType,E_EntityOfTransform2D entity){var val = _entities.GetAllTransform2D_Scale(entity);_RegisterAry(allocatorType,ref val);; return val; }
-        public NativeArray<float> GetAllTransform2D_Scale(EAllocatorType allocatorType,E_EntityOfTransform2D entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllTransform2D_Scale(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
-        public NativeArray<float3> GetAllTransform3D_Position(EAllocatorType allocatorType,E_EntityOfTransform3D entity){var val = _entities.GetAllTransform3D_Position(entity);_RegisterAry(allocatorType,ref val);; return val; }
-        public NativeArray<float3> GetAllTransform3D_Position(EAllocatorType allocatorType,E_EntityOfTransform3D entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllTransform3D_Position(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
-        public NativeArray<float3> GetAllTransform3D_Rotation(EAllocatorType allocatorType,E_EntityOfTransform3D entity){var val = _entities.GetAllTransform3D_Rotation(entity);_RegisterAry(allocatorType,ref val);; return val; }
-        public NativeArray<float3> GetAllTransform3D_Rotation(EAllocatorType allocatorType,E_EntityOfTransform3D entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllTransform3D_Rotation(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
-        public NativeArray<float3> GetAllTransform3D_Scale(EAllocatorType allocatorType,E_EntityOfTransform3D entity){var val = _entities.GetAllTransform3D_Scale(entity);_RegisterAry(allocatorType,ref val);; return val; }
-        public NativeArray<float3> GetAllTransform3D_Scale(EAllocatorType allocatorType,E_EntityOfTransform3D entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllTransform3D_Scale(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
+        public NativeArray<LVector2> GetAllTransform2D_Position(EAllocatorType allocatorType,E_EntityOfTransform2D entity){var val = _entities.GetAllTransform2D_Position(entity);_RegisterAry(allocatorType,ref val);; return val; }
+        public NativeArray<LVector2> GetAllTransform2D_Position(EAllocatorType allocatorType,E_EntityOfTransform2D entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllTransform2D_Position(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
+        public NativeArray<LFloat> GetAllTransform2D_Deg(EAllocatorType allocatorType,E_EntityOfTransform2D entity){var val = _entities.GetAllTransform2D_Deg(entity);_RegisterAry(allocatorType,ref val);; return val; }
+        public NativeArray<LFloat> GetAllTransform2D_Deg(EAllocatorType allocatorType,E_EntityOfTransform2D entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllTransform2D_Deg(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
+        public NativeArray<LFloat> GetAllTransform2D_Scale(EAllocatorType allocatorType,E_EntityOfTransform2D entity){var val = _entities.GetAllTransform2D_Scale(entity);_RegisterAry(allocatorType,ref val);; return val; }
+        public NativeArray<LFloat> GetAllTransform2D_Scale(EAllocatorType allocatorType,E_EntityOfTransform2D entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllTransform2D_Scale(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
+        public NativeArray<LVector3> GetAllTransform3D_Position(EAllocatorType allocatorType,E_EntityOfTransform3D entity){var val = _entities.GetAllTransform3D_Position(entity);_RegisterAry(allocatorType,ref val);; return val; }
+        public NativeArray<LVector3> GetAllTransform3D_Position(EAllocatorType allocatorType,E_EntityOfTransform3D entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllTransform3D_Position(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
+        public NativeArray<LVector3> GetAllTransform3D_Rotation(EAllocatorType allocatorType,E_EntityOfTransform3D entity){var val = _entities.GetAllTransform3D_Rotation(entity);_RegisterAry(allocatorType,ref val);; return val; }
+        public NativeArray<LVector3> GetAllTransform3D_Rotation(EAllocatorType allocatorType,E_EntityOfTransform3D entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllTransform3D_Rotation(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
+        public NativeArray<LVector3> GetAllTransform3D_Scale(EAllocatorType allocatorType,E_EntityOfTransform3D entity){var val = _entities.GetAllTransform3D_Scale(entity);_RegisterAry(allocatorType,ref val);; return val; }
+        public NativeArray<LVector3> GetAllTransform3D_Scale(EAllocatorType allocatorType,E_EntityOfTransform3D entity,FuncEntityFilter<Entity> filterFunc,out int length){var val = _entities.GetAllTransform3D_Scale(entity,filterFunc,out length);_RegisterAry(allocatorType,ref val);; return val; }
  
     #endregion
 

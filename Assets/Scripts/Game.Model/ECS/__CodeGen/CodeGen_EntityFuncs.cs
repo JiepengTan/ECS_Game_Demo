@@ -38,6 +38,11 @@ namespace GamesTan.ECS.Game {
             return EntityUtil._SubClassBComponentSet[(int)compType];
         }
     }
+    public unsafe partial struct SubClassBC :IEntity {
+        public bool HasComponent(EComponentType compType){
+            return EntityUtil._SubClassBCComponentSet[(int)compType];
+        }
+    }
     public unsafe partial struct Enemy :IEntity {
         public bool HasComponent(EComponentType compType){
             return EntityUtil._EnemyComponentSet[(int)compType];
@@ -64,6 +69,7 @@ namespace GamesTan.ECS.Game {
  
  
  
+ 
                 case EntityIds.Bullet: return &(((Bullet* )(ptr))->MeshRenderData); 
                 case EntityIds.BulletEmitter: return &(((BulletEmitter* )(ptr))->MeshRenderData);   
             }
@@ -74,6 +80,7 @@ namespace GamesTan.ECS.Game {
                 return null;
             }
             switch (ptr->_ref._type) {
+ 
  
  
  
@@ -91,6 +98,7 @@ namespace GamesTan.ECS.Game {
                 case EntityIds.PClassA: return &(((PClassA* )(ptr))->PhysicData); 
                 case EntityIds.SubClassA: return &(((SubClassA* )(ptr))->PhysicData); 
                 case EntityIds.SubClassB: return &(((SubClassB* )(ptr))->PhysicData); 
+                case EntityIds.SubClassBC: return &(((SubClassBC* )(ptr))->PhysicData); 
                 case EntityIds.Enemy: return &(((Enemy* )(ptr))->PhysicData); 
                 case EntityIds.Bullet: return &(((Bullet* )(ptr))->PhysicData); 
                 case EntityIds.BulletEmitter: return &(((BulletEmitter* )(ptr))->PhysicData);   
@@ -105,6 +113,7 @@ namespace GamesTan.ECS.Game {
                 case EntityIds.PClassA: return &(((PClassA* )(ptr))->BasicData); 
                 case EntityIds.SubClassA: return &(((SubClassA* )(ptr))->BasicData); 
                 case EntityIds.SubClassB: return &(((SubClassB* )(ptr))->BasicData); 
+                case EntityIds.SubClassBC: return &(((SubClassBC* )(ptr))->BasicData); 
                 case EntityIds.Enemy: return &(((Enemy* )(ptr))->BasicData); 
                 case EntityIds.Bullet: return &(((Bullet* )(ptr))->BasicData); 
                 case EntityIds.BulletEmitter: return &(((BulletEmitter* )(ptr))->BasicData);   
@@ -119,6 +128,7 @@ namespace GamesTan.ECS.Game {
  
  
  
+ 
                 case EntityIds.Enemy: return &(((Enemy* )(ptr))->EnemyTag); 
  
    
@@ -130,6 +140,7 @@ namespace GamesTan.ECS.Game {
                 return null;
             }
             switch (ptr->_ref._type) {
+ 
  
  
  
@@ -149,6 +160,7 @@ namespace GamesTan.ECS.Game {
  
  
  
+ 
                 case EntityIds.BulletEmitter: return &(((BulletEmitter* )(ptr))->SpawnerTag);   
             }
             return null;
@@ -158,6 +170,7 @@ namespace GamesTan.ECS.Game {
                 return null;
             }
             switch (ptr->_ref._type) {
+ 
  
  
  
@@ -177,6 +190,7 @@ namespace GamesTan.ECS.Game {
  
  
  
+ 
                 case EntityIds.BulletEmitter: return &(((BulletEmitter* )(ptr))->EmitterData);   
             }
             return null;
@@ -186,6 +200,7 @@ namespace GamesTan.ECS.Game {
                 return null;
             }
             switch (ptr->_ref._type) {
+ 
  
  
  
@@ -200,6 +215,7 @@ namespace GamesTan.ECS.Game {
                 return null;
             }
             switch (ptr->_ref._type) {
+ 
  
  
  
@@ -219,6 +235,7 @@ namespace GamesTan.ECS.Game {
  
  
  
+ 
    
             }
             return null;
@@ -228,6 +245,7 @@ namespace GamesTan.ECS.Game {
                 return null;
             }
             switch (ptr->_ref._type) {
+ 
  
  
  
@@ -247,6 +265,7 @@ namespace GamesTan.ECS.Game {
  
  
  
+ 
    
             }
             return null;
@@ -259,6 +278,7 @@ namespace GamesTan.ECS.Game {
                 case EntityIds.PClassA: return &(((PClassA* )(ptr))->AssetData); 
                 case EntityIds.SubClassA: return &(((SubClassA* )(ptr))->AssetData); 
                 case EntityIds.SubClassB: return &(((SubClassB* )(ptr))->AssetData); 
+                case EntityIds.SubClassBC: return &(((SubClassBC* )(ptr))->AssetData); 
                 case EntityIds.Enemy: return &(((Enemy* )(ptr))->AssetData); 
                 case EntityIds.Bullet: return &(((Bullet* )(ptr))->AssetData); 
                 case EntityIds.BulletEmitter: return &(((BulletEmitter* )(ptr))->AssetData);   
@@ -270,6 +290,7 @@ namespace GamesTan.ECS.Game {
                 return null;
             }
             switch (ptr->_ref._type) {
+ 
  
  
  
@@ -287,6 +308,7 @@ namespace GamesTan.ECS.Game {
                 case EntityIds.PClassA: return &(((PClassA* )(ptr))->TransformData); 
                 case EntityIds.SubClassA: return &(((SubClassA* )(ptr))->TransformData); 
                 case EntityIds.SubClassB: return &(((SubClassB* )(ptr))->TransformData); 
+                case EntityIds.SubClassBC: return &(((SubClassBC* )(ptr))->TransformData); 
                 case EntityIds.Enemy: return &(((Enemy* )(ptr))->TransformData); 
                 case EntityIds.Bullet: return &(((Bullet* )(ptr))->TransformData); 
                 case EntityIds.BulletEmitter: return &(((BulletEmitter* )(ptr))->TransformData);   
@@ -346,6 +368,27 @@ namespace GamesTan.ECS.Game {
                 false
         };
         public static bool[] _SubClassBComponentSet = new bool[]{ 
+                false,//None
+                false,//MeshRenderData
+                false,//AnimRenderData
+                true,//PhysicData
+                true,//BasicData
+                false,//EnemyTag
+                false,//BulletTag
+                false,//SpawnerTag
+                false,//UnitData
+                false,//EmitterData
+                false,//AIData
+                false,//AnimData
+                false,//Animator
+                false,//CollisionAgent
+                false,//NavMeshAgent
+                true,//AssetData
+                false,//Transform2D
+                true,//Transform3D
+                false
+        };
+        public static bool[] _SubClassBCComponentSet = new bool[]{ 
                 false,//None
                 false,//MeshRenderData
                 false,//AnimRenderData
@@ -435,6 +478,7 @@ namespace GamesTan.ECS.Game {
             EntityUtil._PClassAComponentSet,
             EntityUtil._SubClassAComponentSet,
             EntityUtil._SubClassBComponentSet,
+            EntityUtil._SubClassBCComponentSet,
             EntityUtil._EnemyComponentSet,
             EntityUtil._BulletComponentSet,
             EntityUtil._BulletEmitterComponentSet,  

@@ -53,6 +53,15 @@ namespace GamesTan.ECS.Game {
             return (SubClassB*) val;
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static SubClassBC* ToSubClassBCPtr(this long val){
+            #if DEBUG
+            if ((val == 0L || ((SubClassBC*) val)->EntityType != EEntityType.SubClassBC)) {
+                throw new Exception("ToSubClassBCPtr error: diff type " + val);
+            }
+            #endif
+            return (SubClassBC*) val;
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Enemy* ToEnemyPtr(this long val){
             #if DEBUG
             if ((val == 0L || ((Enemy*) val)->EntityType != EEntityType.Enemy)) {
@@ -181,6 +190,47 @@ namespace GamesTan.ECS.Game {
         }
 
         public SubClassBIterator(SubClassB* ptr,int count){
+            _ptr = ptr;
+            _index = -1;
+            _current = 0;
+            _count = count;
+        }
+
+        public Boolean MoveNext(){
+            while (++_index < _count) {
+                if (_ptr[_index]._entity._active) {
+                    _current = (long) (&_ptr[_index]);
+                    return true;
+                }
+            }
+            _current = 0;
+            return false;
+        }
+
+        public void Reset(){
+            _index = -1;
+            _current = 0;
+        }
+        public void Dispose(){ }
+    }
+    [StructLayoutAttribute(LayoutKind.Sequential, Pack = Define.PackSize)]
+    public unsafe partial struct SubClassBCIterator : IEnumerator<long>, IEnumerable<long> {
+        private Int32 _index;
+        private SubClassBC* _ptr;
+        private long _current;
+        private int _count;
+        public long Current => _current;
+        object IEnumerator.Current {
+            get { return (object) Current; }
+        }
+        IEnumerator IEnumerable.GetEnumerator(){
+            return this;
+        }
+        public IEnumerator<long> GetEnumerator(){
+            return this;
+        }
+
+        public SubClassBCIterator(SubClassBC* ptr,int count){
             _ptr = ptr;
             _index = -1;
             _current = 0;

@@ -36,7 +36,7 @@ namespace GamesTan.ECS.Game {
                  VirtualFunctionExt.FuncB(ptr );
             }
         }
-        public void FuncCParam(int a, float b, string c) {
+        public void FuncCParam(int a, LFloat b, string c) {
             fixed (void* ptr =&this) {
 
                  VirtualFunctionExt.FuncCParam(ptr ,a ,b ,c);
@@ -56,7 +56,7 @@ namespace GamesTan.ECS.Game {
                  VirtualFunctionExt.FuncB(ptr );
             }
         }
-        public void FuncCParam(int a, float b, string c) {
+        public void FuncCParam(int a, LFloat b, string c) {
             fixed (void* ptr =&this) {
 
                  VirtualFunctionExt.FuncCParam(ptr ,a ,b ,c);
@@ -76,10 +76,36 @@ namespace GamesTan.ECS.Game {
                  VirtualFunctionExt.FuncB(ptr );
             }
         }
-        public void FuncCParam(int a, float b, string c) {
+        public void FuncCParam(int a, LFloat b, string c) {
             fixed (void* ptr =&this) {
 
                  VirtualFunctionExt.FuncCParam(ptr ,a ,b ,c);
+            }
+        } 
+    }
+    public unsafe partial struct SubClassBC {
+        public void FuncCParam(int a, LFloat b, string c) {
+            fixed (void* ptr =&this) {
+
+                 VirtualFunctionExt.FuncCParam(ptr ,a ,b ,c);
+            }
+        }
+        public void FuncDParam(int a, string b) {
+            fixed (void* ptr =&this) {
+
+                 VirtualFunctionExt.FuncDParam(ptr ,a ,b);
+            }
+        }
+        public String FuncA() {
+            fixed (void* ptr =&this) {
+                return 
+                 VirtualFunctionExt.FuncA(ptr );
+            }
+        }
+        public String FuncB() {
+            fixed (void* ptr =&this) {
+                return 
+                 VirtualFunctionExt.FuncB(ptr );
             }
         } 
     }
@@ -105,7 +131,8 @@ namespace GamesTan.ECS.Game {
             switch (ptr->TypeId) {
                 case EntityIds.PClassA: return PClassA.FuncA_Virtual((PClassA*)voidPtr ); break;
                 case EntityIds.SubClassA: return SubClassA.FuncA_Virtual((SubClassA*)voidPtr ); break;
-                case EntityIds.SubClassB: return SubClassB.FuncA_Virtual((SubClassB*)voidPtr ); break; 
+                case EntityIds.SubClassB: return SubClassB.FuncA_Virtual((SubClassB*)voidPtr ); break;
+                case EntityIds.SubClassBC: return SubClassB.FuncA_Virtual((SubClassB*)voidPtr  ); break; 
 
             }
             
@@ -121,7 +148,8 @@ namespace GamesTan.ECS.Game {
             switch (ptr->TypeId) {
                 case EntityIds.PClassA: return PClassA.FuncB_Virtual((PClassA*)voidPtr ); break;
                 case EntityIds.SubClassA: return PClassA.FuncB_Virtual((PClassA*)voidPtr  ); break;
-                case EntityIds.SubClassB: return SubClassB.FuncB_Virtual((SubClassB*)voidPtr ); break; 
+                case EntityIds.SubClassB: return SubClassB.FuncB_Virtual((SubClassB*)voidPtr ); break;
+                case EntityIds.SubClassBC: return SubClassB.FuncB_Virtual((SubClassB*)voidPtr  ); break; 
 
             }
             
@@ -129,7 +157,7 @@ namespace GamesTan.ECS.Game {
         }
         public static void FuncCParam(void* voidPtr 
           ,
-            int a, float b, string c
+            int a, LFloat b, string c
         ) {
             var ptr = (Entity*) voidPtr;
             if(ptr == null)
@@ -137,7 +165,21 @@ namespace GamesTan.ECS.Game {
             switch (ptr->TypeId) {
                 case EntityIds.PClassA: PClassA.FuncCParam_Virtual((PClassA*)voidPtr ,a ,b ,c); break;
                 case EntityIds.SubClassA: PClassA.FuncCParam_Virtual((PClassA*)voidPtr  ,a ,b ,c); break;
-                case EntityIds.SubClassB: SubClassB.FuncCParam_Virtual((SubClassB*)voidPtr ,a ,b ,c); break; 
+                case EntityIds.SubClassB: SubClassB.FuncCParam_Virtual((SubClassB*)voidPtr ,a ,b ,c); break;
+                case EntityIds.SubClassBC: SubClassBC.FuncCParam_Virtual((SubClassBC*)voidPtr ,a ,b ,c); break; 
+            }
+            
+
+        }
+        public static void FuncDParam(void* voidPtr 
+          ,
+            int a, string b
+        ) {
+            var ptr = (Entity*) voidPtr;
+            if(ptr == null)
+             return ;
+            switch (ptr->TypeId) {
+                case EntityIds.SubClassBC: SubClassBC.FuncDParam_Virtual((SubClassBC*)voidPtr ,a ,b); break; 
             }
             
 

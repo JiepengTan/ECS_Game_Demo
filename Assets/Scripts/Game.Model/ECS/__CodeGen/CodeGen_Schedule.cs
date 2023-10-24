@@ -36,12 +36,14 @@ namespace GamesTan.ECS.Game {
             _RegisterScheduleSystemFunc(typeof(GamesTan.ECS.Game.SysTestEnemyUpdateAnimation),ScheduleSysTestEnemyUpdateAnimation);
             _RegisterScheduleSystemFunc(typeof(GamesTan.ECS.Game.SysTestEnemyUpdateAI),ScheduleSysTestEnemyUpdateAI);
             _RegisterScheduleSystemFunc(typeof(GamesTan.ECS.Game.SysTestBulletAwake),ScheduleSysTestBulletAwake);
-            _RegisterScheduleSystemFunc(typeof(GamesTan.ECS.Game.SysTestBulletUpdateCollision),ScheduleSysTestBulletUpdateCollision); 
+            _RegisterScheduleSystemFunc(typeof(GamesTan.ECS.Game.SysTestBulletUpdateCollision),ScheduleSysTestBulletUpdateCollision);
+            _RegisterScheduleSystemFunc(typeof(GamesTan.ECS.Game.SysTestBulletUpdatePos),ScheduleSysTestBulletUpdatePos); 
         }
         public void _RegisterPostScheduleSystemFunc(){
             _RegisterPostScheduleSystemFunc(EntityIds.PClassA,PostUpdateCreatePClassA);
             _RegisterPostScheduleSystemFunc(EntityIds.SubClassA,PostUpdateCreateSubClassA);
             _RegisterPostScheduleSystemFunc(EntityIds.SubClassB,PostUpdateCreateSubClassB);
+            _RegisterPostScheduleSystemFunc(EntityIds.SubClassBC,PostUpdateCreateSubClassBC);
             _RegisterPostScheduleSystemFunc(EntityIds.Enemy,PostUpdateCreateEnemy);
             _RegisterPostScheduleSystemFunc(EntityIds.Bullet,PostUpdateCreateBullet);
             _RegisterPostScheduleSystemFunc(EntityIds.BulletEmitter,PostUpdateCreateBulletEmitter); 

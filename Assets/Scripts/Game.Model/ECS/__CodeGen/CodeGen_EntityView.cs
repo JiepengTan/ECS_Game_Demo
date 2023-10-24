@@ -42,6 +42,12 @@ namespace GamesTan.ECS.Game {
             }
             return null;
         }
+        public static SubClassBC* CastToSubClassBC(Entity* entity){
+            if (entity != null && entity->_ref._type == EntityIds.SubClassBC) {
+                return (SubClassBC*) entity;
+            }
+            return null;
+        }
         public static Enemy* CastToEnemy(Entity* entity){
             if (entity != null && entity->_ref._type == EntityIds.Enemy) {
                 return (Enemy*) entity;
@@ -68,6 +74,7 @@ namespace GamesTan.ECS.Game {
                 case EntityIds.PClassA: return (object) (*((PClassA*) entity));
                 case EntityIds.SubClassA: return (object) (*((SubClassA*) entity));
                 case EntityIds.SubClassB: return (object) (*((SubClassB*) entity));
+                case EntityIds.SubClassBC: return (object) (*((SubClassBC*) entity));
                 case EntityIds.Enemy: return (object) (*((Enemy*) entity));
                 case EntityIds.Bullet: return (object) (*((Bullet*) entity));
                 case EntityIds.BulletEmitter: return (object) (*((BulletEmitter*) entity)); 

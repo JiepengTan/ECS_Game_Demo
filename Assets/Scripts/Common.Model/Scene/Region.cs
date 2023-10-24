@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 using GamesTan.ECS;
 using JetBrains.Annotations;
 using GamesTan.ECSInternal;
+using Lockstep.Math;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.AI;
@@ -24,7 +25,7 @@ namespace GamesTan.Spatial {
         [SerializeField] private int _totalChunkCount = 0;
         public List<ChunkInfo> _debugChunkList = new List<ChunkInfo>();
         
-        private Dictionary<int2, ChunkInfo> _chunkCoord2Info = new Dictionary<int2, ChunkInfo>();
+        private Dictionary<LVector2Int, ChunkInfo> _chunkCoord2Info = new Dictionary<LVector2Int, ChunkInfo>();
         private Stack<ChunkInfo> _freeChunkList = new Stack<ChunkInfo>();
 
         private Grid* _extraGrids = null;
@@ -107,7 +108,7 @@ namespace GamesTan.Spatial {
         }
 
         private static List<EntityIdType> _collisionResult = new List<EntityIdType>();
-        public List<EntityIdType> QueryCollision(float3 pos, float radius) {
+        public List<EntityIdType> QueryCollision(LVector3 pos, float radius) {
             var centerWorldPos = FloorWorldPos(pos);
             var centerGridCoord = WorldPos2GridCoord(centerWorldPos);
             var width = ((int)(math.ceil(radius +1 )))>> Grid.WidthBit;
@@ -116,7 +117,7 @@ namespace GamesTan.Spatial {
             // TODO check faster
             for (int x = -width; x <= width; x++) {
                 for (int y = -width; y <= width; y++) {
-                    var gridCoord = new int2(x, y) + centerGridCoord;
+                    var gridCoord = new LVector2Int(x, y) + centerGridCoord;
                     var worldPos = GridCoord2WorldPos(gridCoord);
                     var chunkInfo = GetOrAddChunk(worldPos);
                     if(chunkInfo.EntityCount ==0) continue;
@@ -128,15 +129,15 @@ namespace GamesTan.Spatial {
             return _collisionResult;
         }
 
-        public void Update(EntityIdType data, ref int2 coord, float3 pos) {
+        public void Update(EntityIdType data, ref LVector2Int coord, LVector3 pos) {
             Instance = this;
-            var pos2 = new float2(pos.x, pos.z);
-            var worldPos = (int2)math.floor(pos2);
+            var pos2 = new LVector2(pos.x, pos.z);
+            var worldPos = LMath.FloorToInt(pos2);
             var newCoord = WorldPos2GridCoord(worldPos);
             if (!newCoord.Equals(coord)) {
-                var gridCenter = (coord + new int2(1, 1));
-                var diff = math.abs(pos2 - gridCenter);
-                if (!math.any(diff > Grid.Width))
+                var gridCenter = (coord + new LVector2Int(1, 1));
+                var diff = LMath.Abs(pos2 - (LVector2)gridCenter);
+                if (!(diff.x > Grid.Width || diff.y > Grid.Width))
                     return;
                 var lastChunkCoord = GridCoord2ChunkCoord(coord);
                 var curChunkCoord = GridCoord2ChunkCoord(newCoord);
@@ -167,7 +168,7 @@ namespace GamesTan.Spatial {
             }
         }
 
-        public int2 AddEntity(EntityIdType data,ref int2 coord, float3 pos) {
+        public LVector2Int AddEntity(EntityIdType data,ref LVector2Int coord, LVector3 pos) {
             //if (IsDebugMode) Debug.Log($"AddEntity {data} pos:{pos}");
             var worldPos = FloorWorldPos(pos);
             coord = WorldPos2GridCoord(worldPos);
@@ -177,7 +178,7 @@ namespace GamesTan.Spatial {
             return WorldPos2GridCoord(worldPos);
         }
 
-        public bool RemoveEntity(EntityIdType data, int2 gridCoord) {
+        public bool RemoveEntity(EntityIdType data, LVector2Int gridCoord) {
             //if (IsDebugMode) Debug.Log($"RemoveEntity {data} gridCoord:{gridCoord}");
             var worldPos = GridCoord2WorldPos(gridCoord);
             var chunkInfo = GetOrAddChunk(worldPos);
@@ -199,7 +200,7 @@ namespace GamesTan.Spatial {
             }
             info = _freeChunkList.Pop();
             info.EntityCount = 0;
-            info.Coord = new int2();
+            info.Coord = new LVector2Int();
             return info;
         }
 
@@ -212,7 +213,7 @@ namespace GamesTan.Spatial {
 #endif
         }
 
-        private ChunkInfo GetOrAddChunk(int2 worldPos) {
+        private ChunkInfo GetOrAddChunk(LVector2Int worldPos) {
             var chunkCoord = WorldPos2ChunkCoord(worldPos);
             ChunkInfo chunkInfo = null;
             if (!_chunkCoord2Info.TryGetValue(chunkCoord, out chunkInfo)) {
@@ -273,38 +274,38 @@ namespace GamesTan.Spatial {
 
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static int2 GridCoord2ChunkCoord(int2 gridCoord) {
+        public static LVector2Int GridCoord2ChunkCoord(LVector2Int gridCoord) {
             return gridCoord >> Chunk.GridScalerBit;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static int2 ChunkCoord2GridCoord(int2 chunkCoord) {
+        public static LVector2Int ChunkCoord2GridCoord(LVector2Int chunkCoord) {
             return chunkCoord << Chunk.GridScalerBit;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static int2 WorldPos2ChunkCoord(int2 worldPos) {
+        public static LVector2Int WorldPos2ChunkCoord(LVector2Int worldPos) {
             return worldPos >> Chunk.WidthBit;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static int2 ChunkCoord2WorldPos(int2 chunkCoord) {
+        public static LVector2Int ChunkCoord2WorldPos(LVector2Int chunkCoord) {
             return chunkCoord << Chunk.WidthBit;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static int2 WorldPos2GridCoord(int2 worldPos) {
+        public static LVector2Int WorldPos2GridCoord(LVector2Int worldPos) {
             return worldPos >> Grid.WidthBit;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static int2 GridCoord2WorldPos(int2 gridCoord) {
+        public static LVector2Int GridCoord2WorldPos(LVector2Int gridCoord) {
             return gridCoord << Grid.WidthBit;
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static int2 FloorWorldPos(float3 pos) {
-            return (int2)math.floor(new float2(pos.x, pos.z));
+        public static LVector2Int FloorWorldPos(LVector3 pos) {
+            return new LVector2Int(LMath.FloorToInt(pos.x), LMath.FloorToInt(pos.z));
         }
 
     }

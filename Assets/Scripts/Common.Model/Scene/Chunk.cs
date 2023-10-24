@@ -2,6 +2,7 @@
 using System.Runtime.InteropServices;
 using System.Text;
 using GamesTan.ECS;
+using Lockstep.Math;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -24,7 +25,7 @@ namespace GamesTan.Spatial {
         [FieldOffset(0)] public fixed byte Data[MemSize];
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Grid* GetGrid(int2 localCoord) {
+        public Grid* GetGrid(LVector2Int localCoord) {
             if (!(localCoord.x >= 0 && localCoord.y >= 0 && localCoord.x < SizeX && localCoord.y < SizeY)) {
                 Debug.LogError(" coord out of range " + localCoord.ToString());
                 return null;
@@ -38,7 +39,7 @@ namespace GamesTan.Spatial {
             StringBuilder sb = new StringBuilder();
             for (int y = 0; y < SizeY; y++) {
                 for (int x = 0; x < SizeX; x++) {
-                    var coord = new int2(x, y);
+                    var coord = new LVector2Int(x, y);
                     var grid = GetGrid(coord);
                     sb.Append(coord + ": ");
                     grid->DumpString(sb, true);
