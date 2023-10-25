@@ -30,14 +30,14 @@ namespace GamesTan.ECS.Game {
             _RegisterPostScheduleSystemFunc();
         }
         public void _RegisterExecuteSystemFunc(){
-            _RegisterScheduleSystemFunc(typeof(GamesTan.ECS.Game.SysTestUpdateSkinRender),ScheduleSysTestUpdateSkinRender);
-            _RegisterScheduleSystemFunc(typeof(GamesTan.ECS.Game.SysTestUpdateMeshRender),ScheduleSysTestUpdateMeshRender);
-            _RegisterScheduleSystemFunc(typeof(GamesTan.ECS.Game.SysTestEnemyAwake),ScheduleSysTestEnemyAwake);
-            _RegisterScheduleSystemFunc(typeof(GamesTan.ECS.Game.SysTestEnemyUpdateAnimation),ScheduleSysTestEnemyUpdateAnimation);
-            _RegisterScheduleSystemFunc(typeof(GamesTan.ECS.Game.SysTestEnemyUpdateAI),ScheduleSysTestEnemyUpdateAI);
             _RegisterScheduleSystemFunc(typeof(GamesTan.ECS.Game.SysTestBulletAwake),ScheduleSysTestBulletAwake);
             _RegisterScheduleSystemFunc(typeof(GamesTan.ECS.Game.SysTestBulletUpdateCollision),ScheduleSysTestBulletUpdateCollision);
-            _RegisterScheduleSystemFunc(typeof(GamesTan.ECS.Game.SysTestBulletUpdatePos),ScheduleSysTestBulletUpdatePos); 
+            _RegisterScheduleSystemFunc(typeof(GamesTan.ECS.Game.SysTestBulletUpdatePos),ScheduleSysTestBulletUpdatePos);
+            _RegisterScheduleSystemFunc(typeof(GamesTan.ECS.Game.SysTestEnemyAwake),ScheduleSysTestEnemyAwake);
+            _RegisterScheduleSystemFunc(typeof(GamesTan.ECS.Game.SysTestEnemyUpdateAI),ScheduleSysTestEnemyUpdateAI);
+            _RegisterScheduleSystemFunc(typeof(GamesTan.ECS.Game.SysTestEnemyUpdateAnimation),ScheduleSysTestEnemyUpdateAnimation);
+            _RegisterScheduleSystemFunc(typeof(GamesTan.ECS.Game.SysTestUpdateMeshRender),ScheduleSysTestUpdateMeshRender);
+            _RegisterScheduleSystemFunc(typeof(GamesTan.ECS.Game.SysTestUpdateSkinRender),ScheduleSysTestUpdateSkinRender); 
         }
         public void _RegisterPostScheduleSystemFunc(){
             _RegisterPostScheduleSystemFunc(EntityIds.PClassA,PostUpdateCreatePClassA);

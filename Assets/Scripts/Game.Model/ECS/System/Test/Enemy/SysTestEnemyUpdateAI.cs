@@ -6,6 +6,7 @@ using Unity.Mathematics;
 namespace GamesTan.ECS.Game {
     public unsafe partial class SysTestEnemyUpdateAI : BaseGameExecuteSystem {
         
+        [CustomSystem]
         public void Execute(Enemy* entity) {
             if(GlobalState.DebugStopAI) return;
             if(!entity->IsAlreadyStart) return;

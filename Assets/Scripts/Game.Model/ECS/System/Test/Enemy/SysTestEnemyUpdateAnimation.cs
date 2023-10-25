@@ -6,6 +6,7 @@ using UnityEngine;
 
 namespace GamesTan.ECS.Game {
     public unsafe partial class SysTestEnemyUpdateAnimation : BaseGameExecuteSystem {
+        [CustomSystem]
         public void Execute(Enemy* entity) {
             ref var internalData = ref entity->AnimData;
             if (!GlobalState.DebugStopAnimation) {

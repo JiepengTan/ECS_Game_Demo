@@ -4,49 +4,49 @@ using UnityEngine;
 
 namespace GamesTan.ECS.Game {
     public unsafe partial struct PClassA {
-        [VirtualFunction(typeof(PClassA))]
+        [VirtualFunction]
         public static string FuncA_Virtual(PClassA* ptr) {
             return "PClassA::FuncA_Virtual" + ptr->Val1;
         }
 
-        [VirtualFunction(typeof(PClassA))]
+        [VirtualFunction]
         public static string FuncB_Virtual(PClassA* ptr) {
             return "PClassA::FuncB_Virtual" + ptr->Val1;
         }
         
-        [VirtualFunction(typeof(PClassA))]
+        [VirtualFunction]
         public static void FuncCParam_Virtual(PClassA* ptr,int a,float b,string c) {
         }
     }
 
     public unsafe partial struct SubClassA {
-        [VirtualFunction(typeof(SubClassA))]
+        [VirtualFunction]
         public static string FuncA_Virtual(SubClassA* ptr) {
             return "SubClassA::FuncA_Virtual" + ptr->Val2;
         }
     }
 
     public unsafe partial struct SubClassB {
-        [VirtualFunction(typeof(SubClassB))]
+        [VirtualFunction]
         public static string FuncA_Virtual(SubClassB* ptr) {
             return "SubClassB::FuncA_Virtual" + ptr->Val3;
         }
 
-        [VirtualFunction(typeof(SubClassB))]
+        [VirtualFunction]
         public static string FuncB_Virtual(SubClassB* ptr) {
             return "SubClassB::FuncB_Virtual" + ptr->Val3;
         }        
-        [VirtualFunction(typeof(SubClassB))]
+        [VirtualFunction]
         public static void FuncCParam_Virtual(SubClassB* ptr,int a,float b,string c) {
         }
     }
 
     public unsafe partial struct SubClassBC {
    
-        [VirtualFunction(typeof(SubClassBC))]
+        [VirtualFunction]
         public static void FuncCParam_Virtual(SubClassBC* ptr,int a,float b,string c) {
         }
-        [VirtualFunction(typeof(SubClassBC))]
+        [VirtualFunction]
         public static void FuncDParam_Virtual(SubClassBC* ptr,int a,string b) {
         }
     }

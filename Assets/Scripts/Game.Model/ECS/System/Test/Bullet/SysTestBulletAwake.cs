@@ -2,6 +2,8 @@ using Unity.Mathematics;
 
 namespace GamesTan.ECS.Game {
     public unsafe partial class SysTestBulletAwake : BaseGameExecuteSystem {
+        
+        [CustomSystem]
         public void Execute(Bullet* entity) {
             if (!entity->IsAlreadyStart) {
                 entity->IsAlreadyStart = true;

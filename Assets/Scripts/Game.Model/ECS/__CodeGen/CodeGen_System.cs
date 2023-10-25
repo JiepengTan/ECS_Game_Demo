@@ -27,20 +27,6 @@ namespace GamesTan.ECS.Game {
  
  
         
-        private static void ScheduleSysTestUpdateSkinRender(BaseContext context, ISystem sys){
-            var system = (GamesTan.ECS.Game.SysTestUpdateSkinRender) sys;
-            var entities = ((Context)context)._entities;
-            {
-                var ptr = entities._EnemyAry.GetEntity(0);
-                var len = entities._EnemyAry.Length;
-                for (int i = 0,idx = 0; i < len; i++, ++ptr ) {
-                    if (ptr->_entity._active) {
-                        system.Execute((Entity*)ptr, ref ptr->AssetData, ref ptr->TransformData, ref ptr->AnimRenderData);
-                        idx++;
-                    }
-                }
-            }  
-        }
         private static void ScheduleSysTestUpdateMeshRender(BaseContext context, ISystem sys){
             var system = (GamesTan.ECS.Game.SysTestUpdateMeshRender) sys;
             var entities = ((Context)context)._entities;
@@ -64,70 +50,30 @@ namespace GamesTan.ECS.Game {
                     }
                 }
             }  
+        }
+        private static void ScheduleSysTestUpdateSkinRender(BaseContext context, ISystem sys){
+            var system = (GamesTan.ECS.Game.SysTestUpdateSkinRender) sys;
+            var entities = ((Context)context)._entities;
+            {
+                var ptr = entities._EnemyAry.GetEntity(0);
+                var len = entities._EnemyAry.Length;
+                for (int i = 0,idx = 0; i < len; i++, ++ptr ) {
+                    if (ptr->_entity._active) {
+                        system.Execute((Entity*)ptr, ref ptr->AssetData, ref ptr->TransformData, ref ptr->AnimRenderData);
+                        idx++;
+                    }
+                }
+            }  
         } 
-        //public override void Update(float dt) {
-        //    var pool = EntityManager.EnemyPool;
-        //    var count = pool.MaxUsedSlot;
-        //    var ptrAry = pool.GetData();
-        //    for (int i = 0; i < count; i++) {
-        //        ref var entity =ref ptrAry[i];
-        //        if (entity.IsValid) {
-        //            Execute(ref entity, dt);
-        //        }
-        //    }
-        //}
-        private static void ScheduleSysTestEnemyAwake(BaseContext context, ISystem sys){
-            var system = (GamesTan.ECS.Game.SysTestEnemyAwake) sys;
-            var entities = ((Context)context)._entities;
-            {
-                var ptr = entities._EnemyAry.GetEntity(0);
-                var len = entities._EnemyAry.Length;
-                for (int i = 0,idx = 0; i < len; i++, ++ptr ) {
-                    if (ptr->_entity._active) {
-                        system.Execute((Enemy*) ptr);
-                        idx++;
-                    }
-                }
-            } 
-        }
-        private static void ScheduleSysTestEnemyUpdateAnimation(BaseContext context, ISystem sys){
-            var system = (GamesTan.ECS.Game.SysTestEnemyUpdateAnimation) sys;
-            var entities = ((Context)context)._entities;
-            {
-                var ptr = entities._EnemyAry.GetEntity(0);
-                var len = entities._EnemyAry.Length;
-                for (int i = 0,idx = 0; i < len; i++, ++ptr ) {
-                    if (ptr->_entity._active) {
-                        system.Execute((Enemy*) ptr);
-                        idx++;
-                    }
-                }
-            } 
-        }
-        private static void ScheduleSysTestEnemyUpdateAI(BaseContext context, ISystem sys){
-            var system = (GamesTan.ECS.Game.SysTestEnemyUpdateAI) sys;
-            var entities = ((Context)context)._entities;
-            {
-                var ptr = entities._EnemyAry.GetEntity(0);
-                var len = entities._EnemyAry.Length;
-                for (int i = 0,idx = 0; i < len; i++, ++ptr ) {
-                    if (ptr->_entity._active) {
-                        system.Execute((Enemy*) ptr);
-                        idx++;
-                    }
-                }
-            } 
-        }
         private static void ScheduleSysTestBulletAwake(BaseContext context, ISystem sys){
             var system = (GamesTan.ECS.Game.SysTestBulletAwake) sys;
             var entities = ((Context)context)._entities;
             {
                 var ptr = entities._BulletAry.GetEntity(0);
                 var len = entities._BulletAry.Length;
-                for (int i = 0,idx = 0; i < len; i++, ++ptr ) {
+                for (int i = 0; i < len; i++, ++ptr ) {
                     if (ptr->_entity._active) {
                         system.Execute((Bullet*) ptr);
-                        idx++;
                     }
                 }
             } 
@@ -138,10 +84,9 @@ namespace GamesTan.ECS.Game {
             {
                 var ptr = entities._BulletAry.GetEntity(0);
                 var len = entities._BulletAry.Length;
-                for (int i = 0,idx = 0; i < len; i++, ++ptr ) {
+                for (int i = 0; i < len; i++, ++ptr ) {
                     if (ptr->_entity._active) {
                         system.Execute((Bullet*) ptr);
-                        idx++;
                     }
                 }
             } 
@@ -152,10 +97,48 @@ namespace GamesTan.ECS.Game {
             {
                 var ptr = entities._BulletAry.GetEntity(0);
                 var len = entities._BulletAry.Length;
-                for (int i = 0,idx = 0; i < len; i++, ++ptr ) {
+                for (int i = 0; i < len; i++, ++ptr ) {
                     if (ptr->_entity._active) {
                         system.Execute((Bullet*) ptr);
-                        idx++;
+                    }
+                }
+            } 
+        }
+        private static void ScheduleSysTestEnemyAwake(BaseContext context, ISystem sys){
+            var system = (GamesTan.ECS.Game.SysTestEnemyAwake) sys;
+            var entities = ((Context)context)._entities;
+            {
+                var ptr = entities._EnemyAry.GetEntity(0);
+                var len = entities._EnemyAry.Length;
+                for (int i = 0; i < len; i++, ++ptr ) {
+                    if (ptr->_entity._active) {
+                        system.Execute((Enemy*) ptr);
+                    }
+                }
+            } 
+        }
+        private static void ScheduleSysTestEnemyUpdateAI(BaseContext context, ISystem sys){
+            var system = (GamesTan.ECS.Game.SysTestEnemyUpdateAI) sys;
+            var entities = ((Context)context)._entities;
+            {
+                var ptr = entities._EnemyAry.GetEntity(0);
+                var len = entities._EnemyAry.Length;
+                for (int i = 0; i < len; i++, ++ptr ) {
+                    if (ptr->_entity._active) {
+                        system.Execute((Enemy*) ptr);
+                    }
+                }
+            } 
+        }
+        private static void ScheduleSysTestEnemyUpdateAnimation(BaseContext context, ISystem sys){
+            var system = (GamesTan.ECS.Game.SysTestEnemyUpdateAnimation) sys;
+            var entities = ((Context)context)._entities;
+            {
+                var ptr = entities._EnemyAry.GetEntity(0);
+                var len = entities._EnemyAry.Length;
+                for (int i = 0; i < len; i++, ++ptr ) {
+                    if (ptr->_entity._active) {
+                        system.Execute((Enemy*) ptr);
                     }
                 }
             } 

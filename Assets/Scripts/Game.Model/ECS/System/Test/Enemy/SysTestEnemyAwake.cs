@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace GamesTan.ECS.Game {
     public unsafe partial class SysTestEnemyAwake : BaseGameExecuteSystem {
+        [CustomSystem]
         public void Execute(Enemy* entity) {
             if (!entity->IsAlreadyStart) {
                 entity->IsAlreadyStart = true;

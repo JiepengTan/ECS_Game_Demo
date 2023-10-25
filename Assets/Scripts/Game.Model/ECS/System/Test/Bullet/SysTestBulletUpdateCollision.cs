@@ -6,6 +6,7 @@ using Unity.Mathematics;
 
 namespace GamesTan.ECS.Game {
     public unsafe partial class SysTestBulletUpdateCollision : BaseGameExecuteSystem {
+        [CustomSystem]
         public void Execute(Bullet* entity) {
            
             var lst = WorldRegion.QueryCollision(entity->TransformData.Position, entity->PhysicData.Radius);
